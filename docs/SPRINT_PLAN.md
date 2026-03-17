@@ -67,7 +67,7 @@
 - [ ] **S1-05** Add Facebook as identity provider in Entra External ID ⏸ deferred
 - [x] **S1-06** Cosmos DB containers created by Terraform: `recipes`, `meal-plans`, `users`, `comments`, `shopping-lists`
 - [x] **S1-07** Blob Storage container `media` created by Terraform with public blob access
-- [ ] **S1-08** Set GitHub Actions secrets: `AZURE_API_PUBLISH_PROFILE`, `AZURE_STATIC_WEB_APPS_TOKEN` — in progress
+- [x] **S1-08** Set GitHub Actions secrets: `AZURE_API_PUBLISH_PROFILE`, `AZURE_STATIC_WEB_APPS_TOKEN`
 - [x] **S1-09** `.env` files created for local dev (api + web); gitignored
 
 ### Design System (Frontend)
