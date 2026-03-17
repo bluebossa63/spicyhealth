@@ -45,4 +45,4 @@ jobs:
           app_location: apps/web
           output_location: out
           skip_app_build: true
-          is_static_exports: true
+          is_static_export: true
