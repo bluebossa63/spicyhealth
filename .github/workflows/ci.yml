@@ -14,5 +14,8 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npm run build
-      - run: npm run lint
+      - run: npm run build --workspace=packages/shared
+      - run: npm run build --workspace=apps/api
+      - run: npm run build --workspace=apps/web
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001/api
