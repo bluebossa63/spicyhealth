@@ -16,7 +16,7 @@ export interface FoodFactsProduct {
 export async function lookupNutrition(barcode: string): Promise<FoodFactsProduct | null> {
   const res = await fetch(`${OPEN_FOOD_FACTS_BASE}/product/${barcode}.json`);
   if (!res.ok) return null;
-  const data = await res.json();
+  const data = await res.json() as { status: number; product: FoodFactsProduct };
   return data.status === 1 ? data.product : null;
 }
 
@@ -24,7 +24,7 @@ export async function searchByName(query: string): Promise<FoodFactsProduct[]> {
   const params = new URLSearchParams({ search_terms: query, json: '1', page_size: '5' });
   const res = await fetch(`${OPEN_FOOD_FACTS_BASE}/search?${params}`);
   if (!res.ok) return [];
-  const data = await res.json();
+  const data = await res.json() as { products: FoodFactsProduct[] };
   return data.products ?? [];
 }
 
