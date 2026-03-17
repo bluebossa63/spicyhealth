@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // PWA support via next-pwa (add when ready)
+  output: 'export',
+  trailingSlash: true,
   images: {
-    domains: ['your-storage-account.blob.core.windows.net'],
+    unoptimized: true, // required for static export
+    domains: ['spicyhealthmediaprod.blob.core.windows.net'],
   },
 };
 
