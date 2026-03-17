@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    background-color: #fdf6f0;
+    color: #3a3a3a;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair), Georgia, serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-terracotta text-white font-semibold px-5 py-2.5 rounded-2xl
+           hover:bg-terracotta-dark active:scale-95 transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-sage text-white font-semibold px-5 py-2.5 rounded-2xl
+           hover:bg-sage-dark active:scale-95 transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-charcoal font-medium px-5 py-2.5 rounded-2xl
+           hover:bg-cream-dark active:scale-95 transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-charcoal focus:ring-offset-2;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-shadow duration-200;
+  }
+
+  .input-field {
+    @apply w-full border border-blush-dark rounded-xl px-4 py-2.5 text-charcoal
+           placeholder-charcoal-light bg-white
+           focus:outline-none focus:ring-2 focus:ring-terracotta focus:border-transparent
+           transition-all duration-150;
+  }
+}
