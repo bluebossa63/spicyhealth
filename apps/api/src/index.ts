@@ -6,6 +6,7 @@ import { recipesRouter } from './routes/recipes';
 import { mealPlansRouter } from './routes/meal-plans';
 import { shoppingListRouter } from './routes/shopping-list';
 import { authRouter } from './routes/auth';
+import { nutritionRouter } from './routes/nutrition';
 import { authMiddleware } from './middleware/auth';
 
 const app = express();
@@ -24,6 +25,7 @@ app.use('/api/users', authMiddleware, authRouter);
 app.use('/api/recipes', authMiddleware, recipesRouter);
 app.use('/api/meal-plans', authMiddleware, mealPlansRouter);
 app.use('/api/shopping-list', authMiddleware, shoppingListRouter);
+app.use('/api/nutrition', authMiddleware, nutritionRouter);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 

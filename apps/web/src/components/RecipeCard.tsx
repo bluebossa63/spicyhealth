@@ -1,52 +1,96 @@
-import type { Recipe } from '@spicyhealth/shared';
+'use client';
+import Link from 'next/link';
+import { useState } from 'react';
+import { api } from '@/lib/api';
+import { useToast } from '@/components/ui/Toast';
+import { Toast } from '@/components/ui/Toast';
+
+interface Recipe {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  imageUrl?: string;
+  prepTimeMinutes: number;
+  cookTimeMinutes: number;
+  nutrition: { calories: number };
+  estimatedCostEur: number;
+  tags?: string[];
+}
 
 interface Props {
   recipe: Recipe;
-  onQuickAdd?: (recipe: Recipe) => void;
+  onSaveToggle?: (id: string) => void;
+  saved?: boolean;
 }
 
-export function RecipeCard({ recipe, onQuickAdd }: Props) {
+export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
+  const { toast, show, hide } = useToast();
+  const [isAdding, setIsAdding] = useState(false);
+
+  async function handleQuickAdd(e: React.MouseEvent) {
+    e.preventDefault();
+    setIsAdding(true);
+    try {
+      const { slot } = await api.recipes.quickAdd(recipe.id);
+      show(`Added to ${slot}!`, 'success');
+    } catch {
+      show('Please sign in first', 'error');
+    } finally {
+      setIsAdding(false);
+    }
+  }
+
+  const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
+
   return (
-    <div style={{
-      background: '#fff',
-      borderRadius: 16,
-      padding: '1.25rem',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '0.5rem',
-    }}>
-      {recipe.imageUrl && (
-        <img
-          src={recipe.imageUrl}
-          alt={recipe.title}
-          style={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 12 }}
-        />
-      )}
-      <h3 style={{ margin: 0, color: '#3a3a3a' }}>{recipe.title}</h3>
-      <p style={{ margin: 0, color: '#888', fontSize: '0.875rem' }}>{recipe.description}</p>
-      <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: '#aaa' }}>
-        <span>{recipe.prepTimeMinutes + recipe.cookTimeMinutes} min</span>
-        <span>{recipe.nutrition.calories} kcal</span>
-        <span>€{recipe.estimatedCostEur.toFixed(2)}</span>
-      </div>
-      {onQuickAdd && (
-        <button
-          onClick={() => onQuickAdd(recipe)}
-          style={{
-            marginTop: '0.5rem',
-            padding: '0.5rem 1rem',
-            background: '#d4856a',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            cursor: 'pointer',
-            fontWeight: 600,
-          }}
-        >
-          + Quick Add for Today
-        </button>
-      )}
-    </div>
+    <>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hide} />}
+      <Link href={`/recipes/detail?id=${recipe.id}`} className="group block">
+        <div className="card overflow-hidden h-full flex flex-col group-hover:shadow-card-hover transition-shadow">
+          {/* Image */}
+          <div className="relative h-48 bg-gradient-to-br from-blush-light to-cream-dark flex-shrink-0">
+            {recipe.imageUrl ? (
+              <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-4xl">🥗</div>
+            )}
+            {/* Category chip */}
+            <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-xs font-semibold px-2.5 py-1 rounded-full text-terracotta capitalize">
+              {recipe.category}
+            </span>
+            {/* Save button */}
+            <button
+              onClick={e => { e.preventDefault(); onSaveToggle?.(recipe.id); }}
+              className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:scale-110 transition-transform"
+            >
+              <span className={saved ? 'text-terracotta' : 'text-charcoal-light'}>♥</span>
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="p-4 flex flex-col gap-2 flex-1">
+            <h3 className="font-heading font-semibold text-charcoal leading-snug line-clamp-2">{recipe.title}</h3>
+            <p className="text-xs text-charcoal-light leading-relaxed line-clamp-2 flex-1">{recipe.description}</p>
+
+            {/* Meta badges */}
+            <div className="flex gap-3 text-xs text-charcoal-light mt-1">
+              <span>⏱ {totalTime} min</span>
+              <span>🔥 {recipe.nutrition.calories} kcal</span>
+              <span>💰 €{recipe.estimatedCostEur.toFixed(2)}</span>
+            </div>
+
+            {/* Quick Add */}
+            <button
+              onClick={handleQuickAdd}
+              disabled={isAdding}
+              className="btn-primary text-xs py-2 w-full mt-2"
+            >
+              {isAdding ? 'Adding…' : '+ Quick Add for Today'}
+            </button>
+          </div>
+        </div>
+      </Link>
+    </>
   );
 }

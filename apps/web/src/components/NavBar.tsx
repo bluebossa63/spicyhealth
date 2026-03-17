@@ -30,6 +30,7 @@ export function NavBar() {
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               <span className="text-sm text-charcoal-light">{user?.displayName || user?.email}</span>
+              <Link href="/recipes/new" className="btn-secondary text-sm">+ Recipe</Link>
               <button onClick={logout} className="btn-ghost text-sm">Log out</button>
             </div>
           ) : (
