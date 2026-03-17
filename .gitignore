@@ -20,3 +20,6 @@ infra/terraform/tfplan
 infra/main.bicep
 infra/parameters.json
 infra/setup.sh
+
+# Azure publish profiles (contain credentials)
+infra/*.PublishSettings
