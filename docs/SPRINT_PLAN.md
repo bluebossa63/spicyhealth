@@ -1,6 +1,6 @@
 # SpicyHealth — Sprint Plan
 
-**Version:** 0.2.0 | **Date:** 2026-03-17 | **Sprint length:** 2 weeks
+**Version:** 0.3.0 | **Date:** 2026-03-17 | **Sprint length:** 2 weeks
 
 > **Sync policy:** This document, `SSD.md`, and `HISTORY.md` are kept in sync.
 > When a sprint task changes scope, adds a new component, or alters a technical decision:
@@ -95,57 +95,42 @@
 
 ---
 
-## Sprint 2 — Recipe Library
+## Sprint 2 — Recipe Library ✅
 
 **Goal:** Users can browse, search, filter, and view recipes.
 **Outcome:** Fully functional recipe library with real data, beautiful UI.
 
 ### API
-- [ ] **S2-01** Implement `GET /api/recipes`: Cosmos DB query with filters (`category`, `dietary`, `maxCalories`, `maxPrepTime`, `maxCost`, `search` full-text); pagination (`page`, `pageSize`)
-- [ ] **S2-02** Implement `GET /api/recipes/:id`: fetch recipe by ID with full ingredient detail
-- [ ] **S2-03** Implement `POST /api/recipes`: Zod validation, save to Cosmos DB, return created recipe
-- [ ] **S2-04** Implement `PUT /api/recipes/:id`: author-only update
-- [ ] **S2-05** Implement `DELETE /api/recipes/:id`: author-only soft delete
-- [ ] **S2-06** Implement `GET /api/nutrition/search?q=`: proxy to Open Food Facts search
-- [ ] **S2-07** Implement `GET /api/nutrition/:barcode`: proxy to Open Food Facts product lookup
-- [ ] **S2-08** Add image upload endpoint `POST /api/recipes/upload-image`: generate SAS URL → client uploads directly to Blob Storage; return final URL
+- [x] **S2-01** Implement `GET /api/recipes`: Cosmos DB query with filters (`category`, `dietary`, `maxCalories`, `maxPrepTime`, `maxCost`, `search` full-text); pagination (`page`, `pageSize`)
+- [x] **S2-02** Implement `GET /api/recipes/:id`: fetch recipe by ID with full ingredient detail
+- [x] **S2-03** Implement `POST /api/recipes`: Zod validation, save to Cosmos DB, return created recipe
+- [x] **S2-04** Implement `PUT /api/recipes/:id`: author-only update
+- [x] **S2-05** Implement `DELETE /api/recipes/:id`: author-only soft delete
+- [x] **S2-06** Implement `GET /api/nutrition/search?q=`: proxy to Open Food Facts search
+- [x] **S2-07** Implement `GET /api/nutrition/:barcode`: proxy to Open Food Facts product lookup
+- [x] **S2-08** Add image upload endpoint `POST /api/recipes/upload-image`: generate SAS URL → client uploads directly to Blob Storage; return final URL
 
 ### Frontend — Recipe List
-- [ ] **S2-09** Build `SearchBar` component (debounced input, 300ms)
-- [ ] **S2-10** Build `FilterPanel` component:
-  - Category chips (breakfast, lunch, dinner, snack, dessert, smoothie)
-  - Dietary toggles (vegan, vegetarian, gluten-free, dairy-free)
-  - Calories slider (0–1500 kcal)
-  - Prep time slider (0–120 min)
-  - Cost slider (€0–€30)
-- [ ] **S2-11** Build `RecipeGrid` component: responsive grid (1→2→3→4 col), skeleton loading state
-- [ ] **S2-12** Build `RecipeCard` component (full design):
-  - Photo with aspect ratio 4:3, lifestyle placeholder if none
-  - Title, description (truncated)
-  - Badges: prep time, kcal, cost
-  - Category chip
-  - Quick Add button (terracotta)
-  - Heart/save icon (top-right)
-- [ ] **S2-13** Build `/recipes` page: compose SearchBar + FilterPanel + RecipeGrid with SWR data fetching
-- [ ] **S2-14** Add infinite scroll or pagination to recipe list
+- [x] **S2-09** Build `SearchBar` component (debounced input, 300ms)
+- [x] **S2-10** Build `FilterPanel` component: category chips, calories/prep-time/cost sliders
+- [x] **S2-11** Build `RecipeGrid` component: responsive grid (1→2→3→4 col), skeleton loading state
+- [x] **S2-12** Build `RecipeCard` component: image, badges, category chip, Quick Add, heart/save
+- [x] **S2-13** Build `/recipes` page: SearchBar + FilterPanel + RecipeGrid
+- [x] **S2-14** Add "Load more" pagination to recipe list
 
 ### Frontend — Recipe Detail
-- [ ] **S2-15** Create `/recipes/[id]` page route
-- [ ] **S2-16** Build `RecipeHero`: large image, title, meta (author, date, prep/cook time, servings)
-- [ ] **S2-17** Build `IngredientList`: each ingredient shows name, quantity, unit, kcal, cost; link to Open Food Facts lookup
-- [ ] **S2-18** Build `NutritionPanel`: macros bar chart (calories, protein, carbs, fat, fiber) per serving and per recipe
-- [ ] **S2-19** Build `CostPanel`: cost per serving and total recipe cost
-- [ ] **S2-20** Build `InstructionList`: numbered steps with clean typography
-- [ ] **S2-21** Build `QuickAddButton`: POST to `/api/recipes/:id/quick-add`, show success toast
-- [ ] **S2-22** Build `SaveRecipeButton`: toggle saved state, optimistic update
+- [x] **S2-15** Create `/recipes/detail?id=` page (static-export compatible)
+- [x] **S2-16** RecipeHero: large image, title, meta (author, prep/cook time, servings)
+- [x] **S2-17** IngredientList: name, quantity, unit, kcal, cost per ingredient
+- [x] **S2-18** Build `NutritionPanel`: macros bar chart per serving and per recipe
+- [x] **S2-19** Cost panel: cost per serving and total recipe cost
+- [x] **S2-20** InstructionList: numbered steps
+- [x] **S2-21** QuickAddButton: POST to `/api/recipes/:id/quick-add`, toast feedback
+- [x] **S2-22** SaveRecipeButton: toggle saved state
 
 ### Frontend — Recipe Create/Edit
-- [ ] **S2-23** Build `/recipes/new` page with multi-step form:
-  - Step 1: Title, description, category, tags
-  - Step 2: Ingredients (dynamic list, Open Food Facts autocomplete per ingredient)
-  - Step 3: Instructions (ordered drag-and-drop list)
-  - Step 4: Image upload, preview
-- [ ] **S2-24** Auto-calculate and display nutrition + cost totals as user adds ingredients
+- [x] **S2-23** Build `/recipes/new` 3-step wizard: basic info → ingredients → instructions
+- [ ] **S2-24** Auto-calculate nutrition + cost totals as user adds ingredients ⏸ deferred to S3
 
 ---
 
@@ -323,8 +308,8 @@
 | Sprint | Theme | Key Deliverables |
 |---|---|---|
 | S0 ✅ | Scaffold | Monorepo, types, Bicep, CI/CD, SSD |
-| S1 | Auth & Design System | Working login, Tailwind theme, NavBar |
-| S2 | Recipe Library | Browse, search, filter, detail, create |
+| S1 ✅ | Auth & Design System | Working login, Tailwind theme, NavBar |
+| S2 ✅ | Recipe Library | Browse, search, filter, detail, create |
 | S3 | Social & Profiles | Comments, reactions, saved recipes, profile |
 | S4 | Meal Planner | Drag-and-drop planner, Quick Add, weekly totals |
 | S5 | Shopping List | Auto-generate, group by category, cost totals |
