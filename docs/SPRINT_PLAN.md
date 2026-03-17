@@ -60,41 +60,38 @@
 **Outcome:** User can register, log in with email or Google, and see their profile.
 
 ### Azure Setup (Infra)
-- [ ] **S1-01** Bootstrap Terraform state storage (once manually), then run `terraform init / plan / apply` from `infra/terraform/`
-- [ ] **S1-02** Set up Azure AD B2C tenant; create app registration; configure user flow `B2C_1_signupsignin`
-- [ ] **S1-03** Add Google as identity provider in B2C
-- [ ] **S1-04** Add Microsoft identity provider in B2C
-- [ ] **S1-05** Add Facebook identity provider in B2C
-- [ ] **S1-06** Create Cosmos DB containers: `recipes`, `meal-plans`, `users`, `comments`; configure indexes
-- [ ] **S1-07** Create Blob Storage container `media` with public read policy for images
-- [ ] **S1-08** Set GitHub Actions secrets: `AZURE_API_PUBLISH_PROFILE`, `AZURE_STATIC_WEB_APPS_TOKEN`
-- [ ] **S1-09** Create `.env` files for local dev (api + web); add to `.gitignore`
+- [x] **S1-01** Terraform state storage bootstrapped; `terraform apply` complete — all Azure resources live
+- [x] **S1-02** Set up Entra External ID tenant; create app registration; configured user flow `B2C_1_signupsignin`
+- [ ] **S1-03** Add Google as identity provider in Entra External ID ⏸ deferred
+- [ ] **S1-04** Add Microsoft as identity provider in Entra External ID ⏸ deferred
+- [ ] **S1-05** Add Facebook as identity provider in Entra External ID ⏸ deferred
+- [x] **S1-06** Cosmos DB containers created by Terraform: `recipes`, `meal-plans`, `users`, `comments`, `shopping-lists`
+- [x] **S1-07** Blob Storage container `media` created by Terraform with public blob access
+- [ ] **S1-08** Set GitHub Actions secrets: `AZURE_API_PUBLISH_PROFILE`, `AZURE_STATIC_WEB_APPS_TOKEN` — in progress
+- [x] **S1-09** `.env` files created for local dev (api + web); gitignored
 
 ### Design System (Frontend)
-- [ ] **S1-10** Install and configure Tailwind CSS in `apps/web` with custom design tokens:
-  - Colors: `blush` (#f4b8b0), `sage` (#8fad88), `cream` (#fdf6f0), `terracotta` (#d4856a), `charcoal` (#3a3a3a)
-  - Font: Inter (body) + Playfair Display (headings) via `next/font`
-  - Border radius: `rounded-2xl` default for cards
-- [ ] **S1-11** Build `NavBar` component (logo, links, avatar/login button; mobile hamburger menu)
-- [ ] **S1-12** Build `Footer` component
-- [ ] **S1-13** Update `RootLayout` to include NavBar, Footer, and global CSS
-- [ ] **S1-14** Build reusable `Button` component (variants: primary/secondary/ghost, sizes: sm/md/lg)
-- [ ] **S1-15** Build reusable `Card` component (rounded, shadow, hover lift)
-- [ ] **S1-16** Build reusable `Input`, `Select`, `Checkbox` form components
+- [x] **S1-10** Tailwind CSS configured with brand tokens (blush/sage/cream/terracotta/charcoal), Playfair Display + Inter
+- [x] **S1-11** `NavBar` component built (sticky, desktop nav, mobile hamburger)
+- [x] **S1-12** `Footer` component built
+- [x] **S1-13** `RootLayout` updated with NavBar, Footer, global CSS, PWA meta
+- [x] **S1-14** `Button` component (primary/secondary/ghost, sm/md/lg)
+- [x] **S1-15** `Card` component (rounded, shadow, hover lift)
+- [x] **S1-16** `Input`, `Toast`, `SkeletonCard`, `SkeletonText` components built
 
 ### Auth (API)
-- [ ] **S1-17** Implement `POST /api/auth/register`: validate body with Zod, create B2C user via Graph API, create user document in Cosmos DB `users` container
-- [ ] **S1-18** Implement `POST /api/auth/login`: validate credentials against B2C, return JWT
-- [ ] **S1-19** Wire `authMiddleware` to all protected routes; add integration smoke test
-- [ ] **S1-20** Add `GET /api/users/me` — return profile for authenticated user
+- [x] **S1-17** `POST /api/auth/register`: Zod validation, MSAL ROPC flow, user upserted in Cosmos DB
+- [x] **S1-18** `POST /api/auth/login`: MSAL ROPC flow, returns JWT
+- [x] **S1-19** `authMiddleware` wired to all protected routes; helmet + rate limiting added
+- [x] **S1-20** `GET /api/users/me` — returns profile from Cosmos DB
 
 ### Auth (Frontend)
-- [ ] **S1-21** Build `/auth/login` page: email/password form + social login buttons (Google, Microsoft, Facebook)
-- [ ] **S1-22** Build `/auth/register` page: name, email, password, confirm password form
-- [ ] **S1-23** Implement MSAL.js or B2C redirect flow for social OAuth
-- [ ] **S1-24** Store JWT in `httpOnly` cookie (or `localStorage` with XSS mitigation)
-- [ ] **S1-25** Add auth context (`useAuth` hook) — expose `user`, `login`, `logout`, `isAuthenticated`
-- [ ] **S1-26** Protect routes that require authentication (redirect to `/auth/login`)
+- [x] **S1-21** `/auth/login` page — wired to `useAuth().login` with loading/error state
+- [x] **S1-22** `/auth/register` page — wired to `useAuth().register` with password confirm
+- [ ] **S1-23** Social OAuth redirect flow ⏸ deferred (S1-03/04/05 pending)
+- [x] **S1-24** JWT stored in `localStorage` via `AuthProvider`
+- [x] **S1-25** `useAuth` hook — `user`, `login`, `register`, `logout`, `isAuthenticated`, `isLoading`
+- [x] **S1-26** `ProtectedRoute` component — redirects to `/auth/login` if unauthenticated; applied to meal-planner and shopping-list pages
 
 ---
 

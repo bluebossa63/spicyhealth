@@ -1,10 +1,12 @@
+import { ProtectedRoute } from '@/components/ProtectedRoute';
+
 export default function ShoppingListPage() {
   return (
-    <main style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem' }}>
-      <h2 style={{ color: '#c4624a' }}>Shopping List</h2>
-      {/* TODO: auto-generated from meal plan, grouped by category */}
-      {/* TODO: manual add/edit, mark purchased */}
-      <p style={{ color: '#aaa' }}>Smart shopping list coming soon...</p>
-    </main>
+    <ProtectedRoute>
+      <main className="max-w-6xl mx-auto px-4 py-8">
+        <h2 className="font-heading text-3xl text-terracotta mb-6">Shopping List</h2>
+        <p className="text-charcoal-light">Smart shopping list coming soon.</p>
+      </main>
+    </ProtectedRoute>
   );
 }

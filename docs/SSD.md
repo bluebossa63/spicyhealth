@@ -26,7 +26,7 @@ This document describes the software system design for **SpicyHealth**, a full-s
 - Web application (Next.js, PWA-capable)
 - REST API backend (Node.js / Express)
 - Azure cloud infrastructure
-- Authentication via Azure AD B2C (email/password + social OAuth)
+- Authentication via Entra External ID (email/password + social OAuth)
 - Integrations: Open Food Facts API (nutrition data)
 
 ### 1.3 Definitions
@@ -59,7 +59,7 @@ This document describes the software system design for **SpicyHealth**, a full-s
 │                            └─┬────────┬──────────┬────┘    │
 │                              │        │          │          │
 │               ┌──────────────▼┐  ┌────▼────┐ ┌──▼──────┐  │
-│               │  Azure AD B2C │  │Cosmos DB│ │  Blob   │  │
+│               │  Entra External ID │  │Cosmos DB│ │  Blob   │  │
 │               │  (Auth)       │  │(Data)   │ │ Storage │  │
 │               └───────────────┘  └─────────┘ └─────────┘  │
 │                                                             │
@@ -96,7 +96,7 @@ spicyhealth/
 | Mobile-first | PWA via `manifest.json` + responsive layout |
 | Azure-native | SWA + App Service + Cosmos DB + AD B2C + Blob |
 | Cost efficiency | Cosmos DB Serverless; B1 App Service; SWA Standard |
-| Social login | Azure AD B2C (Google, Microsoft, Facebook built-in) |
+| Social login | Entra External ID (Google, Microsoft, Facebook built-in) |
 | Shared types | `@spicyhealth/shared` package eliminates API drift |
 
 ---
@@ -351,7 +351,7 @@ Partition key: `/recipeId`
 ### 6.2 Authentication
 
 All protected endpoints require:
-`Authorization: Bearer <Azure AD B2C JWT>`
+`Authorization: Bearer <Entra External ID JWT>`
 
 ### 6.3 Endpoint Catalogue
 
@@ -400,7 +400,7 @@ All protected endpoints require:
 
 ## 7. Security Design
 
-### 7.1 Authentication Flow (Azure AD B2C)
+### 7.1 Authentication Flow (Entra External ID)
 
 ```
 User clicks "Sign in with Google"
@@ -468,7 +468,7 @@ Resource Group: rg-spicyhealth
 ├── Azure App Service Plan        spicyhealth-plan-prod (B1, Linux)
 │   └── App Service               spicyhealth-api-prod (Node 20 LTS)
 │
-├── Azure AD B2C tenant           spicyhealthb2c.onmicrosoft.com
+├── Entra External ID tenant           spicyhealthb2c.onmicrosoft.com
 │   ├── User flow: B2C_1_signupsignin
 │   └── Identity providers: Google, Microsoft, Facebook
 │
@@ -519,7 +519,7 @@ Terraform (manual / separate workflow):
 | Azure App Service | B1 | €13 |
 | Azure Cosmos DB | Serverless (< 1M RU) | €0–5 |
 | Azure Blob Storage | LRS, < 10 GB | < €1 |
-| Azure AD B2C | ≤ 50k MAU free | €0 |
+| Entra External ID | ≤ 50k MAU free | €0 |
 | GitHub Actions | Free tier | €0 |
 | **Total** | | **~€23–28/mo** |
 

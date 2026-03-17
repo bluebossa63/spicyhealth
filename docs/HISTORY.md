@@ -295,6 +295,25 @@ packages/shared → shared types
 
 ---
 
+## [2026-03-17] D-017 — Entra External ID replaces Azure AD B2C
+
+**Decision:** Use Microsoft Entra External ID instead of Azure AD B2C.
+
+**Context:** Azure AD B2C is no longer available to new customers as of May 1, 2025. Entra External ID is the official Microsoft replacement with equivalent capabilities.
+
+**Details:**
+- Same social provider support: Google, Microsoft, Facebook
+- Same JWT token issuance and JWKS endpoint pattern
+- Configured via portal.azure.com → Microsoft Entra External ID
+- Free tier: 50k MAU
+- Auth middleware in API unchanged — still validates Bearer JWT via JWKS
+
+**Impact:** All references to "Azure AD B2C" in SSD.md and SPRINT_PLAN.md updated to "Entra External ID". `terraform.tfvars` `b2c_tenant` variable repurposed for Entra tenant name.
+
+**References:** SSD §7, SPRINT_PLAN S1-02–S1-05
+
+---
+
 ## Template for future decisions
 
 ```

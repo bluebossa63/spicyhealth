@@ -1,10 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
-import { JwksClient } from 'jwks-rsa';
+import jwksRsa from 'jwks-rsa';
 import jwt from 'jsonwebtoken';
 
-const client = new JwksClient({
-  jwksUri: `https://${process.env.B2C_TENANT}.b2clogin.com/${process.env.B2C_TENANT}.onmicrosoft.com/${process.env.B2C_POLICY}/discovery/v2.0/keys`,
+const TENANT = process.env.ENTRA_TENANT!;
+const POLICY = process.env.ENTRA_POLICY!;
+
+const jwksClient = jwksRsa({
+  jwksUri: `https://${TENANT}/${TENANT}/${POLICY}/discovery/v2.0/keys`,
+  cache: true,
+  rateLimit: true,
 });
+
+function getSigningKey(kid: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    jwksClient.getSigningKey(kid, (err, key) => {
+      if (err) return reject(err);
+      resolve(key!.getPublicKey());
+    });
+  });
+}
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.split(' ')[1];
@@ -12,13 +26,15 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 
   try {
     const decoded = jwt.decode(token, { complete: true });
-    const kid = decoded?.header?.kid;
-    const key = await client.getSigningKey(kid);
-    const signingKey = key.getPublicKey();
-    const payload = jwt.verify(token, signingKey);
+    if (!decoded?.header?.kid) throw new Error('Invalid token structure');
+    const signingKey = await getSigningKey(decoded.header.kid);
+    const payload = jwt.verify(token, signingKey, {
+      algorithms: ['RS256'],
+      audience: process.env.ENTRA_CLIENT_ID,
+    });
     (req as any).user = payload;
     next();
-  } catch {
-    res.status(401).json({ error: 'Invalid token' });
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
