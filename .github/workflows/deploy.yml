@@ -19,11 +19,23 @@ jobs:
       - run: npm ci
       - run: npm run build --workspace=packages/shared
       - run: npm run build --workspace=apps/api
+      - name: Bundle API with production dependencies
+        run: |
+          mkdir -p deploy-api
+          cp -r apps/api/dist/. deploy-api/
+          node -e "
+            const pkg = require('./apps/api/package.json');
+            delete pkg.dependencies['@spicyhealth/shared'];
+            delete pkg.devDependencies;
+            pkg.scripts = { start: 'node index.js' };
+            require('fs').writeFileSync('./deploy-api/package.json', JSON.stringify(pkg, null, 2));
+          "
+          cd deploy-api && npm install --production --ignore-scripts
       - uses: azure/webapps-deploy@v3
         with:
           app-name: spicyhealth-api-prod
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
-          package: apps/api/dist
+          package: deploy-api
 
   deploy-web:
     runs-on: ubuntu-latest
