@@ -7,7 +7,7 @@
 | Frontend | Next.js 14 (App Router, PWA) | Azure Static Web Apps |
 | Backend | Node.js + Express + TypeScript | Azure App Service (B1+) |
 | Database | Azure Cosmos DB (NoSQL, Serverless) | Cosmos DB |
-| Auth | Azure AD B2C (Google, Microsoft, Facebook OAuth) | Azure AD B2C |
+| Auth | Entra External ID / bcryptjs + HS256 JWT | Microsoft Entra External ID |
 | Storage | Azure Blob Storage | Storage Account |
 | CI/CD | GitHub Actions | — |
 
@@ -23,7 +23,7 @@ Azure Static Web Apps
         │ REST API calls
         ▼
 Azure App Service (Node.js API)
-        ├──► Azure AD B2C  (JWT validation)
+        ├──► Entra External ID  (JWT validation)
         ├──► Azure Cosmos DB  (recipes, meal plans, users, comments)
         └──► Open Food Facts API  (nutrition lookup)
 
@@ -56,8 +56,9 @@ Azure Blob Storage ◄── image uploads from API
 | meal-plans | /userId | Weekly meal plans |
 | users | /id | User profiles |
 | comments | /recipeId | Recipe comments |
+| shopping-lists | /userId | Smart shopping lists |
 
-## Azure AD B2C — Social Login Setup
+## Entra External ID — Social Login Setup
 
 1. Create B2C tenant at portal.azure.com
 2. Register app → client ID & secret
@@ -73,7 +74,7 @@ Azure Blob Storage ◄── image uploads from API
 | App Service | B1 | €13 |
 | Cosmos DB | Serverless | €0–10 |
 | Blob Storage | LRS | <€1 |
-| Azure AD B2C | 50k MAU free | €0 |
+| Entra External ID | 50k MAU free | €0 |
 | **Total** | | **~€23–33/mo** |
 
 ## Milestones

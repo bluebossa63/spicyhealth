@@ -194,7 +194,7 @@ packages/shared → shared types
 
 ---
 
-## [2026-03-011] D-011 — Cost estimate target: ~€23–28/month
+## [2026-03-17] D-011 — Cost estimate target: ~€23–28/month
 
 **Decision:** Target Azure infrastructure cost of ~€23–28/month for low-traffic production.
 
