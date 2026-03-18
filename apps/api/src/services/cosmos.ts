@@ -12,4 +12,5 @@ export const containers = {
   mealPlans: db.container('meal-plans'),
   users: db.container('users'),
   comments: db.container('comments'),
+  shoppingLists: db.container('shopping-lists'),
 };

@@ -89,8 +89,14 @@ export const api = {
     },
   },
   shoppingList: {
-    get: () => fetchJson<{ items: any[] }>('/shopping-list'),
+    get: () => fetchJson<{ items: any[]; listId: string }>('/shopping-list'),
     generate: (mealPlanId: string) =>
-      fetchJson('/shopping-list/generate', { method: 'POST', body: JSON.stringify({ mealPlanId }) }),
+      fetchJson<{ items: any[]; listId: string }>('/shopping-list/generate', { method: 'POST', body: JSON.stringify({ mealPlanId }) }),
+    addItem: (data: { name: string; quantity?: number; unit?: string; estimatedCostEur?: number }) =>
+      fetchJson<{ item: any }>('/shopping-list/items', { method: 'POST', body: JSON.stringify(data) }),
+    updateItem: (id: string, data: { purchased?: boolean; quantity?: number; name?: string }) =>
+      fetchJson<{ item: any }>(`/shopping-list/items/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    deleteItem: (id: string) =>
+      fetchJson<{ success: boolean }>(`/shopping-list/items/${id}`, { method: 'DELETE' }),
   },
 };
