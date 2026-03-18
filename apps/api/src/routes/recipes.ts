@@ -35,7 +35,7 @@ recipesRouter.get('/', async (req: Request, res: Response) => {
   try {
     const { category, search, maxCalories, maxPrepTime, maxCost, page = '1', pageSize = '12' } = req.query;
 
-    let query = 'SELECT * FROM c WHERE 1=1';
+    let query = 'SELECT * FROM c WHERE (NOT IS_DEFINED(c.deleted) OR c.deleted = false)';
     const params: { name: string; value: any }[] = [];
 
     if (category) {

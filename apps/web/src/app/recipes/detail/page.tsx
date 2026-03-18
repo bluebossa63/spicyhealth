@@ -46,6 +46,14 @@ function RecipeDetail() {
     } catch { show('Hinzufügen fehlgeschlagen', 'error'); }
   }
 
+  async function handleDelete() {
+    if (!id || !confirm('Rezept wirklich löschen?')) return;
+    try {
+      await api.recipes.delete(id);
+      router.push('/recipes');
+    } catch { show('Löschen fehlgeschlagen', 'error'); }
+  }
+
   async function handleSave() {
     if (!id) return;
     try {
@@ -96,12 +104,27 @@ function RecipeDetail() {
         </span>
         <div className="flex items-start justify-between gap-4">
           <h1 className="font-display text-3xl text-charcoal-800 leading-tight">{recipe.title}</h1>
-          <button
-            onClick={handleSave}
-            className={`shrink-0 text-2xl transition-colors ${saved ? 'text-terracotta-500' : 'text-charcoal-300 hover:text-terracotta-400'}`}
-          >
-            {saved ? '♥' : '♡'}
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            {user?.id === recipe?.authorId && (
+              <>
+                <Link href={`/recipes/edit?id=${recipe.id}`} className="btn-secondary text-sm px-3 py-1.5">
+                  ✏️ Bearbeiten
+                </Link>
+                <button
+                  onClick={handleDelete}
+                  className="btn-ghost text-sm px-3 py-1.5 text-red-500 hover:text-red-700"
+                >
+                  🗑 Löschen
+                </button>
+              </>
+            )}
+            <button
+              onClick={handleSave}
+              className={`text-2xl transition-colors ${saved ? 'text-terracotta-500' : 'text-charcoal-300 hover:text-terracotta-400'}`}
+            >
+              {saved ? '♥' : '♡'}
+            </button>
+          </div>
         </div>
         <p className="text-charcoal-500 mt-2 leading-relaxed">{recipe.description}</p>
         <div className="flex flex-wrap gap-4 mt-4 text-sm text-charcoal-500">
