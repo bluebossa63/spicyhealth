@@ -44,6 +44,8 @@ app.use('/api/nutrition', authMiddleware, nutritionRouter);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
+export { app };
+
 app.listen(PORT, () => {
   console.log(`SpicyHealth API running on port ${PORT}`);
 });
