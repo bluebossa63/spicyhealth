@@ -1,6 +1,6 @@
 # SpicyHealth — Sprint Plan
 
-**Version:** 0.3.0 | **Date:** 2026-03-17 | **Sprint length:** 2 weeks
+**Version:** 0.4.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
 
 > **Sync policy:** This document, `SSD.md`, and `HISTORY.md` are kept in sync.
 > When a sprint task changes scope, adds a new component, or alters a technical decision:
@@ -134,36 +134,33 @@
 
 ---
 
-## Sprint 3 — Comments & User Profiles
+## Sprint 3 — Comments & User Profiles ✅
 
 **Goal:** Social engagement layer and personalization.
 **Outcome:** Users can comment, react, save recipes, and manage their profile.
 
 ### API
-- [ ] **S3-01** Implement `GET /api/recipes/:id/comments`: fetch threaded comments (parent + replies), sorted by createdAt
-- [ ] **S3-02** Implement `POST /api/recipes/:id/comments`: create comment or reply (`parentId` optional)
-- [ ] **S3-03** Implement `POST /api/comments/:id/like`: toggle like for authenticated user
-- [ ] **S3-04** Implement `DELETE /api/comments/:id`: author-only delete
-- [ ] **S3-05** Implement `GET /api/users/me`: full profile with saved recipes and preferences
-- [ ] **S3-06** Implement `PUT /api/users/me`: update display name, avatar, dietary preferences
-- [ ] **S3-07** Implement `POST /api/users/me/saved-recipes/:recipeId`: save recipe
-- [ ] **S3-08** Implement `DELETE /api/users/me/saved-recipes/:recipeId`: unsave recipe
+- [x] **S3-01** `GET /api/recipes/:id/comments` — threaded comments
+- [x] **S3-02** `POST /api/recipes/:id/comments` — create comment or reply (`parentId` optional)
+- [x] **S3-03** `POST /api/comments/:id/like` — toggle like for authenticated user
+- [x] **S3-04** `DELETE /api/comments/:id` — author-only delete
+- [x] **S3-05** `GET /api/users/me` — full profile with saved recipes and preferences
+- [x] **S3-06** `PUT /api/users/me` — update display name, avatar, dietary preferences
+- [x] **S3-07** `POST /api/users/me/saved-recipes/:recipeId` — save recipe
+- [x] **S3-08** `DELETE /api/users/me/saved-recipes/:recipeId` — unsave recipe
+- [x] **S3-13b** `POST /api/comments/:id/react` — emoji reactions with per-user toggle
 
 ### Frontend — Comments
-- [ ] **S3-09** Build `CommentThread` component: renders root comments + nested replies (2 levels deep)
-- [ ] **S3-10** Build `CommentItem`: avatar, username, timestamp, body, like button (count), reply button, delete button (own)
-- [ ] **S3-11** Build `CommentForm`: textarea with submit; attach to recipe detail page below instructions
-- [ ] **S3-12** Build `ReplyForm`: collapsible inline form under each comment
-- [ ] **S3-13** Add emoji reactions bar (👍 ❤️ 😋 🔥) — store as reaction type counts in comment document
+- [x] **S3-09** `CommentThread` component: root comments + nested replies, optimistic updates
+- [x] **S3-10** `CommentItem`: avatar initials, username, timestamp, like count, reply, delete (own)
+- [x] **S3-11** `CommentForm`: textarea with submit integrated into CommentThread
+- [x] **S3-12** `ReplyForm`: collapsible inline form per comment
+- [x] **S3-13** Emoji reactions bar 👍❤️😋🔥 — stored as per-user sets in comment document
 
 ### Frontend — User Profile
-- [ ] **S3-14** Build `/profile` page:
-  - Avatar (upload to Blob)
-  - Display name, email (read-only from B2C)
-  - Dietary preferences (multi-select chips)
-  - Saved recipes grid (reuses RecipeCard)
-  - Meal history (last 4 weeks, clickable weeks)
-- [ ] **S3-15** Build `AvatarUpload` component: drag-and-drop + preview, uploads to Blob Storage
+- [x] **S3-14** `/profile` page: avatar, display name, dietary prefs chips, saved recipes grid
+- [x] **S3-15** `AvatarUpload` component: drag-and-drop + preview, SAS URL → Blob Storage
+- [x] **S2-24** Auto-calculate nutrition + cost totals as ingredients are added (recipe create wizard)
 
 ---
 
@@ -310,7 +307,7 @@
 | S0 ✅ | Scaffold | Monorepo, types, Bicep, CI/CD, SSD |
 | S1 ✅ | Auth & Design System | Working login, Tailwind theme, NavBar |
 | S2 ✅ | Recipe Library | Browse, search, filter, detail, create |
-| S3 | Social & Profiles | Comments, reactions, saved recipes, profile |
+| S3 ✅ | Social & Profiles | Comments, reactions, saved recipes, profile |
 | S4 | Meal Planner | Drag-and-drop planner, Quick Add, weekly totals |
 | S5 | Shopping List | Auto-generate, group by category, cost totals |
 | S6 | PWA & Polish | Service worker, push notifications, responsive |
