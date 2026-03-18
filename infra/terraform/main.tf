@@ -77,6 +77,8 @@ resource "azurerm_linux_web_app" "api" {
     STORAGE_CONTAINER  = azurerm_storage_container.media.name
     STORAGE_KEY        = azurerm_storage_account.media.primary_access_key
     NODE_ENV           = "production"
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.main.connection_string
+    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
   }
 
   https_only = true
@@ -137,6 +139,18 @@ resource "azurerm_cosmosdb_sql_container" "users" {
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
   partition_key_path  = "/id"
+
+  indexing_policy {
+    indexing_mode = "consistent"
+
+    included_path {
+      path = "/*"
+    }
+
+    included_path {
+      path = "/email/?"
+    }
+  }
 }
 
 resource "azurerm_cosmosdb_sql_container" "comments" {
@@ -179,6 +193,15 @@ resource "azurerm_storage_container" "media" {
   name                  = "media"
   storage_account_name  = azurerm_storage_account.media.name
   container_access_type = "blob"
+}
+
+# Application Insights
+resource "azurerm_application_insights" "main" {
+  name                = "${var.app_name}-insights-${var.environment}"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = var.location
+  application_type    = "Node.JS"
+  tags                = local.tags
 }
 
 locals {
