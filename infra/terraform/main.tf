@@ -41,6 +41,13 @@ resource "azurerm_static_web_app" "frontend" {
   tags                = local.tags
 }
 
+# Custom domain — spicyhealth.niceneasy.ch (CNAME → SWA default hostname)
+resource "azurerm_static_web_app_custom_domain" "frontend" {
+  static_web_app_id = azurerm_static_web_app.frontend.id
+  domain_name       = "spicyhealth.niceneasy.ch"
+  validation_type   = "cname-delegation"
+}
+
 # App Service Plan (Linux, Node.js API)
 resource "azurerm_service_plan" "api" {
   name                = "${var.app_name}-plan-${var.environment}"
@@ -72,7 +79,7 @@ resource "azurerm_linux_web_app" "api" {
     COSMOS_KEY         = azurerm_cosmosdb_account.main.primary_key
     B2C_TENANT         = var.b2c_tenant
     B2C_POLICY         = var.b2c_policy
-    ALLOWED_ORIGIN     = "https://${azurerm_static_web_app.frontend.default_host_name}"
+    ALLOWED_ORIGIN     = "https://spicyhealth.niceneasy.ch"
     STORAGE_ACCOUNT    = azurerm_storage_account.media.name
     STORAGE_CONTAINER  = azurerm_storage_container.media.name
     STORAGE_KEY        = azurerm_storage_account.media.primary_access_key
@@ -182,7 +189,7 @@ resource "azurerm_storage_account" "media" {
     cors_rule {
       allowed_headers    = ["*"]
       allowed_methods    = ["GET", "PUT", "POST"]
-      allowed_origins    = ["https://${azurerm_static_web_app.frontend.default_host_name}"]
+      allowed_origins    = ["https://spicyhealth.niceneasy.ch", "https://${azurerm_static_web_app.frontend.default_host_name}"]
       exposed_headers    = ["*"]
       max_age_in_seconds = 3600
     }

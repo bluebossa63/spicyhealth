@@ -507,7 +507,7 @@ Terraform (manual / separate workflow):
 |---|---|---|---|
 | Local dev | `localhost:3000` | `localhost:3001` | Cosmos DB emulator |
 | Staging | SWA preview URL | App Service slot | Cosmos DB (dev db) |
-| Production | `https://orange-forest-0be990103.6.azurestaticapps.net` | `https://spicyhealth-api-prod.azurewebsites.net` | `https://spicyhealth-cosmos-prod.documents.azure.com:443/` |
+| Production | `https://spicyhealth.niceneasy.ch` | `https://spicyhealth-api-prod.azurewebsites.net` | `https://spicyhealth-cosmos-prod.documents.azure.com:443/` |
 
 ### 8.4 Pricing Estimate (West Europe)
 
