@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { SearchBar } from '@/components/SearchBar';
 import { FilterPanel, Filters } from '@/components/FilterPanel';
 import { RecipeCard } from '@/components/RecipeCard';
@@ -51,9 +52,17 @@ export default function RecipesPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="font-heading text-4xl text-charcoal mb-2">Rezepte</h1>
-        <p className="text-charcoal-light">Entdecke gesunde, leckere Mahlzeiten</p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="font-heading text-4xl text-charcoal mb-2">Rezepte</h1>
+          <p className="text-charcoal-light">Entdecke gesunde, leckere Mahlzeiten</p>
+        </div>
+        <Link
+          href="/recipes/new"
+          className="btn-primary flex items-center gap-1 whitespace-nowrap"
+        >
+          + Rezept
+        </Link>
       </div>
 
       <div className="mb-6">
