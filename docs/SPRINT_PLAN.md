@@ -1,6 +1,6 @@
 # SpicyHealth — Sprint Plan
 
-**Version:** 0.6.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
+**Version:** 0.7.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
 
 > **Sync policy:** This document, `SSD.md`, and `HISTORY.md` are kept in sync.
 > When a sprint task changes scope, adds a new component, or alters a technical decision:
@@ -292,7 +292,7 @@
 |---|---|---|---|---|
 | S8-01 | Generate `icon-192.png` + `icon-512.png` from SVG (terracotta, brand colours) | 20 min | — | [ ] |
 | S8-02 | Wire `ErrorBoundary` into root layout (`apps/web/src/app/layout.tsx`) | 10 min | — | [ ] |
-| S8-03 | Add `spicyhealth.niceneasy.ch` to Entra External ID redirect URIs (Azure portal step + doc) | 15 min | — | [ ] |
+| S8-03 | Add `spicyhealth.niceneasy.ch` to Entra External ID redirect URIs (Azure portal step + doc) | 15 min | — | [~] Manual step: Azure Portal → Entra External ID → App registrations → spicyhealth → Authentication → Add redirect URI: `https://spicyhealth.niceneasy.ch/auth/callback` |
 | S8-04 | Create `staticwebapp.config.json` with CSP, cache and security headers | 20 min | — | [ ] |
 | S8-05 | Validate CI/CD end-to-end: trigger a PR, check build passes, merge, confirm deploy | 20 min | — | [ ] |
 
@@ -338,6 +338,53 @@
 
 ---
 
+## Sprint 9 — Content & DX
+
+**Goal:** Make it easy to add quality content and fix pain points discovered in production.
+**Outcome:** Recipe import skill works end-to-end; mobile login fixed; encoding correct; Figma workflow established.
+**Sprint start:** 2026-04-01
+
+> **Velocity tracking:** Each task has an estimate (Est.) in minutes of AI working time.
+> Log actual time (Act.) when completed to build velocity data.
+
+---
+
+### 🔴 Must-do — Production bugs
+
+| # | Task | Est. | Act. | Status |
+|---|---|---|---|---|
+| S9-01 | Fix mobile login "failed to fetch" — investigate CORS / network error on mobile data | 30 min | — | [ ] |
+| S9-02 | Fix recipe encoding: ensure all API routes accept + store proper UTF-8 umlauts (ä ö ü ß) | 20 min | — | [ ] |
+
+### 🟠 Developer experience — Recipe import skill
+
+| # | Task | Est. | Act. | Status |
+|---|---|---|---|---|
+| S9-03 | Write `/import-recipe` Claude Code skill: accepts recipe description, POSTs to API with correct UTF-8 encoding | 45 min | — | [ ] |
+| S9-04 | Add photo fetch + Azure Blob upload to import skill (auto-search Unsplash → SAS upload → set imageUrl) | 40 min | — | [ ] |
+| S9-05 | Seed 10 quality recipes via import skill to populate the app | 30 min | — | [ ] |
+
+### 🟡 Design workflow
+
+| # | Task | Est. | Act. | Status |
+|---|---|---|---|---|
+| S9-06 | Establish Figma → code workflow: import live site via Builder.io plugin, verify MCP read access | 20 min | — | [ ] |
+| S9-07 | Keep `figma-developer-mcp` HTTP server auto-starting on Windows login (Task Scheduler entry) | 15 min | — | [ ] |
+
+---
+
+### Sprint 9 — Velocity Summary
+
+| Metric | Value |
+|---|---|
+| Total tasks | 7 |
+| Total estimated | 200 min (~3.3 h) |
+| Total actual | — |
+| Tasks completed | 0 / 7 |
+| Velocity (Est/Act) | — |
+
+---
+
 | Item | Notes |
 |---|---|
 | React Native companion app | Shares API; Phase 3 |
@@ -366,3 +413,4 @@
 | S6 ⚠️ | PWA & Polish | Service worker, install banner, bottom nav, toast, skeletons — push notifications deferred |
 | S7 ⚠️ | Deploy & Harden | Infra live, custom domain, App Insights, rate limiting, Zod, helmet — tests + docs carried |
 | S8 | Finish & Ship | Icons, ErrorBoundary, CSP, mobile planner, swipe-delete, a11y, tests, docs |
+| S9 | Content & DX | Recipe import skill, encoding fix, mobile login fix, Figma workflow |
