@@ -1,6 +1,6 @@
 # SpicyHealth — Sprint Plan
 
-**Version:** 0.5.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
+**Version:** 0.6.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
 
 > **Sync policy:** This document, `SSD.md`, and `HISTORY.md` are kept in sync.
 > When a sprint task changes scope, adds a new component, or alters a technical decision:
@@ -188,33 +188,27 @@
 
 ---
 
-## Sprint 5 — Shopping List
+## Sprint 5 — Shopping List ✅
 
 **Goal:** Smart shopping list auto-generated from meal plan, with manual editing and cost tracking.
 **Outcome:** Users get a ready-to-use grouped shopping list with estimated costs.
 
 ### API
-- [ ] **S5-01** Implement `POST /api/shopping-list/generate`:
-  - Accept `mealPlanId`
-  - Aggregate all ingredients from all recipes in the plan
-  - Merge duplicates (same ingredient name), sum quantities
-  - Assign `ShoppingCategory` (produce/dairy/meat/grains/pantry/frozen/other) based on ingredient tags
-  - Look up `estimatedCostEur` from recipe data or Open Food Facts
-  - Return sorted list grouped by category
-- [ ] **S5-02** Implement `GET /api/shopping-list`: fetch current list for user (stored in Cosmos DB `shopping-lists` container)
-- [ ] **S5-03** Implement `POST /api/shopping-list/items`: manually add item
-- [ ] **S5-04** Implement `PATCH /api/shopping-list/items/:id`: toggle `purchased`, update quantity, update name
-- [ ] **S5-05** Implement `DELETE /api/shopping-list/items/:id`: remove item
-- [ ] **S5-06** Add `shopping-lists` Cosmos DB container (partition key: `/userId`)
+- [x] **S5-01** `POST /api/shopping-list/generate` — aggregate + deduplicate ingredients from meal plan, auto-categorize
+- [x] **S5-02** `GET /api/shopping-list` — fetch/create current list for user
+- [x] **S5-03** `POST /api/shopping-list/items` — manually add item with auto-categorization
+- [x] **S5-04** `PATCH /api/shopping-list/items/:id` — toggle purchased, update quantity/name
+- [x] **S5-05** `DELETE /api/shopping-list/items/:id` — remove item
+- [x] **S5-06** `shopping-lists` container added to cosmos.ts (partition key `/userId`)
 
 ### Frontend
-- [ ] **S5-07** Build `/shopping-list` page with `GenerateFromPlanButton` (calls `POST /generate`, shows loading spinner)
-- [ ] **S5-08** Build `ShoppingGroup`: section per category with category icon and item count badge
-- [ ] **S5-09** Build `ShoppingItem`: checkbox (strike-through on purchased), quantity input, item name, cost badge, delete button
-- [ ] **S5-10** Build `AddItemForm`: inline form at bottom of each group to manually add items
-- [ ] **S5-11** Build `ListTotalsBar`: total item count, total estimated cost, items remaining
-- [ ] **S5-12** Add "Copy to clipboard" button — exports list as plain text for sharing
-- [ ] **S5-13** Add "Clear purchased" button — removes all checked items
+- [x] **S5-07** `/shopping-list` page with "Generate from plan" button + loading state
+- [x] **S5-08** Items grouped by category with icon + count badge
+- [x] **S5-09** Checkbox (strike-through on purchased), quantity, name, cost badge, delete button
+- [x] **S5-10** Inline add-item form per category + global add form at bottom
+- [x] **S5-11** Progress bar (n/total done) + estimated total cost
+- [x] **S5-12** "Copy to clipboard" — plain text with emoji category headers
+- [x] **S5-13** "Clear done" bulk removes all purchased items
 
 ---
 
@@ -308,6 +302,6 @@
 | S2 ✅ | Recipe Library | Browse, search, filter, detail, create |
 | S3 ✅ | Social & Profiles | Comments, reactions, saved recipes, profile |
 | S4 ✅ | Meal Planner | Drag-and-drop planner, Quick Add, weekly totals |
-| S5 | Shopping List | Auto-generate, group by category, cost totals |
+| S5 ✅ | Shopping List | Auto-generate, group by category, cost totals |
 | S6 | PWA & Polish | Service worker, push notifications, responsive |
 | S7 | Deploy & Harden | Azure live, monitoring, security, tests |
