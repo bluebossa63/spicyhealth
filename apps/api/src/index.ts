@@ -7,6 +7,8 @@ import { mealPlansRouter } from './routes/meal-plans';
 import { shoppingListRouter } from './routes/shopping-list';
 import { authRouter } from './routes/auth';
 import { nutritionRouter } from './routes/nutrition';
+import { usersRouter } from './routes/users';
+import { commentsRouter } from './routes/comments';
 import { authMiddleware } from './middleware/auth';
 
 const app = express();
@@ -21,8 +23,9 @@ app.use(rateLimit({ windowMs: 60_000, max: 100, standardHeaders: true, legacyHea
 app.use('/api/auth', authRouter);
 
 // Protected routes
-app.use('/api/users', authMiddleware, authRouter);
+app.use('/api/users', authMiddleware, usersRouter);
 app.use('/api/recipes', authMiddleware, recipesRouter);
+app.use('/api/comments', authMiddleware, commentsRouter);
 app.use('/api/meal-plans', authMiddleware, mealPlansRouter);
 app.use('/api/shopping-list', authMiddleware, shoppingListRouter);
 app.use('/api/nutrition', authMiddleware, nutritionRouter);

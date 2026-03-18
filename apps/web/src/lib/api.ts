@@ -61,6 +61,20 @@ export const api = {
     search: (q: string) => fetchJson<{ products: any[] }>(`/nutrition/search?q=${encodeURIComponent(q)}`),
     lookup: (barcode: string) => fetchJson<{ product: any }>(`/nutrition/${barcode}`),
   },
+  comments: {
+    like: (id: string) => fetchJson<{ likes: number; liked: boolean }>(`/comments/${id}/like`, { method: 'POST' }),
+    react: (id: string, emoji: string) => fetchJson<{ reactionCounts: Record<string, number> }>(`/comments/${id}/react`, { method: 'POST', body: JSON.stringify({ emoji }) }),
+    delete: (id: string) => fetchJson<{ success: boolean }>(`/comments/${id}`, { method: 'DELETE' }),
+  },
+  users: {
+    me: () => fetchJson<{ user: any }>('/users/me'),
+    update: (data: { displayName?: string; avatarUrl?: string; dietaryPreferences?: string[] }) =>
+      fetchJson<{ user: any }>('/users/me', { method: 'PUT', body: JSON.stringify(data) }),
+    saveRecipe: (recipeId: string) => fetchJson<{ savedRecipeIds: string[] }>(`/users/me/saved-recipes/${recipeId}`, { method: 'POST' }),
+    unsaveRecipe: (recipeId: string) => fetchJson<{ savedRecipeIds: string[] }>(`/users/me/saved-recipes/${recipeId}`, { method: 'DELETE' }),
+    uploadAvatar: (filename: string, contentType: string) =>
+      fetchJson<{ uploadUrl: string; publicUrl: string }>('/recipes/upload-image', { method: 'POST', body: JSON.stringify({ filename, contentType }) }),
+  },
   mealPlans: {
     current: () => fetchJson<{ mealPlan: any }>('/meal-plans/current'),
   },

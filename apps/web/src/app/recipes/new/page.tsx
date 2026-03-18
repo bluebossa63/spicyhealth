@@ -44,11 +44,18 @@ function NewRecipeForm() {
     set('instructions', steps);
   }
 
+  const computedNutrition = {
+    calories: form.ingredients.reduce((s, i) => s + (i.calories || 0), 0),
+    proteinG: 0, carbsG: 0, fatG: 0,
+  };
+  const computedCost = form.ingredients.reduce((s, i) => s + (i.estimatedCostEur || 0), 0);
+
   async function handleSubmit() {
     setError(''); setLoading(true);
     try {
       const { recipe } = await api.recipes.create({
         ...form,
+        estimatedCostEur: form.estimatedCostEur || computedCost,
         tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
       });
       router.push(`/recipes/detail?id=${recipe.id}`);
@@ -108,6 +115,15 @@ function NewRecipeForm() {
             ))}
             <button onClick={addIngredient} className="btn-ghost text-sm mt-1">+ Add ingredient</button>
           </div>
+          {step === 2 && form.ingredients.length > 0 && (
+            <div className="bg-cream-50 rounded-xl p-4 text-sm mt-4">
+              <p className="font-semibold text-charcoal-700 mb-1">Estimated totals</p>
+              <div className="flex gap-6 text-charcoal-500">
+                <span>🔥 {computedNutrition.calories} kcal</span>
+                <span>💶 €{computedCost.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
           <div className="flex gap-3 mt-6">
             <Button variant="ghost" onClick={() => setStep(1)}>← Back</Button>
             <Button onClick={() => setStep(3)} className="flex-1">Next: Instructions →</Button>

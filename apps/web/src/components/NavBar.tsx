@@ -10,6 +10,10 @@ const navLinks = [
   { href: '/shopping-list', label: 'Shopping List' },
 ];
 
+const authNavLinks = [
+  { href: '/profile', label: 'Profile' },
+];
+
 export function NavBar() {
   const [open, setOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
@@ -30,6 +34,11 @@ export function NavBar() {
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               <span className="text-sm text-charcoal-light">{user?.displayName || user?.email}</span>
+              {authNavLinks.map(({ href, label }) => (
+                <Link key={href} href={href} className="text-sm font-medium text-charcoal-light hover:text-terracotta transition-colors">
+                  {label}
+                </Link>
+              ))}
               <Link href="/recipes/new" className="btn-secondary text-sm">+ Recipe</Link>
               <button onClick={logout} className="btn-ghost text-sm">Log out</button>
             </div>
@@ -51,7 +60,12 @@ export function NavBar() {
             <Link key={href} href={href} className="text-sm font-medium text-charcoal py-1" onClick={() => setOpen(false)}>{label}</Link>
           ))}
           {isAuthenticated ? (
-            <button onClick={() => { logout(); setOpen(false); }} className="btn-ghost text-sm text-left mt-2">Log out</button>
+            <>
+              {authNavLinks.map(({ href, label }) => (
+                <Link key={href} href={href} className="text-sm font-medium text-charcoal py-1" onClick={() => setOpen(false)}>{label}</Link>
+              ))}
+              <button onClick={() => { logout(); setOpen(false); }} className="btn-ghost text-sm text-left mt-2">Log out</button>
+            </>
           ) : (
             <Link href="/auth/login" className="btn-primary text-sm text-center mt-2" onClick={() => setOpen(false)}>Sign in</Link>
           )}
