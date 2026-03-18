@@ -77,6 +77,16 @@ export const api = {
   },
   mealPlans: {
     current: () => fetchJson<{ mealPlan: any }>('/meal-plans/current'),
+    forWeek: (weekStart: string) => fetchJson<{ mealPlan: any }>(`/meal-plans?weekStart=${weekStart}`),
+    updateSlot: (id: string, date: string, slot: string, recipe: any | null) =>
+      fetchJson<{ mealPlan: any }>(`/meal-plans/${id}/day/${date}`, {
+        method: 'PUT',
+        body: JSON.stringify({ slot, recipe }),
+      }),
+    removeSlot: (id: string, date: string, slot: string, snackIndex?: number) => {
+      const qs = snackIndex !== undefined ? `?snackIndex=${snackIndex}` : '';
+      return fetchJson<{ mealPlan: any }>(`/meal-plans/${id}/day/${date}/slot/${slot}${qs}`, { method: 'DELETE' });
+    },
   },
   shoppingList: {
     get: () => fetchJson<{ items: any[] }>('/shopping-list'),
