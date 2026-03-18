@@ -138,7 +138,7 @@ resource "azurerm_cosmosdb_sql_container" "recipes" {
     included_path { path = "/*" }
     included_path { path = "/category/?" }
     included_path { path = "/authorId/?" }
-    included_path { path = "/tags/[]" }
+    included_path { path = "/tags/[]/?" }
     included_path { path = "/deleted/?" }
 
     excluded_path { path = "/instructions/*" }
@@ -269,39 +269,8 @@ resource "azurerm_storage_management_policy" "media" {
   }
 }
 
-# App Service staging slot
-resource "azurerm_linux_web_app_slot" "staging" {
-  name           = "staging"
-  app_service_id = azurerm_linux_web_app.api.id
-  tags           = local.tags
-
-  site_config {
-    application_stack {
-      node_version = "20-lts"
-    }
-    health_check_path = "/health"
-  }
-
-  app_settings = {
-    COSMOS_ENDPOINT    = azurerm_cosmosdb_account.main.endpoint
-    COSMOS_DB_NAME     = var.cosmos_db_name
-    COSMOS_KEY         = azurerm_cosmosdb_account.main.primary_key
-    B2C_TENANT         = var.b2c_tenant
-    B2C_POLICY         = var.b2c_policy
-    ALLOWED_ORIGIN     = "https://spicyhealth.niceneasy.ch"
-    STORAGE_ACCOUNT    = azurerm_storage_account.media.name
-    STORAGE_CONTAINER  = azurerm_storage_container.media.name
-    STORAGE_KEY        = azurerm_storage_account.media.primary_access_key
-    NODE_ENV           = "staging"
-    GOOGLE_CLIENT_ID     = var.google_client_id
-    GOOGLE_CLIENT_SECRET = var.google_client_secret
-    GOOGLE_REDIRECT_URI  = "https://spicyhealth-api-prod.azurewebsites.net/api/auth/google/callback"
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.main.connection_string
-    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
-  }
-
-  https_only = true
-}
+# Staging slot requires Standard+ SKU — disabled on Basic tier
+# resource "azurerm_linux_web_app_slot" "staging" { ... }
 
 locals {
   tags = {
