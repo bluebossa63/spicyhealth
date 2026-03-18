@@ -212,71 +212,131 @@
 
 ---
 
-## Sprint 6 — PWA, Polish & Notifications
+## Sprint 6 — PWA, Polish & Notifications ⚠️ Partially complete
 
 **Goal:** Installable PWA, polished responsive design, push notifications.
 **Outcome:** App is installable on iOS/Android, looks great on all screen sizes, sends meal reminders.
 
 ### PWA
-- [ ] **S6-01** Design and add PWA icons: `icon-192.png` and `icon-512.png` (use brand terracotta + leaf motif)
-- [ ] **S6-02** Implement service worker with `next-pwa`:
-  - Cache static assets and API responses (stale-while-revalidate)
-  - Offline fallback page
-- [ ] **S6-03** Configure `next-pwa` in `next.config.js`
-- [ ] **S6-04** Add "Install App" banner component (shown when `beforeinstallprompt` fires)
-- [ ] **S6-05** Implement Web Push API: request notification permission on first login
-- [ ] **S6-06** Build notification service (API): store push subscriptions in Cosmos DB; send daily meal reminders at configurable time
-- [ ] **S6-07** Add notification preferences to user profile settings (enable/disable, reminder time)
+- [~] **S6-01** PWA icons: `icon-192.svg` exists; PNG files required by manifest still missing → carried to S8
+- [x] **S6-02** Service worker via `next-pwa` (auto-generated; cache + offline handled by framework)
+- [x] **S6-03** `next-pwa` configured in `next.config.js`
+- [x] **S6-04** `InstallBanner` component (beforeinstallprompt, full implementation)
+- [ ] **S6-05** Web Push permission request on first login ⏸ deferred to backlog
+- [ ] **S6-06** Push notification service (API): subscriptions + daily reminders ⏸ deferred to backlog
+- [ ] **S6-07** Notification preferences in user profile ⏸ deferred to backlog
 
 ### Responsive Design Polish
-- [ ] **S6-08** Mobile navigation: bottom tab bar (Home, Recipes, Planner, List, Profile)
-- [ ] **S6-09** Responsive recipe grid: 1 col on mobile, 2 on tablet, 3-4 on desktop
-- [ ] **S6-10** Responsive meal planner: horizontal scroll on mobile; day-by-day view toggle
-- [ ] **S6-11** Touch-friendly controls: min 44px tap targets, swipe to delete shopping items
-- [ ] **S6-12** Add lifestyle photography placeholders for all image slots (use Unsplash category seeds or local SVG illustrations)
+- [x] **S6-08** Bottom tab bar (mobile, md:hidden) — fully implemented
+- [x] **S6-09** Responsive recipe grid: 1→2→3 col (4-col deferred — not required at current traffic)
+- [~] **S6-10** Meal planner: horizontal scroll done; day-by-day mobile toggle missing → carried to S8
+- [~] **S6-11** Touch targets: present; swipe-to-delete on shopping items missing → carried to S8
+- [x] **S6-12** Lifestyle placeholders: emoji-based (🥗🌿🍽️) — sufficient for current scope
 
 ### UX Polish
-- [ ] **S6-13** Add `Toast` component for success/error feedback (Quick Add, save recipe, etc.)
-- [ ] **S6-14** Add `SkeletonLoader` components for recipe cards, planner grid, shopping list
-- [ ] **S6-15** Add empty states with illustrations (no recipes found, empty planner, empty list)
-- [ ] **S6-16** Add `ErrorBoundary` and global error page
-- [ ] **S6-17** Add page transitions (Framer Motion fade-slide)
-- [ ] **S6-18** Accessibility pass: ARIA labels, keyboard navigation, focus rings, color contrast ≥ 4.5:1
+- [x] **S6-13** `Toast` component (success/error/info, auto-dismiss, animation)
+- [x] **S6-14** `SkeletonLoader` components (`SkeletonCard`, `SkeletonText`)
+- [x] **S6-15** Empty states with emoji illustrations (recipes, shopping list, saved recipes)
+- [~] **S6-16** `ErrorBoundary` component exists; not wired to root layout → carried to S8
+- [ ] **S6-17** Page transitions (Framer Motion) → carried to S8
+- [~] **S6-18** Accessibility: partial (NavBar aria-label, Toast role=alert); full pass → carried to S8
 
 ---
 
-## Sprint 7 — Deployment & Production Hardening
+## Sprint 7 — Deployment & Production Hardening ⚠️ Partially complete
 
 **Goal:** Live, deployed application accessible via custom domain.
 **Outcome:** App is running on Azure, CI/CD is fully wired, monitoring is in place.
 
 ### Deployment
-- [ ] **S7-01** Complete Azure infrastructure provisioning (Bicep deploy to `rg-spicyhealth`)
-- [ ] **S7-02** Configure B2C redirect URIs for production domains
-- [ ] **S7-03** Add all production secrets to Azure App Service Application Settings and GitHub Actions secrets
-- [ ] **S7-04** Configure custom domain + managed TLS on Azure SWA and App Service
-- [ ] **S7-05** Deploy staging slot on App Service; test before swapping to production
-- [ ] **S7-06** Validate full CI/CD pipeline end-to-end (PR → build → merge → deploy)
+- [x] **S7-01** Azure infrastructure live via Terraform (`terraform apply` complete)
+- [~] **S7-02** Entra External ID redirect URIs — must add `https://spicyhealth.niceneasy.ch` in Azure portal → carried to S8
+- [x] **S7-03** Production secrets set via Terraform app_settings + GitHub Actions secrets
+- [x] **S7-04** Custom domain `spicyhealth.niceneasy.ch` configured (Terraform, CNAME in place)
+- [ ] **S7-05** Staging slot on App Service → carried to S8
+- [ ] **S7-06** Validate CI/CD end-to-end (PR → build → merge → deploy) → carried to S8
 
 ### Production Hardening
-- [ ] **S7-07** Add Azure Application Insights to API (request tracing, error tracking, performance)
-- [ ] **S7-08** Add rate limiting middleware to API (`express-rate-limit`): 100 req/min per IP
-- [ ] **S7-09** Add Zod validation to all API routes (currently missing on most routes)
-- [ ] **S7-10** Add helmet.js to API (security headers: CSP, HSTS, X-Frame-Options)
-- [ ] **S7-11** Configure Content Security Policy header on SWA (`staticwebapp.config.json`)
-- [ ] **S7-12** Add Cosmos DB index policies for common query patterns (category, userId, recipeId)
-- [ ] **S7-13** Add health check endpoint; configure App Service health check probe
-- [ ] **S7-14** Write API integration tests (Supertest): auth, recipe CRUD, shopping list generation
-- [ ] **S7-15** Configure Azure Blob lifecycle policy: delete unused uploads > 30 days
+- [x] **S7-07** Application Insights wired to API (connection string via app_settings; Log Analytics workspace added)
+- [x] **S7-08** `express-rate-limit`: 100 req/min/IP in `apps/api/src/index.ts`
+- [x] **S7-09** Zod validation on all API routes (auth, recipes, shopping-list, users)
+- [x] **S7-10** `helmet.js` active in `apps/api/src/index.ts`
+- [ ] **S7-11** CSP header on SWA (`staticwebapp.config.json`) → carried to S8
+- [ ] **S7-12** Cosmos DB index policies for category, userId, recipeId → carried to S8
+- [x] **S7-13** `GET /health` endpoint; health_check_path configured in Terraform
+- [ ] **S7-14** API integration tests (Supertest) → carried to S8
+- [ ] **S7-15** Azure Blob lifecycle policy (delete unused uploads > 30 days) → carried to S8
 
 ### Documentation
-- [ ] **S7-16** Update `README.md` with real deployment instructions and env var reference
-- [ ] **S7-17** Write `CONTRIBUTING.md` with local dev setup guide
-- [ ] **S7-18** Document all API endpoints in OpenAPI 3.0 (`docs/openapi.yaml`)
+- [~] **S7-16** README exists with basic info; full deployment guide still needed → carried to S8
+- [ ] **S7-17** `CONTRIBUTING.md` → carried to S8
+- [ ] **S7-18** OpenAPI 3.0 spec (`docs/openapi.yaml`) → carried to S8
 
 ---
 
-## Backlog (Future Sprints)
+## Sprint 8 — Finish & Ship
+
+**Goal:** Close all remaining S6/S7 carry-overs and ship the app production-ready.
+**Outcome:** `spicyhealth.niceneasy.ch` fully live, polished, tested, and documented.
+**Sprint start:** 2026-03-18
+
+> **Velocity tracking:** Each task has an estimate (Est.) in minutes of AI working time.
+> Log actual time (Act.) when completed to build velocity data.
+> Velocity = Est. / Act. (>1.0 means faster than estimated)
+
+---
+
+### 🔴 Must-do — Ship blockers
+
+| # | Task | Est. | Act. | Status |
+|---|---|---|---|---|
+| S8-01 | Generate `icon-192.png` + `icon-512.png` from SVG (terracotta, brand colours) | 20 min | — | [ ] |
+| S8-02 | Wire `ErrorBoundary` into root layout (`apps/web/src/app/layout.tsx`) | 10 min | — | [ ] |
+| S8-03 | Add `spicyhealth.niceneasy.ch` to Entra External ID redirect URIs (Azure portal step + doc) | 15 min | — | [ ] |
+| S8-04 | Create `staticwebapp.config.json` with CSP, cache and security headers | 20 min | — | [ ] |
+| S8-05 | Validate CI/CD end-to-end: trigger a PR, check build passes, merge, confirm deploy | 20 min | — | [ ] |
+
+### 🟠 High value — UX completeness
+
+| # | Task | Est. | Act. | Status |
+|---|---|---|---|---|
+| S8-06 | Meal planner: day-by-day mobile toggle (< md: show one day at a time, prev/next arrows) | 50 min | — | [ ] |
+| S8-07 | Shopping list: swipe-to-delete gesture on mobile items | 40 min | — | [ ] |
+| S8-08 | Accessibility pass: ARIA labels on all interactive elements, focus rings, contrast check | 45 min | — | [ ] |
+| S8-09 | Page transitions: Framer Motion fade-slide between routes | 50 min | — | [ ] |
+
+### 🟡 Production hardening
+
+| # | Task | Est. | Act. | Status |
+|---|---|---|---|---|
+| S8-10 | Cosmos DB index policies in Terraform (category, userId, recipeId) | 30 min | — | [ ] |
+| S8-11 | Azure Blob lifecycle policy in Terraform (delete unused uploads > 30 days) | 20 min | — | [ ] |
+| S8-12 | API integration tests: auth + recipe CRUD + shopping list (Supertest) | 90 min | — | [ ] |
+| S8-13 | App Service staging slot — Terraform + swap-to-production workflow | 40 min | — | [ ] |
+
+### 🔵 Documentation
+
+| # | Task | Est. | Act. | Status |
+|---|---|---|---|---|
+| S8-14 | `README.md`: real deployment instructions, env var reference, local dev guide | 30 min | — | [ ] |
+| S8-15 | `CONTRIBUTING.md`: local setup, branch strategy, PR checklist | 25 min | — | [ ] |
+| S8-16 | `docs/openapi.yaml`: OpenAPI 3.0 spec for all API endpoints | 60 min | — | [ ] |
+
+---
+
+### Sprint 8 — Velocity Summary
+
+| Metric | Value |
+|---|---|
+| Total tasks | 16 |
+| Total estimated | 555 min (~9.25 h) |
+| Total actual | — |
+| Tasks completed | 0 / 16 |
+| Velocity (Est/Act) | — |
+
+> Push notifications (S6-05/06/07) deferred to backlog — requires VAPID key setup and is not blocking the launch.
+
+---
 
 | Item | Notes |
 |---|---|
@@ -303,5 +363,6 @@
 | S3 ✅ | Social & Profiles | Comments, reactions, saved recipes, profile |
 | S4 ✅ | Meal Planner | Drag-and-drop planner, Quick Add, weekly totals |
 | S5 ✅ | Shopping List | Auto-generate, group by category, cost totals |
-| S6 | PWA & Polish | Service worker, push notifications, responsive |
-| S7 | Deploy & Harden | Azure live, monitoring, security, tests |
+| S6 ⚠️ | PWA & Polish | Service worker, install banner, bottom nav, toast, skeletons — push notifications deferred |
+| S7 ⚠️ | Deploy & Harden | Infra live, custom domain, App Insights, rate limiting, Zod, helmet — tests + docs carried |
+| S8 | Finish & Ship | Icons, ErrorBoundary, CSP, mobile planner, swipe-delete, a11y, tests, docs |
