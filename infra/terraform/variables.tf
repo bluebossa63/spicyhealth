@@ -56,3 +56,16 @@ variable "b2c_policy" {
   type        = string
   default     = "B2C_1_signupsignin"
 }
+
+variable "google_client_id" {
+  description = "Google OAuth client ID"
+  type        = string
+  default     = ""
+}
+
+variable "google_client_secret" {
+  description = "Google OAuth client secret"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

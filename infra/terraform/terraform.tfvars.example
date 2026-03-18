@@ -9,3 +9,6 @@ b2c_tenant      = "spicyhealthb2c"
 b2c_policy      = "B2C_1_signupsignin"
 environment     = "prod"
 location        = "westeurope"
+
+google_client_id     = "your-google-client-id.apps.googleusercontent.com"
+google_client_secret = "GOCSPX-your-google-client-secret"

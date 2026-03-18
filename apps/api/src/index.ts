@@ -4,7 +4,7 @@ if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
     .setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
     .setAutoDependencyCorrelation(true)
     .setAutoCollectRequests(true)
-    .setAutoCollectPerformance(true)
+    .setAutoCollectPerformance(true, true)
     .setAutoCollectExceptions(true)
     .setAutoCollectDependencies(true)
     .start();
@@ -44,6 +44,10 @@ app.use('/api/nutrition', authMiddleware, nutritionRouter);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-app.listen(PORT, () => {
-  console.log(`SpicyHealth API running on port ${PORT}`);
-});
+export { app };
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`SpicyHealth API running on port ${PORT}`);
+  });
+}

@@ -84,6 +84,9 @@ resource "azurerm_linux_web_app" "api" {
     STORAGE_CONTAINER  = azurerm_storage_container.media.name
     STORAGE_KEY        = azurerm_storage_account.media.primary_access_key
     NODE_ENV           = "production"
+    GOOGLE_CLIENT_ID     = var.google_client_id
+    GOOGLE_CLIENT_SECRET = var.google_client_secret
+    GOOGLE_REDIRECT_URI  = "https://spicyhealth-api-prod.azurewebsites.net/api/auth/google/callback"
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.main.connection_string
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
   }
@@ -129,7 +132,18 @@ resource "azurerm_cosmosdb_sql_container" "recipes" {
   database_name       = azurerm_cosmosdb_sql_database.main.name
   partition_key_path  = "/category"
 
+  indexing_policy {
+    indexing_mode = "consistent"
 
+    included_path { path = "/*" }
+    included_path { path = "/category/?" }
+    included_path { path = "/authorId/?" }
+    included_path { path = "/tags/[]" }
+    included_path { path = "/deleted/?" }
+
+    excluded_path { path = "/instructions/*" }
+    excluded_path { path = "/description/?" }
+  }
 }
 
 resource "azurerm_cosmosdb_sql_container" "meal_plans" {
@@ -166,6 +180,18 @@ resource "azurerm_cosmosdb_sql_container" "comments" {
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
   partition_key_path  = "/recipeId"
+
+  indexing_policy {
+    indexing_mode = "consistent"
+
+    included_path { path = "/*" }
+    included_path { path = "/recipeId/?" }
+    included_path { path = "/authorId/?" }
+    included_path { path = "/parentId/?" }
+    included_path { path = "/createdAt/?" }
+
+    excluded_path { path = "/body/?" }
+  }
 }
 
 resource "azurerm_cosmosdb_sql_container" "shopping_lists" {
@@ -220,6 +246,61 @@ resource "azurerm_application_insights" "main" {
   application_type    = "Node.JS"
   workspace_id        = azurerm_log_analytics_workspace.main.id
   tags                = local.tags
+}
+
+# Blob lifecycle policy — delete orphaned uploads after 30 days
+resource "azurerm_storage_management_policy" "media" {
+  storage_account_id = azurerm_storage_account.media.id
+
+  rule {
+    name    = "delete-old-uploads"
+    enabled = true
+
+    filters {
+      prefix_match = ["media/tmp/"]
+      blob_types   = ["blockBlob"]
+    }
+
+    actions {
+      base_blob {
+        delete_after_days_since_modification_greater_than = 30
+      }
+    }
+  }
+}
+
+# App Service staging slot
+resource "azurerm_linux_web_app_slot" "staging" {
+  name           = "staging"
+  app_service_id = azurerm_linux_web_app.api.id
+  tags           = local.tags
+
+  site_config {
+    application_stack {
+      node_version = "20-lts"
+    }
+    health_check_path = "/health"
+  }
+
+  app_settings = {
+    COSMOS_ENDPOINT    = azurerm_cosmosdb_account.main.endpoint
+    COSMOS_DB_NAME     = var.cosmos_db_name
+    COSMOS_KEY         = azurerm_cosmosdb_account.main.primary_key
+    B2C_TENANT         = var.b2c_tenant
+    B2C_POLICY         = var.b2c_policy
+    ALLOWED_ORIGIN     = "https://spicyhealth.niceneasy.ch"
+    STORAGE_ACCOUNT    = azurerm_storage_account.media.name
+    STORAGE_CONTAINER  = azurerm_storage_container.media.name
+    STORAGE_KEY        = azurerm_storage_account.media.primary_access_key
+    NODE_ENV           = "staging"
+    GOOGLE_CLIENT_ID     = var.google_client_id
+    GOOGLE_CLIENT_SECRET = var.google_client_secret
+    GOOGLE_REDIRECT_URI  = "https://spicyhealth-api-prod.azurewebsites.net/api/auth/google/callback"
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.main.connection_string
+    ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
+  }
+
+  https_only = true
 }
 
 locals {
