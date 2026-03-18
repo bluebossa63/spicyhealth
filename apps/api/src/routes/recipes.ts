@@ -12,6 +12,10 @@ const ingredientSchema = z.object({
   quantity: z.number().positive(),
   unit: z.string().min(1),
   calories: z.number().optional(),
+  proteinG: z.number().optional(),
+  carbsG: z.number().optional(),
+  fatG: z.number().optional(),
+  fiberG: z.number().optional(),
   estimatedCostEur: z.number().optional(),
   openFoodFactsId: z.string().optional(),
 });
