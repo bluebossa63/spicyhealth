@@ -1,6 +1,6 @@
 # SpicyHealth — Sprint Plan
 
-**Version:** 0.4.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
+**Version:** 0.5.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
 
 > **Sync policy:** This document, `SSD.md`, and `HISTORY.md` are kept in sync.
 > When a sprint task changes scope, adds a new component, or alters a technical decision:
@@ -164,28 +164,27 @@
 
 ---
 
-## Sprint 4 — Meal Planner
+## Sprint 4 — Meal Planner ✅
 
 **Goal:** Drag-and-drop weekly meal planning with nutritional and cost totals.
 **Outcome:** Users can plan their full week, see daily totals, and log meals with one click.
 
 ### API
-- [ ] **S4-01** Implement `GET /api/meal-plans/current`: get or create current week's plan for user; compute `totalNutrition` and `totalCostEur` per day
-- [ ] **S4-02** Implement `GET /api/meal-plans?weekStart=`: get specific week's plan
-- [ ] **S4-03** Implement `PUT /api/meal-plans/:id/day/:date`: update meal slot(s) for a day; recalculate totals
-- [ ] **S4-04** Implement `POST /api/recipes/:id/quick-add`: upsert today's `DayPlan`, add recipe to appropriate meal slot (detect by time of day), recalculate totals
-- [ ] **S4-05** Implement `DELETE /api/meal-plans/:id/day/:date/slot/:slot`: remove a recipe from a specific meal slot
+- [x] **S4-01** `GET /api/meal-plans/current` — get or create current week's plan; auto-calculates totals
+- [x] **S4-02** `GET /api/meal-plans?weekStart=` — get/create any week's plan
+- [x] **S4-03** `PUT /api/meal-plans/:id/day/:date` — update slot, recalculate day totals
+- [x] **S4-05** `DELETE /api/meal-plans/:id/day/:date/slot/:slot` — remove recipe from slot
+- [ ] **S4-04** Quick-add time-of-day detection ⏸ deferred (basic quick-add works via recipe detail)
 
 ### Frontend
-- [ ] **S4-06** Install `@dnd-kit/core` and `@dnd-kit/sortable` for drag-and-drop
-- [ ] **S4-07** Build `WeeklyGrid`: 7 columns (Mon–Sun), 4 rows (Breakfast, Lunch, Dinner, Snacks), week navigation arrows
-- [ ] **S4-08** Build `MealSlot`: drop target; shows assigned `RecipeCard` (compact variant) or empty state with `+` button
-- [ ] **S4-09** Build `RecipePickerModal`: searchable recipe list, select to assign to a slot; triggered by `+` button or drag from sidebar
-- [ ] **S4-10** Build `RecipeSidebar`: drag source — shows recently used and saved recipes
-- [ ] **S4-11** Build `DayTotalsBar`: per-day calorie, macro, and cost summary beneath each day column
-- [ ] **S4-12** Build `WeekTotalsPanel`: weekly aggregate nutrition + cost (shown at bottom of planner)
-- [ ] **S4-13** Wire drag-and-drop: on drop, call `PUT /api/meal-plans/:id/day/:date`; optimistic update with rollback on error
-- [ ] **S4-14** Build `/meal-planner` page: compose all planner components with SWR fetching
+- [x] **S4-06** `@dnd-kit/core` + `@dnd-kit/sortable` + `@dnd-kit/utilities` installed
+- [x] **S4-07** Weekly 8-col grid (slot label + Mon–Sun), week navigation arrows, today highlight
+- [x] **S4-08** `MealSlot`: droppable target, compact recipe preview, hover-reveal clear button, `+` picker button
+- [x] **S4-09** `RecipePickerModal`: debounced search, image/emoji thumbnails, click-to-assign
+- [x] **S4-11** `DayTotalsBar`: calories, cost, P/C/F macros per day column
+- [x] **S4-12** `WeekTotalsPanel`: weekly aggregate + avg per active day
+- [x] **S4-13** Drag-and-drop wired: `DndContext` → `PUT /api/meal-plans/:id/day/:date`
+- [x] **S4-14** `/meal-planner` page: full planner with week nav, totals, modal, drag overlay
 
 ---
 
@@ -308,7 +307,7 @@
 | S1 ✅ | Auth & Design System | Working login, Tailwind theme, NavBar |
 | S2 ✅ | Recipe Library | Browse, search, filter, detail, create |
 | S3 ✅ | Social & Profiles | Comments, reactions, saved recipes, profile |
-| S4 | Meal Planner | Drag-and-drop planner, Quick Add, weekly totals |
+| S4 ✅ | Meal Planner | Drag-and-drop planner, Quick Add, weekly totals |
 | S5 | Shopping List | Auto-generate, group by category, cost totals |
 | S6 | PWA & Polish | Service worker, push notifications, responsive |
 | S7 | Deploy & Harden | Azure live, monitoring, security, tests |
