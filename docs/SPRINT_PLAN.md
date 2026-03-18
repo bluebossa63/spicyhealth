@@ -16,26 +16,26 @@
 
 | Area | Required | Current State |
 |---|---|---|
-| Design system | Blush/sage/cream theme, rounded UI, responsive | ❌ No CSS, no tokens, no layout |
-| Auth UI | Login, register, social OAuth | ❌ Empty stubs |
-| Auth API | B2C JWT flow, user creation | ⚠️ Middleware written, untested |
-| Recipe library UI | Grid, search, filters | ❌ "Coming soon" placeholder |
-| Recipe detail UI | Ingredients, nutrition, cost, comments | ❌ Page doesn't exist |
-| Recipe API | CRUD, Cosmos DB queries | ❌ All routes return null |
-| Image upload | Azure Blob Storage | ❌ Not implemented |
-| Comment system | Threaded comments, likes | ❌ Not implemented |
-| Quick Add for Today | Log to today's plan | ❌ Route stub, no logic |
-| Meal planner UI | Drag-and-drop weekly grid | ❌ "Coming soon" placeholder |
-| Meal planner API | Day slot CRUD | ❌ Route stub, no logic |
-| Shopping list UI | Auto-generated, grouped, editable | ❌ "Coming soon" placeholder |
-| Shopping list API | Generate from plan, aggregate ingredients | ❌ Route stub, no logic |
-| Nutrition lookup | Open Food Facts integration | ⚠️ Service written, not wired |
-| Nutrition calculator | Per recipe + per day totals | ❌ Not implemented |
-| Cost calculator | Per recipe + per week | ❌ Not implemented |
-| User profile | Saved recipes, preferences, history | ❌ Not implemented |
-| PWA | Service worker, icons, push notifications | ⚠️ Manifest only, no icons/SW |
-| Azure infrastructure | B2C, Cosmos, Blob, App Service, SWA | ❌ Bicep template only |
-| CI/CD | GitHub Actions → Azure | ⚠️ Workflow files exist, no secrets |
+| Design system | Blush/sage/cream theme, rounded UI, responsive | ✅ Done (S1) |
+| Auth UI | Login, register, social OAuth | ✅ Email/password done; social OAuth deferred (S1) |
+| Auth API | bcryptjs + HS256 JWT, user creation | ✅ Done (S1/D-018) |
+| Recipe library UI | Grid, search, filters | ✅ Done (S2) |
+| Recipe detail UI | Ingredients, nutrition, cost, comments | ✅ Done (S2) |
+| Recipe API | CRUD, Cosmos DB queries | ✅ Done (S2) |
+| Image upload | Azure Blob Storage via SAS URL | ✅ Done (S2) |
+| Comment system | Threaded comments, likes, emoji reactions | ✅ Done (S3) |
+| Quick Add for Today | Log to today's plan | ✅ Done (S2) |
+| Meal planner UI | Drag-and-drop weekly grid | ✅ Done (S4) |
+| Meal planner API | Day slot CRUD | ✅ Done (S4) |
+| Shopping list UI | Auto-generated, grouped, editable | ✅ Done (S5) |
+| Shopping list API | Generate from plan, aggregate ingredients | ✅ Done (S5) |
+| Nutrition lookup | Open Food Facts integration | ✅ Done (S2) |
+| Nutrition calculator | Per recipe + per day totals | ✅ Done (S2/S4) |
+| Cost calculator | Per recipe + per week | ✅ Done (S2/S4) |
+| User profile | Saved recipes, preferences, avatar | ✅ Done (S3) |
+| PWA | Manifest + next-pwa config | ⚠️ Manifest done; icons/SW/push pending (S6) |
+| Azure infrastructure | Terraform — Cosmos, Blob, App Service, SWA | ✅ Live in production (S1) |
+| CI/CD | GitHub Actions → Azure | ✅ Secrets set, pipeline active (S1) |
 
 ---
 

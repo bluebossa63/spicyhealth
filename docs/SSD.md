@@ -1,9 +1,9 @@
 # Software System Design (SSD)
 # SpicyHealth — Healthy Food & Lifestyle Platform
 
-**Version:** 0.2.0
-**Date:** 2026-03-17
-**Status:** Draft
+**Version:** 0.3.0
+**Date:** 2026-03-18
+**Status:** Active
 
 > **Sync policy:** This document, `SPRINT_PLAN.md`, and `HISTORY.md` are kept in sync.
 > Any change to architecture, tech stack, scope, or constraints must be:
@@ -400,44 +400,42 @@ All protected endpoints require:
 
 ## 7. Security Design
 
-### 7.1 Authentication Flow (Entra External ID)
+### 7.1 Authentication Flow (email/password — current implementation)
+
+> See D-018 in HISTORY.md. MSAL/ROPC was dropped in favour of self-managed credentials.
 
 ```
-User clicks "Sign in with Google"
+User submits email + password
         │
         ▼
-Browser redirects to B2C /authorize endpoint
+POST /api/auth/register  or  POST /api/auth/login
         │
         ▼
-B2C redirects to Google OAuth
+API: bcrypt.compare(password, storedHash)
         │
         ▼
-User consents → Google returns code to B2C
+API: jwt.sign({ userId, email }, JWT_SECRET, { expiresIn: '7d' })
         │
         ▼
-B2C issues ID token + access token (JWT)
-        │
-        ▼
-Frontend stores token in localStorage
+Frontend stores JWT in localStorage via AuthProvider
         │
         ▼
 API calls include: Authorization: Bearer <token>
         │
         ▼
-authMiddleware fetches JWKS from B2C, verifies token
+authMiddleware: jwt.verify(token, JWT_SECRET) → req.user
 ```
 
-**Supported identity providers via B2C:**
-- Email / password (built-in)
-- Google (OAuth 2.0)
-- Microsoft (OpenID Connect)
-- Facebook (OAuth 2.0)
+**Current identity support:**
+- Email / password (active)
+- Google / Microsoft / Facebook via Entra External ID (deferred — S1-03/04/05)
 
 ### 7.2 Token Validation
 
-- JWKS endpoint: `https://<tenant>.b2clogin.com/<tenant>.onmicrosoft.com/<policy>/discovery/v2.0/keys`
-- Library: `jwks-rsa` + `jsonwebtoken`
-- Validated claims: `aud`, `iss`, `exp`, `nbf`
+- Algorithm: HS256, signed with `JWT_SECRET` env var
+- Library: `jsonwebtoken`
+- Expiry: 7 days
+- Validated claims: `exp`, `userId`, `email`
 
 ### 7.3 Security Controls
 
@@ -548,29 +546,30 @@ Calculation: `value = (per100g_value * quantityGrams) / 100`
 
 ## 10. Phased Delivery
 
-### Phase 1 — MVP
+### Phase 1 — MVP ✅
 
-- [ ] Auth: email/password + Google OAuth (B2C)
-- [ ] Recipe CRUD + image upload to Blob Storage
-- [ ] Recipe list with search + category/dietary/prep time filter
-- [ ] Recipe detail page with ingredient nutrition (Open Food Facts)
-- [ ] Comment system (threaded + likes)
-- [ ] Quick Add for Today button
-- [ ] PWA manifest + responsive layout
+- [x] Auth: email/password (S1); Google/social OAuth deferred (S1-03–05)
+- [x] Recipe CRUD + image upload to Blob Storage (S2)
+- [x] Recipe list with search + category/dietary/prep time filter (S2)
+- [x] Recipe detail page with ingredient nutrition (Open Food Facts) (S2)
+- [x] Comment system (threaded + likes + emoji reactions) (S3)
+- [x] Quick Add for Today button (S2)
+- [x] PWA manifest + responsive layout (S1/S2); full SW/push pending (S6)
 
-### Phase 2 — v1
+### Phase 2 — v1 ✅
 
-- [ ] Meal planner: drag-and-drop weekly/daily grid
-- [ ] Per-day nutritional totals
-- [ ] Estimated cost per recipe + per week
-- [ ] Smart shopping list (auto-generated from plan, grouped by category)
-- [ ] Manual shopping list editing + mark purchased
-- [ ] User profile (preferences, saved recipes)
+- [x] Meal planner: drag-and-drop weekly/daily grid (S4)
+- [x] Per-day nutritional totals (S4)
+- [x] Estimated cost per recipe + per week (S2/S4)
+- [x] Smart shopping list (auto-generated from plan, grouped by category) (S5)
+- [x] Manual shopping list editing + mark purchased (S5)
+- [x] User profile (preferences, saved recipes, avatar) (S3)
 
 ### Phase 3 — v2
 
-- [ ] Microsoft + Facebook social login
-- [ ] Push notifications (meal reminders, new recipes)
+- [ ] Full PWA: service worker, offline support, push notifications (S6)
+- [ ] Mobile polish: bottom tab bar, swipe gestures, responsive planner (S6)
+- [ ] Google / Microsoft / Facebook social login (deferred from S1)
 - [ ] React Native companion app (shared API)
 - [ ] Cost estimates from grocery price data
 - [ ] Admin dashboard (recipe moderation)
@@ -582,7 +581,7 @@ Calculation: `value = (per100g_value * quantityGrams) / 100`
 | # | Question | Owner | Status |
 |---|---|---|---|
 | 1 | Which grocery price API for cost estimates? | Product | Open |
-| 2 | Multi-language support required? | Product | Open |
+| 2 | Multi-language support required? | Product | Resolved: German-only (D-019) |
 | 3 | User-generated recipes moderated or open? | Product | Open |
 | 4 | Custom domain name? | Infra | Open |
-| 5 | Analytics: Azure App Insights or third-party? | Infra | Open |
+| 5 | Analytics: Azure App Insights or third-party? | Infra | Resolved: Azure App Insights (S7) |
