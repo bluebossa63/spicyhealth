@@ -27,20 +27,20 @@ export function RecipePickerModal({ onSelect, onClose }: RecipePickerModalProps)
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
         <div className="p-4 border-b border-cream-200">
-          <h3 className="font-display text-lg text-charcoal-800 mb-3">Pick a recipe</h3>
+          <h3 className="font-display text-lg text-charcoal-800 mb-3">Rezept auswählen</h3>
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search recipes…"
+            placeholder="Rezepte suchen…"
             className="input-field"
             autoFocus
           />
         </div>
         <div className="flex-1 overflow-y-auto p-2">
-          {loading && <p className="text-center text-charcoal-400 py-8 text-sm">Loading…</p>}
+          {loading && <p className="text-center text-charcoal-400 py-8 text-sm">Laden…</p>}
           {!loading && recipes.length === 0 && (
-            <p className="text-center text-charcoal-400 py-8 text-sm">No recipes found</p>
+            <p className="text-center text-charcoal-400 py-8 text-sm">Keine Rezepte gefunden</p>
           )}
           {recipes.map(recipe => (
             <button
@@ -65,7 +65,7 @@ export function RecipePickerModal({ onSelect, onClose }: RecipePickerModalProps)
           ))}
         </div>
         <div className="p-4 border-t border-cream-200">
-          <button onClick={onClose} className="btn-ghost w-full">Cancel</button>
+          <button onClick={onClose} className="btn-ghost w-full">Abbrechen</button>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: { default: 'SpicyHealth', template: '%s | SpicyHealth' },
-  description: 'Healthy food & lifestyle recipes, meal planning, and nutrition tracking',
+  description: 'Gesunde Ernährung & Lifestyle-Rezepte, Mahlzeitenplanung und Nährwert-Tracking',
   manifest: '/manifest.json',
   themeColor: '#d4856a',
   viewport: { width: 'device-width', initialScale: 1 },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="de" className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen flex flex-col bg-cream font-body text-charcoal">
         <AuthProvider>
           <NavBar />

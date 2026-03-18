@@ -47,8 +47,8 @@ function CommentItem({
       </div>
       <div className="flex-1">
         <div className="flex items-baseline gap-2 mb-1">
-          <span className="font-semibold text-sm text-charcoal-800">{comment.authorName || 'User'}</span>
-          <span className="text-xs text-charcoal-400">{new Date(comment.createdAt).toLocaleDateString()}</span>
+          <span className="font-semibold text-sm text-charcoal-800">{comment.authorName || 'Nutzer'}</span>
+          <span className="text-xs text-charcoal-400">{new Date(comment.createdAt).toLocaleDateString('de-DE')}</span>
         </div>
         <p className="text-sm text-charcoal-700 leading-relaxed">{comment.body}</p>
         <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -75,7 +75,7 @@ function CommentItem({
             onClick={() => onReply(comment.id)}
             className="text-xs text-charcoal-400 hover:text-sage-600 transition-colors"
           >
-            Reply
+            Antworten
           </button>
           {/* Delete (own comments) */}
           {currentUserId === comment.userId && (
@@ -83,7 +83,7 @@ function CommentItem({
               onClick={() => onDelete(comment.id)}
               className="text-xs text-charcoal-300 hover:text-red-500 transition-colors"
             >
-              Delete
+              Löschen
             </button>
           )}
         </div>
@@ -147,7 +147,7 @@ export function CommentThread({ recipeId, initialComments }: { recipeId: string;
 
   return (
     <div className="space-y-6">
-      <h3 className="font-display text-xl text-charcoal-800">Comments ({comments.length})</h3>
+      <h3 className="font-display text-xl text-charcoal-800">Kommentare ({comments.length})</h3>
 
       {/* New comment form */}
       {user && (
@@ -159,12 +159,12 @@ export function CommentThread({ recipeId, initialComments }: { recipeId: string;
             <textarea
               value={body}
               onChange={e => setBody(e.target.value)}
-              placeholder="Write a comment…"
+              placeholder="Kommentar schreiben…"
               rows={2}
               className="input-field resize-none w-full text-sm"
             />
             <button type="submit" disabled={submitting || !body.trim()} className="btn-primary mt-2 text-sm">
-              {submitting ? 'Posting…' : 'Post comment'}
+              {submitting ? 'Wird gesendet…' : 'Kommentar senden'}
             </button>
           </div>
         </form>
@@ -172,7 +172,7 @@ export function CommentThread({ recipeId, initialComments }: { recipeId: string;
 
       {/* Comment list */}
       <div className="space-y-5">
-        {roots.length === 0 && <p className="text-sm text-charcoal-400 italic">Be the first to comment!</p>}
+        {roots.length === 0 && <p className="text-sm text-charcoal-400 italic">Sei der Erste, der kommentiert!</p>}
         {roots.map(c => (
           <div key={c.id} className="space-y-4">
             <CommentItem
@@ -205,17 +205,17 @@ export function CommentThread({ recipeId, initialComments }: { recipeId: string;
                 <textarea
                   value={replyBody}
                   onChange={e => setReplyBody(e.target.value)}
-                  placeholder="Write a reply…"
+                  placeholder="Antwort schreiben…"
                   rows={2}
                   className="input-field resize-none flex-1 text-sm"
                   autoFocus
                 />
                 <div className="flex flex-col gap-1">
                   <button type="submit" disabled={submitting || !replyBody.trim()} className="btn-primary text-xs px-3 py-2">
-                    Reply
+                    Antworten
                   </button>
                   <button type="button" onClick={() => setReplyTo(null)} className="btn-ghost text-xs px-3 py-2">
-                    Cancel
+                    Abbrechen
                   </button>
                 </div>
               </form>

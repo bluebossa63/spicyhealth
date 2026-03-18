@@ -15,17 +15,17 @@ export function NutritionPanel({ nutrition, servings = 1 }: Props) {
   const per = (v: number) => Math.round(v / servings);
 
   const macros = [
-    { label: 'Protein', value: per(nutrition.proteinG), unit: 'g', color: 'bg-sage' },
-    { label: 'Carbs', value: per(nutrition.carbsG), unit: 'g', color: 'bg-blush' },
-    { label: 'Fat', value: per(nutrition.fatG), unit: 'g', color: 'bg-terracotta' },
-    ...(nutrition.fiberG ? [{ label: 'Fiber', value: per(nutrition.fiberG), unit: 'g', color: 'bg-cream-dark' }] : []),
+    { label: 'Eiweiß', value: per(nutrition.proteinG), unit: 'g', color: 'bg-sage' },
+    { label: 'Kohlenhydrate', value: per(nutrition.carbsG), unit: 'g', color: 'bg-blush' },
+    { label: 'Fett', value: per(nutrition.fatG), unit: 'g', color: 'bg-terracotta' },
+    ...(nutrition.fiberG ? [{ label: 'Ballaststoffe', value: per(nutrition.fiberG), unit: 'g', color: 'bg-cream-dark' }] : []),
   ];
 
   const total = per(nutrition.proteinG) + per(nutrition.carbsG) + per(nutrition.fatG);
 
   return (
     <div className="card p-5">
-      <h3 className="font-heading font-semibold text-charcoal mb-4">Nutrition per serving</h3>
+      <h3 className="font-heading font-semibold text-charcoal mb-4">Nährwerte pro Portion</h3>
       <div className="text-center mb-4">
         <span className="text-3xl font-bold text-terracotta">{per(nutrition.calories)}</span>
         <span className="text-sm text-charcoal-light ml-1">kcal</span>

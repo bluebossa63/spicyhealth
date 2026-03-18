@@ -12,8 +12,8 @@ export function DayTotalsBar({ totals }: { totals: DayTotals }) {
         <span>💶 €{totalCostEur.toFixed(2)}</span>
       </div>
       <div className="flex justify-between text-charcoal-400">
-        <span>P {Math.round(n.proteinG)}g</span>
-        <span>C {Math.round(n.carbsG)}g</span>
+        <span>E {Math.round(n.proteinG)}g</span>
+        <span>K {Math.round(n.carbsG)}g</span>
         <span>F {Math.round(n.fatG)}g</span>
       </div>
     </div>

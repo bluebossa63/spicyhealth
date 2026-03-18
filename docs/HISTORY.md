@@ -314,6 +314,44 @@ packages/shared → shared types
 
 ---
 
+## [2026-03-18] D-018 — Auth: replace MSAL ROPC with bcryptjs + self-signed JWT
+
+**Decision:** Drop Azure AD B2C / MSAL ROPC in favour of bcryptjs password hashing and HS256 JWTs issued by the API itself.
+
+**Context:** ROPC (Resource Owner Password Credentials) can only authenticate existing users — it cannot create new accounts. Creating users in B2C requires Microsoft Graph API with `User.ReadWrite.All` permission, which was not provisioned. Additionally, the authority URL and JWKS URI were misconfigured. The net result: register and login both failed.
+
+**Details:**
+- Passwords hashed with bcrypt (cost 12), stored in Cosmos DB `users` container
+- JWT signed with `JWT_SECRET` env var (HS256, 7d expiry)
+- `authMiddleware` simplified to `jwt.verify` — no JWKS, no external dependency
+- `@azure/msal-node` and `jwks-rsa` can be removed when next cleanup happens
+
+**Alternatives considered:**
+- Fix MSAL + provision Graph API permissions (deferred: adds Azure setup complexity; revisit when social OAuth is needed)
+- Use B2C hosted UI redirect (rejected: breaks email/password API flow)
+
+**References:** SPRINT_PLAN S1-17/18/19, S6 auth fix
+
+---
+
+## [2026-03-18] D-019 — UI language: German
+
+**Decision:** All UI text is written in German. No English/German toggle — the app is German-only.
+
+**Context:** The app is a personal project for a German-speaking user (the developer's wife). There is no requirement for English UI.
+
+**Details:**
+- All hardcoded strings in React components translated to German
+- Error messages, labels, placeholders, navigation, category names all in German
+- `next-intl` (listed in backlog) not needed; direct string replacement is sufficient for a single-language app
+
+**Alternatives considered:**
+- next-intl for full i18n (deferred to backlog — only add if English is ever needed)
+
+**References:** SPRINT_PLAN backlog (i18n item)
+
+---
+
 ## Template for future decisions
 
 ```

@@ -4,11 +4,11 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 
 const TABS = [
-  { href: '/', icon: '🏠', label: 'Home' },
-  { href: '/recipes', icon: '📖', label: 'Recipes' },
-  { href: '/meal-planner', icon: '📅', label: 'Planner' },
-  { href: '/shopping-list', icon: '🛒', label: 'List' },
-  { href: '/profile', icon: '👤', label: 'Profile' },
+  { href: '/', icon: '🏠', label: 'Startseite' },
+  { href: '/recipes', icon: '📖', label: 'Rezepte' },
+  { href: '/meal-planner', icon: '📅', label: 'Planer' },
+  { href: '/shopping-list', icon: '🛒', label: 'Liste' },
+  { href: '/profile', icon: '👤', label: 'Profil' },
 ];
 
 export function BottomTabBar() {

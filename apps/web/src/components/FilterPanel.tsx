@@ -2,7 +2,7 @@
 
 const CATEGORIES = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'smoothie'] as const;
 const CATEGORY_LABELS: Record<string, string> = {
-  breakfast: '🌅 Breakfast', lunch: '🥗 Lunch', dinner: '🍽️ Dinner',
+  breakfast: '🌅 Frühstück', lunch: '🥗 Mittagessen', dinner: '🍽️ Abendessen',
   snack: '🍎 Snack', dessert: '🍓 Dessert', smoothie: '🥤 Smoothie',
 };
 
@@ -25,13 +25,13 @@ export function FilterPanel({ filters, onChange }: Props) {
     <div className="bg-white rounded-2xl shadow-card p-5 flex flex-col gap-5">
       {/* Category chips */}
       <div>
-        <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">Category</p>
+        <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">Kategorie</p>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => set('category', '')}
             className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${!filters.category ? 'bg-terracotta text-white' : 'bg-cream-dark text-charcoal-light hover:bg-blush-light'}`}
           >
-            All
+            Alle
           </button>
           {CATEGORIES.map(cat => (
             <button
@@ -48,7 +48,7 @@ export function FilterPanel({ filters, onChange }: Props) {
       {/* Sliders */}
       <div>
         <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">
-          Max Calories <span className="text-terracotta">{filters.maxCalories === 1500 ? 'Any' : `${filters.maxCalories} kcal`}</span>
+          Max. Kalorien <span className="text-terracotta">{filters.maxCalories === 1500 ? 'Beliebig' : `${filters.maxCalories} kcal`}</span>
         </p>
         <input type="range" min={100} max={1500} step={50} value={filters.maxCalories}
           onChange={e => set('maxCalories', Number(e.target.value))}
@@ -57,7 +57,7 @@ export function FilterPanel({ filters, onChange }: Props) {
 
       <div>
         <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">
-          Max Prep Time <span className="text-terracotta">{filters.maxPrepTime === 120 ? 'Any' : `${filters.maxPrepTime} min`}</span>
+          Max. Vorbereitungszeit <span className="text-terracotta">{filters.maxPrepTime === 120 ? 'Beliebig' : `${filters.maxPrepTime} min`}</span>
         </p>
         <input type="range" min={5} max={120} step={5} value={filters.maxPrepTime}
           onChange={e => set('maxPrepTime', Number(e.target.value))}
@@ -66,7 +66,7 @@ export function FilterPanel({ filters, onChange }: Props) {
 
       <div>
         <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">
-          Max Cost <span className="text-terracotta">{filters.maxCost === 30 ? 'Any' : `€${filters.maxCost}`}</span>
+          Max. Kosten <span className="text-terracotta">{filters.maxCost === 30 ? 'Beliebig' : `€${filters.maxCost}`}</span>
         </p>
         <input type="range" min={1} max={30} step={1} value={filters.maxCost}
           onChange={e => set('maxCost', Number(e.target.value))}
@@ -77,7 +77,7 @@ export function FilterPanel({ filters, onChange }: Props) {
         onClick={() => onChange({ category: '', maxCalories: 1500, maxPrepTime: 120, maxCost: 30 })}
         className="text-xs text-charcoal-light hover:text-terracotta transition-colors text-left"
       >
-        Reset filters
+        Filter zurücksetzen
       </button>
     </div>
   );

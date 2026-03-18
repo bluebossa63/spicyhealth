@@ -18,12 +18,12 @@ import { api } from '@/lib/api';
 
 const SLOTS = ['breakfast', 'lunch', 'dinner', 'snacks'] as const;
 const SLOT_LABELS: Record<string, string> = {
-  breakfast: '☀️ Breakfast',
-  lunch: '🥗 Lunch',
-  dinner: '🍽️ Dinner',
+  breakfast: '☀️ Frühstück',
+  lunch: '🥗 Mittagessen',
+  dinner: '🍽️ Abendessen',
   snacks: '🍎 Snack',
 };
-const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAY_NAMES = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
 function getWeekStart(offset = 0): string {
   const d = new Date();
@@ -123,15 +123,15 @@ function MealPlanner() {
     <main className="max-w-6xl mx-auto px-4 py-8">
       {/* Header + week navigation */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-3xl text-charcoal-800">Meal Planner</h1>
+        <h1 className="font-display text-3xl text-charcoal-800">Mahlzeitenplaner</h1>
         <div className="flex items-center gap-3">
           <button onClick={() => setWeekOffset(w => w - 1)} className="btn-ghost px-3 py-2 text-lg">‹</button>
           <span className="text-sm text-charcoal-600 min-w-[120px] text-center">
-            Week of {new Date(weekStart + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+            Woche vom {new Date(weekStart + 'T00:00:00Z').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}
           </span>
           <button onClick={() => setWeekOffset(w => w + 1)} className="btn-ghost px-3 py-2 text-lg">›</button>
           {weekOffset !== 0 && (
-            <button onClick={() => setWeekOffset(0)} className="btn-secondary text-xs px-3 py-1.5">Today</button>
+            <button onClick={() => setWeekOffset(0)} className="btn-secondary text-xs px-3 py-1.5">Heute</button>
           )}
         </div>
       </div>
@@ -184,7 +184,7 @@ function MealPlanner() {
 
             {/* Day totals row */}
             <div className="grid grid-cols-8 gap-2 mt-1">
-              <div className="text-xs font-semibold text-charcoal-400 self-start pt-1">Totals</div>
+              <div className="text-xs font-semibold text-charcoal-400 self-start pt-1">Gesamt</div>
               {days.map(day => (
                 <DayTotalsBar key={day.date} totals={day} />
               ))}

@@ -37,7 +37,7 @@ export default function RecipesPage() {
       setRecipes(prev => reset ? data : [...prev, ...data]);
       setHasMore(data.length === 12);
     } catch {
-      // API not available — show empty state
+      // API nicht verfügbar — leeren Zustand anzeigen
     } finally {
       setLoading(false);
     }
@@ -52,8 +52,8 @@ export default function RecipesPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="font-heading text-4xl text-charcoal mb-2">Recipes</h1>
-        <p className="text-charcoal-light">Discover healthy, delicious meals</p>
+        <h1 className="font-heading text-4xl text-charcoal mb-2">Rezepte</h1>
+        <p className="text-charcoal-light">Entdecke gesunde, leckere Mahlzeiten</p>
       </div>
 
       <div className="mb-6">
@@ -75,8 +75,8 @@ export default function RecipesPage() {
           ) : recipes.length === 0 ? (
             <div className="text-center py-24">
               <div className="text-5xl mb-4">🥗</div>
-              <h3 className="font-heading text-xl text-charcoal mb-2">No recipes found</h3>
-              <p className="text-charcoal-light text-sm">Try adjusting your search or filters</p>
+              <h3 className="font-heading text-xl text-charcoal mb-2">Keine Rezepte gefunden</h3>
+              <p className="text-charcoal-light text-sm">Passe deine Suche oder die Filter an</p>
             </div>
           ) : (
             <>
@@ -97,7 +97,7 @@ export default function RecipesPage() {
               {hasMore && (
                 <div className="text-center mt-8">
                   <button onClick={loadMore} className="btn-secondary" disabled={loading}>
-                    {loading ? 'Loading…' : 'Load more'}
+                    {loading ? 'Laden…' : 'Mehr laden'}
                   </button>
                 </div>
               )}

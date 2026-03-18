@@ -21,14 +21,14 @@ export function WeekTotalsPanel({ days }: WeekTotalsPanelProps) {
 
   return (
     <div className="card p-4 mt-6">
-      <h3 className="font-display text-lg text-charcoal-800 mb-3">Week totals</h3>
+      <h3 className="font-display text-lg text-charcoal-800 mb-3">Wochensumme</h3>
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         {[
-          { label: 'Calories', value: `${Math.round(totals.calories)} kcal`, icon: '🔥' },
-          { label: 'Protein', value: `${Math.round(totals.proteinG)}g`, icon: '💪' },
-          { label: 'Carbs', value: `${Math.round(totals.carbsG)}g`, icon: '🌾' },
-          { label: 'Fat', value: `${Math.round(totals.fatG)}g`, icon: '🥑' },
-          { label: 'Est. cost', value: `€${totals.cost.toFixed(2)}`, icon: '💶' },
+          { label: 'Kalorien', value: `${Math.round(totals.calories)} kcal`, icon: '🔥' },
+          { label: 'Eiweiß', value: `${Math.round(totals.proteinG)}g`, icon: '💪' },
+          { label: 'Kohlenhydrate', value: `${Math.round(totals.carbsG)}g`, icon: '🌾' },
+          { label: 'Fett', value: `${Math.round(totals.fatG)}g`, icon: '🥑' },
+          { label: 'Gesch. Kosten', value: `€${totals.cost.toFixed(2)}`, icon: '💶' },
         ].map(({ label, value, icon }) => (
           <div key={label} className="bg-cream-50 rounded-xl p-3 text-center">
             <div className="text-lg mb-1">{icon}</div>
@@ -39,7 +39,7 @@ export function WeekTotalsPanel({ days }: WeekTotalsPanelProps) {
       </div>
       {activeDays > 0 && (
         <p className="text-xs text-charcoal-400 mt-3 text-center">
-          Avg per day: {Math.round(totals.calories / activeDays)} kcal · €{(totals.cost / activeDays).toFixed(2)}
+          Ø pro Tag: {Math.round(totals.calories / activeDays)} kcal · €{(totals.cost / activeDays).toFixed(2)}
         </p>
       )}
     </div>

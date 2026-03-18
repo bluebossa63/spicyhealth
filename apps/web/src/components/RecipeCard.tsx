@@ -33,9 +33,9 @@ export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
     setIsAdding(true);
     try {
       const { slot } = await api.recipes.quickAdd(recipe.id);
-      show(`Added to ${slot}!`, 'success');
+      show(`Zu ${slot} hinzugefügt!`, 'success');
     } catch {
-      show('Please sign in first', 'error');
+      show('Bitte zuerst anmelden', 'error');
     } finally {
       setIsAdding(false);
     }
@@ -86,7 +86,7 @@ export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
               disabled={isAdding}
               className="btn-primary text-xs py-2 w-full mt-2"
             >
-              {isAdding ? 'Adding…' : '+ Quick Add for Today'}
+              {isAdding ? 'Wird hinzugefügt…' : '+ Schnell zu heute hinzufügen'}
             </button>
           </div>
         </div>

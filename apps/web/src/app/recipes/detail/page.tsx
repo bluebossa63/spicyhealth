@@ -42,8 +42,8 @@ function RecipeDetail() {
   async function handleQuickAdd() {
     try {
       const { slot } = await api.recipes.quickAdd(id!);
-      show(`Added to ${slot}!`, 'success');
-    } catch { show('Failed to add', 'error'); }
+      show(`Zu ${slot} hinzugefügt!`, 'success');
+    } catch { show('Hinzufügen fehlgeschlagen', 'error'); }
   }
 
   async function handleSave() {
@@ -52,13 +52,13 @@ function RecipeDetail() {
       if (saved) {
         await api.users.unsaveRecipe(id);
         setSaved(false);
-        show('Removed from saved recipes', 'success');
+        show('Aus gespeicherten Rezepten entfernt', 'success');
       } else {
         await api.users.saveRecipe(id);
         setSaved(true);
-        show('Recipe saved!', 'success');
+        show('Rezept gespeichert!', 'success');
       }
-    } catch { show('Failed to update saved status', 'error'); }
+    } catch { show('Gespeicherten Status konnte nicht aktualisiert werden', 'error'); }
   }
 
   if (loading) return (
@@ -69,8 +69,8 @@ function RecipeDetail() {
 
   if (!recipe) return (
     <div className="max-w-3xl mx-auto px-4 py-12 text-center">
-      <p className="text-charcoal-400 text-lg">Recipe not found.</p>
-      <Link href="/recipes" className="btn-primary mt-4 inline-block">Back to recipes</Link>
+      <p className="text-charcoal-400 text-lg">Rezept nicht gefunden.</p>
+      <Link href="/recipes" className="btn-primary mt-4 inline-block">Zurück zu den Rezepten</Link>
     </div>
   );
 
@@ -106,20 +106,20 @@ function RecipeDetail() {
         <p className="text-charcoal-500 mt-2 leading-relaxed">{recipe.description}</p>
         <div className="flex flex-wrap gap-4 mt-4 text-sm text-charcoal-500">
           <span>⏱ {totalTime} min</span>
-          <span>👤 {recipe.servings} servings</span>
+          <span>👤 {recipe.servings} Portionen</span>
           {recipe.estimatedCostEur > 0 && <span>💶 €{recipe.estimatedCostEur.toFixed(2)}</span>}
           {recipe.tags?.map((t: string) => (
             <span key={t} className="px-2 py-0.5 bg-cream-100 rounded-full text-xs">{t}</span>
           ))}
         </div>
         <button onClick={handleQuickAdd} className="btn-primary mt-4">
-          + Quick Add to Today
+          + Schnell zu heute hinzufügen
         </button>
       </div>
 
       {/* Ingredients */}
       <section className="card p-6 mb-6">
-        <h2 className="font-display text-xl text-charcoal-800 mb-4">Ingredients</h2>
+        <h2 className="font-display text-xl text-charcoal-800 mb-4">Zutaten</h2>
         <ul className="space-y-2">
           {recipe.ingredients?.map((ing: any, i: number) => (
             <li key={i} className="flex items-center justify-between text-sm">
@@ -134,8 +134,8 @@ function RecipeDetail() {
         </ul>
         {recipe.estimatedCostEur > 0 && (
           <div className="border-t border-cream-200 mt-4 pt-3 flex justify-between text-sm font-semibold text-charcoal-700">
-            <span>Total cost</span>
-            <span>€{recipe.estimatedCostEur.toFixed(2)} (€{(recipe.estimatedCostEur / recipe.servings).toFixed(2)} / serving)</span>
+            <span>Gesamtkosten</span>
+            <span>€{recipe.estimatedCostEur.toFixed(2)} (€{(recipe.estimatedCostEur / recipe.servings).toFixed(2)} / Portion)</span>
           </div>
         )}
       </section>
@@ -145,7 +145,7 @@ function RecipeDetail() {
 
       {/* Instructions */}
       <section className="card p-6 mb-6">
-        <h2 className="font-display text-xl text-charcoal-800 mb-4">Instructions</h2>
+        <h2 className="font-display text-xl text-charcoal-800 mb-4">Zubereitung</h2>
         <ol className="space-y-4">
           {recipe.instructions?.map((step: string, i: number) => (
             <li key={i} className="flex gap-4">

@@ -19,14 +19,14 @@ export default function RegisterPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    if (password !== confirm) { setError('Passwords do not match'); return; }
-    if (password.length < 8) { setError('Password must be at least 8 characters'); return; }
+    if (password !== confirm) { setError('Die Passwörter stimmen nicht überein'); return; }
+    if (password.length < 8) { setError('Das Passwort muss mindestens 8 Zeichen lang sein'); return; }
     setLoading(true);
     try {
       await register(displayName, email, password);
       router.replace('/recipes');
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      setError(err.message || 'Registrierung fehlgeschlagen');
     } finally {
       setLoading(false);
     }
@@ -37,36 +37,36 @@ export default function RegisterPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <span className="text-4xl">🌿</span>
-          <h1 className="font-display text-3xl text-charcoal-800 mt-2">Create account</h1>
-          <p className="text-charcoal-400 text-sm mt-1">Join SpicyHealth today</p>
+          <h1 className="font-display text-3xl text-charcoal-800 mt-2">Konto erstellen</h1>
+          <p className="text-charcoal-400 text-sm mt-1">Werde noch heute Teil von SpicyHealth</p>
         </div>
         <form onSubmit={handleSubmit} className="card p-6 space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">{error}</div>
           )}
           <div>
-            <label className="block text-sm font-medium text-charcoal-700 mb-1">Your name</label>
+            <label className="block text-sm font-medium text-charcoal-700 mb-1">Dein Name</label>
             <input type="text" value={displayName} onChange={e => setDisplayName(e.target.value)} required className="input-field" placeholder="Maria" autoComplete="name" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-charcoal-700 mb-1">Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="input-field" placeholder="you@example.com" autoComplete="email" />
+            <label className="block text-sm font-medium text-charcoal-700 mb-1">E-Mail</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="input-field" placeholder="du@beispiel.de" autoComplete="email" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-charcoal-700 mb-1">Password <span className="text-charcoal-400 font-normal">(min. 8 chars)</span></label>
+            <label className="block text-sm font-medium text-charcoal-700 mb-1">Passwort <span className="text-charcoal-400 font-normal">(min. 8 Zeichen)</span></label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="input-field" placeholder="••••••••" autoComplete="new-password" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-charcoal-700 mb-1">Confirm password</label>
+            <label className="block text-sm font-medium text-charcoal-700 mb-1">Passwort bestätigen</label>
             <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} required className="input-field" placeholder="••••••••" autoComplete="new-password" />
           </div>
           <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? 'Creating account…' : 'Create account'}
+            {loading ? 'Konto wird erstellt…' : 'Konto erstellen'}
           </button>
         </form>
         <p className="text-center text-sm text-charcoal-500 mt-4">
-          Already have an account?{' '}
-          <Link href="/auth/login" className="text-terracotta-500 hover:underline font-medium">Sign in</Link>
+          Bereits ein Konto?{' '}
+          <Link href="/auth/login" className="text-terracotta-500 hover:underline font-medium">Anmelden</Link>
         </p>
       </div>
     </main>

@@ -5,13 +5,13 @@ import { useState } from 'react';
 import { useAuth } from '@/lib/auth';
 
 const navLinks = [
-  { href: '/recipes',       label: 'Recipes' },
-  { href: '/meal-planner',  label: 'Meal Planner' },
-  { href: '/shopping-list', label: 'Shopping List' },
+  { href: '/recipes',       label: 'Rezepte' },
+  { href: '/meal-planner',  label: 'Mahlzeitenplaner' },
+  { href: '/shopping-list', label: 'Einkaufsliste' },
 ];
 
 const authNavLinks = [
-  { href: '/profile', label: 'Profile' },
+  { href: '/profile', label: 'Profil' },
 ];
 
 export function NavBar() {
@@ -39,15 +39,15 @@ export function NavBar() {
                   {label}
                 </Link>
               ))}
-              <Link href="/recipes/new" className="btn-secondary text-sm">+ Recipe</Link>
-              <button onClick={logout} className="btn-ghost text-sm">Log out</button>
+              <Link href="/recipes/new" className="btn-secondary text-sm">+ Rezept</Link>
+              <button onClick={logout} className="btn-ghost text-sm">Abmelden</button>
             </div>
           ) : (
-            <Link href="/auth/login" className="btn-primary text-sm">Sign in</Link>
+            <Link href="/auth/login" className="btn-primary text-sm">Anmelden</Link>
           )}
         </nav>
 
-        <button className="md:hidden p-2 rounded-xl hover:bg-blush-light transition-colors" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+        <button className="md:hidden p-2 rounded-xl hover:bg-blush-light transition-colors" onClick={() => setOpen(!open)} aria-label="Menü umschalten">
           <span className="block w-5 h-0.5 bg-charcoal mb-1" />
           <span className="block w-5 h-0.5 bg-charcoal mb-1" />
           <span className="block w-5 h-0.5 bg-charcoal" />
@@ -64,10 +64,10 @@ export function NavBar() {
               {authNavLinks.map(({ href, label }) => (
                 <Link key={href} href={href} className="text-sm font-medium text-charcoal py-1" onClick={() => setOpen(false)}>{label}</Link>
               ))}
-              <button onClick={() => { logout(); setOpen(false); }} className="btn-ghost text-sm text-left mt-2">Log out</button>
+              <button onClick={() => { logout(); setOpen(false); }} className="btn-ghost text-sm text-left mt-2">Abmelden</button>
             </>
           ) : (
-            <Link href="/auth/login" className="btn-primary text-sm text-center mt-2" onClick={() => setOpen(false)}>Sign in</Link>
+            <Link href="/auth/login" className="btn-primary text-sm text-center mt-2" onClick={() => setOpen(false)}>Anmelden</Link>
           )}
         </div>
       )}

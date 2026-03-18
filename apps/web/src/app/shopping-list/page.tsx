@@ -7,13 +7,13 @@ import { api as mealApi } from '@/lib/api';
 type ShoppingCategory = 'produce' | 'dairy' | 'meat' | 'grains' | 'pantry' | 'frozen' | 'other';
 
 const CATEGORY_META: Record<ShoppingCategory, { label: string; icon: string }> = {
-  produce: { label: 'Produce', icon: '🥦' },
-  dairy: { label: 'Dairy & Eggs', icon: '🥛' },
-  meat: { label: 'Meat & Fish', icon: '🥩' },
-  grains: { label: 'Grains & Bread', icon: '🌾' },
-  pantry: { label: 'Pantry', icon: '🫙' },
-  frozen: { label: 'Frozen', icon: '❄️' },
-  other: { label: 'Other', icon: '🛒' },
+  produce: { label: 'Obst & Gemüse', icon: '🥦' },
+  dairy: { label: 'Milchprodukte & Eier', icon: '🥛' },
+  meat: { label: 'Fleisch & Fisch', icon: '🥩' },
+  grains: { label: 'Getreide & Brot', icon: '🌾' },
+  pantry: { label: 'Vorratskammer', icon: '🫙' },
+  frozen: { label: 'Tiefkühlprodukte', icon: '❄️' },
+  other: { label: 'Sonstiges', icon: '🛒' },
 };
 
 const CATEGORY_ORDER: ShoppingCategory[] = ['produce', 'dairy', 'meat', 'grains', 'pantry', 'frozen', 'other'];
@@ -118,19 +118,19 @@ function ShoppingList() {
     <main className="max-w-2xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <h1 className="font-display text-3xl text-charcoal-800">Shopping List</h1>
+        <h1 className="font-display text-3xl text-charcoal-800">Einkaufsliste</h1>
         <div className="flex flex-wrap gap-2">
           {mealPlan && (
             <button onClick={handleGenerate} disabled={generating} className="btn-primary text-sm">
-              {generating ? 'Generating…' : '✨ Generate from plan'}
+              {generating ? 'Wird generiert…' : '✨ Aus Mahlzeitenplan generieren'}
             </button>
           )}
           {items.length > 0 && (
             <>
-              <button onClick={handleCopyToClipboard} className="btn-secondary text-sm">📋 Copy</button>
+              <button onClick={handleCopyToClipboard} className="btn-secondary text-sm">📋 Kopieren</button>
               {purchasedCount > 0 && (
                 <button onClick={handleClearPurchased} className="btn-ghost text-sm text-red-500">
-                  🗑 Clear done ({purchasedCount})
+                  🗑 Erledigt entfernen ({purchasedCount})
                 </button>
               )}
             </>
@@ -142,10 +142,10 @@ function ShoppingList() {
       {items.length > 0 && (
         <div className="card p-4 mb-6 flex flex-wrap gap-6 text-sm">
           <span className="text-charcoal-600">
-            <strong className="text-charcoal-800">{purchasedCount}/{totalItems}</strong> items done
+            <strong className="text-charcoal-800">{purchasedCount}/{totalItems}</strong> Artikel erledigt
           </span>
           <span className="text-charcoal-600">
-            <strong className="text-charcoal-800">€{totalCost.toFixed(2)}</strong> est. total
+            <strong className="text-charcoal-800">€{totalCost.toFixed(2)}</strong> geschätzte Gesamtkosten
           </span>
           <div className="flex-1 flex items-center min-w-[120px]">
             <div className="w-full bg-cream-200 rounded-full h-2">
@@ -162,10 +162,10 @@ function ShoppingList() {
       {items.length === 0 && (
         <div className="card p-12 text-center mb-6">
           <p className="text-5xl mb-4">🛒</p>
-          <p className="text-charcoal-600 font-semibold mb-1">Your shopping list is empty</p>
+          <p className="text-charcoal-600 font-semibold mb-1">Deine Einkaufsliste ist leer</p>
           {mealPlan
-            ? <p className="text-charcoal-400 text-sm">Generate it from your current meal plan, or add items manually below.</p>
-            : <p className="text-charcoal-400 text-sm">Plan some meals first, then generate your list automatically.</p>
+            ? <p className="text-charcoal-400 text-sm">Generiere sie aus deinem aktuellen Mahlzeitenplan oder füge Artikel manuell hinzu.</p>
+            : <p className="text-charcoal-400 text-sm">Plane zuerst einige Mahlzeiten, dann wird deine Liste automatisch erstellt.</p>
           }
         </div>
       )}
@@ -183,7 +183,7 @@ function ShoppingList() {
             return (
               <div key={cat} className="flex items-center justify-between px-1">
                 <span className="text-xs text-charcoal-400">{meta.icon} {meta.label}</span>
-                <button onClick={() => setAddingTo(cat)} className="text-xs text-sage-500 hover:text-sage-700">+ Add</button>
+                <button onClick={() => setAddingTo(cat)} className="text-xs text-sage-500 hover:text-sage-700">+ Hinzufügen</button>
               </div>
             );
           }
@@ -198,7 +198,7 @@ function ShoppingList() {
                   <span className="text-xs bg-cream-100 text-charcoal-400 px-2 py-0.5 rounded-full">{group.length}</span>
                 </div>
                 <button onClick={() => setAddingTo(isAdding ? null : cat)} className="text-xs text-sage-500 hover:text-sage-700">
-                  {isAdding ? 'Cancel' : '+ Add'}
+                  {isAdding ? 'Abbrechen' : '+ Hinzufügen'}
                 </button>
               </div>
 
@@ -239,11 +239,11 @@ function ShoppingList() {
                     value={newItemName}
                     onChange={e => setNewItemName(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleAddItem(cat)}
-                    placeholder="Item name…"
+                    placeholder="Artikelname…"
                     className="input-field flex-1 text-sm"
                     autoFocus
                   />
-                  <button onClick={() => handleAddItem(cat)} className="btn-primary text-sm px-4">Add</button>
+                  <button onClick={() => handleAddItem(cat)} className="btn-primary text-sm px-4">Hinzufügen</button>
                 </div>
               )}
             </div>
@@ -259,11 +259,11 @@ function ShoppingList() {
             value={newItemName}
             onChange={e => setNewItemName(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleAddItem('other')}
-            placeholder="Add an item to your list…"
+            placeholder="Artikel zur Liste hinzufügen…"
             className="input-field flex-1"
           />
           <button onClick={() => handleAddItem('other')} disabled={!newItemName.trim()} className="btn-secondary">
-            Add
+            Hinzufügen
           </button>
         </div>
       )}

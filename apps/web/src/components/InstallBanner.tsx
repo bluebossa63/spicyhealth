@@ -33,12 +33,12 @@ export function InstallBanner() {
     <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-6 md:w-80 z-40 bg-white rounded-2xl shadow-xl border border-cream-200 p-4 flex items-center gap-3">
       <div className="w-10 h-10 rounded-xl bg-terracotta-100 flex items-center justify-center text-xl shrink-0">🌿</div>
       <div className="flex-1">
-        <p className="font-semibold text-sm text-charcoal-800">Install SpicyHealth</p>
-        <p className="text-xs text-charcoal-400">Add to home screen for quick access</p>
+        <p className="font-semibold text-sm text-charcoal-800">SpicyHealth installieren</p>
+        <p className="text-xs text-charcoal-400">Zum Startbildschirm hinzufügen für schnellen Zugriff</p>
       </div>
       <div className="flex flex-col gap-1">
-        <button onClick={handleInstall} className="btn-primary text-xs px-3 py-1.5">Install</button>
-        <button onClick={() => setDismissed(true)} className="btn-ghost text-xs px-3 py-1.5">Later</button>
+        <button onClick={handleInstall} className="btn-primary text-xs px-3 py-1.5">Installieren</button>
+        <button onClick={() => setDismissed(true)} className="btn-ghost text-xs px-3 py-1.5">Später</button>
       </div>
     </div>
   );

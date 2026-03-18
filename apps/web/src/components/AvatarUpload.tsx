@@ -9,7 +9,7 @@ export function AvatarUpload({ current, onUploaded }: { current?: string; onUplo
   const [error, setError] = useState('');
 
   async function handleFile(file: File) {
-    if (!file.type.startsWith('image/')) { setError('Please select an image file'); return; }
+    if (!file.type.startsWith('image/')) { setError('Bitte eine Bilddatei auswählen'); return; }
     setPreview(URL.createObjectURL(file));
     setUploading(true);
     setError('');
@@ -18,7 +18,7 @@ export function AvatarUpload({ current, onUploaded }: { current?: string; onUplo
       await fetch(uploadUrl, { method: 'PUT', body: file, headers: { 'x-ms-blob-type': 'BlockBlob', 'Content-Type': file.type } });
       onUploaded(publicUrl);
     } catch {
-      setError('Upload failed. Please try again.');
+      setError('Upload fehlgeschlagen. Bitte erneut versuchen.');
     } finally {
       setUploading(false);
     }
@@ -45,7 +45,7 @@ export function AvatarUpload({ current, onUploaded }: { current?: string; onUplo
         )}
       </div>
       <div className="absolute inset-0 rounded-full bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-        <span className="text-white text-xs font-semibold">{uploading ? '…' : 'Change'}</span>
+        <span className="text-white text-xs font-semibold">{uploading ? '…' : 'Ändern'}</span>
       </div>
       <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
       {error && <p className="text-xs text-red-500 mt-1 text-center">{error}</p>}

@@ -7,6 +7,16 @@ import { api } from '@/lib/api';
 
 const DIETARY_OPTIONS = ['vegan', 'vegetarian', 'gluten-free', 'dairy-free', 'nut-free', 'low-carb', 'high-protein'];
 
+const DIETARY_LABELS: Record<string, string> = {
+  'vegan': 'vegan',
+  'vegetarian': 'vegetarisch',
+  'gluten-free': 'glutenfrei',
+  'dairy-free': 'laktosefrei',
+  'nut-free': 'nussfrei',
+  'low-carb': 'kohlenhydratarm',
+  'high-protein': 'proteinreich',
+};
+
 export default function ProfilePage() {
   return (
     <ProtectedRoute>
@@ -59,38 +69,38 @@ function Profile() {
   }
 
   if (loading) return (
-    <div className="max-w-3xl mx-auto px-4 py-12 text-center text-charcoal-400">Loading profile…</div>
+    <div className="max-w-3xl mx-auto px-4 py-12 text-center text-charcoal-400">Profil wird geladen…</div>
   );
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="font-display text-3xl text-charcoal-800 mb-8">My Profile</h1>
+      <h1 className="font-display text-3xl text-charcoal-800 mb-8">Mein Profil</h1>
 
       <form onSubmit={handleSave} className="card p-6 mb-8 space-y-6">
         {/* Avatar */}
         <div className="flex items-center gap-6">
           <AvatarUpload current={profile?.avatarUrl} onUploaded={handleAvatarUploaded} />
           <div>
-            <p className="font-semibold text-charcoal-800">{profile?.displayName || 'Anonymous'}</p>
+            <p className="font-semibold text-charcoal-800">{profile?.displayName || 'Anonym'}</p>
             <p className="text-sm text-charcoal-400">{profile?.email}</p>
           </div>
         </div>
 
         {/* Display name */}
         <div>
-          <label className="block text-sm font-medium text-charcoal-700 mb-1">Display name</label>
+          <label className="block text-sm font-medium text-charcoal-700 mb-1">Anzeigename</label>
           <input
             type="text"
             value={displayName}
             onChange={e => setDisplayName(e.target.value)}
             className="input-field"
-            placeholder="Your name"
+            placeholder="Dein Name"
           />
         </div>
 
         {/* Dietary preferences */}
         <div>
-          <label className="block text-sm font-medium text-charcoal-700 mb-2">Dietary preferences</label>
+          <label className="block text-sm font-medium text-charcoal-700 mb-2">Ernährungsweise</label>
           <div className="flex flex-wrap gap-2">
             {DIETARY_OPTIONS.map(pref => (
               <button
@@ -103,24 +113,24 @@ function Profile() {
                     : 'bg-white border-charcoal-200 text-charcoal-600 hover:border-sage-400'
                 }`}
               >
-                {pref}
+                {DIETARY_LABELS[pref] ?? pref}
               </button>
             ))}
           </div>
         </div>
 
         <button type="submit" disabled={saving} className="btn-primary">
-          {saving ? 'Saving…' : saved ? '✓ Saved!' : 'Save changes'}
+          {saving ? 'Speichern…' : saved ? '✓ Gespeichert!' : 'Änderungen speichern'}
         </button>
       </form>
 
       {/* Saved recipes */}
       <section>
-        <h2 className="font-display text-2xl text-charcoal-800 mb-4">Saved Recipes ({savedRecipes.length})</h2>
+        <h2 className="font-display text-2xl text-charcoal-800 mb-4">Gespeicherte Rezepte ({savedRecipes.length})</h2>
         {savedRecipes.length === 0 ? (
           <div className="card p-8 text-center text-charcoal-400">
             <p className="text-4xl mb-3">🔖</p>
-            <p>No saved recipes yet. Heart a recipe to save it here.</p>
+            <p>Noch keine gespeicherten Rezepte. Markiere ein Rezept mit einem Herz, um es hier zu speichern.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

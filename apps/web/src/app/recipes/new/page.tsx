@@ -66,7 +66,7 @@ function NewRecipeForm() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="font-heading text-3xl text-charcoal mb-2">New Recipe</h1>
+      <h1 className="font-heading text-3xl text-charcoal mb-2">Neues Rezept</h1>
       <div className="flex gap-2 mb-8">
         {[1, 2, 3].map(s => (
           <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors ${step >= s ? 'bg-terracotta' : 'bg-blush-light'}`} />
@@ -75,49 +75,49 @@ function NewRecipeForm() {
 
       {step === 1 && (
         <Card>
-          <h2 className="font-heading text-xl text-charcoal mb-4">Basic info</h2>
+          <h2 className="font-heading text-xl text-charcoal mb-4">Grundangaben</h2>
           <div className="flex flex-col gap-4">
-            <Input label="Title" value={form.title} onChange={e => set('title', e.target.value)} placeholder="Avocado & Mango Salad" required />
+            <Input label="Titel" value={form.title} onChange={e => set('title', e.target.value)} placeholder="Avocado-Mango-Salat" required />
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-charcoal">Description</label>
+              <label className="text-sm font-medium text-charcoal">Beschreibung</label>
               <textarea value={form.description} onChange={e => set('description', e.target.value)}
-                rows={3} placeholder="A fresh, vibrant salad…"
+                rows={3} placeholder="Ein frischer, lebendiger Salat…"
                 className="input-field resize-none" />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-charcoal">Category</label>
+              <label className="text-sm font-medium text-charcoal">Kategorie</label>
               <select value={form.category} onChange={e => set('category', e.target.value)} className="input-field">
                 {CATEGORIES.map(c => <option key={c} value={c} className="capitalize">{c}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-3 gap-3">
-              <Input label="Prep (min)" type="number" value={form.prepTimeMinutes} onChange={e => set('prepTimeMinutes', Number(e.target.value))} />
-              <Input label="Cook (min)" type="number" value={form.cookTimeMinutes} onChange={e => set('cookTimeMinutes', Number(e.target.value))} />
-              <Input label="Servings" type="number" value={form.servings} onChange={e => set('servings', Number(e.target.value))} />
+              <Input label="Vorbereitung (min)" type="number" value={form.prepTimeMinutes} onChange={e => set('prepTimeMinutes', Number(e.target.value))} />
+              <Input label="Kochzeit (min)" type="number" value={form.cookTimeMinutes} onChange={e => set('cookTimeMinutes', Number(e.target.value))} />
+              <Input label="Portionen" type="number" value={form.servings} onChange={e => set('servings', Number(e.target.value))} />
             </div>
-            <Input label="Estimated cost (€)" type="number" step="0.5" value={form.estimatedCostEur} onChange={e => set('estimatedCostEur', Number(e.target.value))} />
-            <Input label="Tags (comma separated)" value={form.tags} onChange={e => set('tags', e.target.value)} placeholder="vegan, quick, gluten-free" />
-            <Button onClick={() => setStep(2)} className="w-full">Next: Ingredients →</Button>
+            <Input label="Geschätzte Kosten (€)" type="number" step="0.5" value={form.estimatedCostEur} onChange={e => set('estimatedCostEur', Number(e.target.value))} />
+            <Input label="Tags (kommagetrennt)" value={form.tags} onChange={e => set('tags', e.target.value)} placeholder="vegan, schnell, glutenfrei" />
+            <Button onClick={() => setStep(2)} className="w-full">Weiter: Zutaten →</Button>
           </div>
         </Card>
       )}
 
       {step === 2 && (
         <Card>
-          <h2 className="font-heading text-xl text-charcoal mb-4">Ingredients</h2>
+          <h2 className="font-heading text-xl text-charcoal mb-4">Zutaten</h2>
           <div className="flex flex-col gap-3">
             {form.ingredients.map((ing, i) => (
               <div key={i} className="grid grid-cols-4 gap-2 items-end">
-                <div className="col-span-2"><Input label={i === 0 ? 'Ingredient' : ''} value={ing.name} onChange={e => updateIngredient(i, 'name', e.target.value)} placeholder="Avocado" /></div>
-                <Input label={i === 0 ? 'Qty' : ''} type="number" value={ing.quantity} onChange={e => updateIngredient(i, 'quantity', Number(e.target.value))} />
-                <Input label={i === 0 ? 'Unit' : ''} value={ing.unit} onChange={e => updateIngredient(i, 'unit', e.target.value)} placeholder="g" />
+                <div className="col-span-2"><Input label={i === 0 ? 'Zutat' : ''} value={ing.name} onChange={e => updateIngredient(i, 'name', e.target.value)} placeholder="Avocado" /></div>
+                <Input label={i === 0 ? 'Menge' : ''} type="number" value={ing.quantity} onChange={e => updateIngredient(i, 'quantity', Number(e.target.value))} />
+                <Input label={i === 0 ? 'Einheit' : ''} value={ing.unit} onChange={e => updateIngredient(i, 'unit', e.target.value)} placeholder="g" />
               </div>
             ))}
-            <button onClick={addIngredient} className="btn-ghost text-sm mt-1">+ Add ingredient</button>
+            <button onClick={addIngredient} className="btn-ghost text-sm mt-1">+ Zutat hinzufügen</button>
           </div>
           {step === 2 && form.ingredients.length > 0 && (
             <div className="bg-cream-50 rounded-xl p-4 text-sm mt-4">
-              <p className="font-semibold text-charcoal-700 mb-1">Estimated totals</p>
+              <p className="font-semibold text-charcoal-700 mb-1">Geschätzte Gesamtwerte</p>
               <div className="flex gap-6 text-charcoal-500">
                 <span>🔥 {computedNutrition.calories} kcal</span>
                 <span>💶 €{computedCost.toFixed(2)}</span>
@@ -125,31 +125,31 @@ function NewRecipeForm() {
             </div>
           )}
           <div className="flex gap-3 mt-6">
-            <Button variant="ghost" onClick={() => setStep(1)}>← Back</Button>
-            <Button onClick={() => setStep(3)} className="flex-1">Next: Instructions →</Button>
+            <Button variant="ghost" onClick={() => setStep(1)}>← Zurück</Button>
+            <Button onClick={() => setStep(3)} className="flex-1">Weiter: Zubereitung →</Button>
           </div>
         </Card>
       )}
 
       {step === 3 && (
         <Card>
-          <h2 className="font-heading text-xl text-charcoal mb-4">Instructions</h2>
+          <h2 className="font-heading text-xl text-charcoal mb-4">Zubereitung</h2>
           <div className="flex flex-col gap-3">
             {form.instructions.map((step_, i) => (
               <div key={i} className="flex gap-3 items-start">
                 <span className="flex-shrink-0 w-6 h-6 bg-terracotta text-white text-xs font-bold rounded-full flex items-center justify-center mt-2.5">{i + 1}</span>
                 <textarea value={step_} onChange={e => updateStep(i, e.target.value)}
-                  rows={2} placeholder={`Step ${i + 1}…`}
+                  rows={2} placeholder={`Schritt ${i + 1}…`}
                   className="input-field flex-1 resize-none text-sm" />
               </div>
             ))}
-            <button onClick={addStep} className="btn-ghost text-sm mt-1">+ Add step</button>
+            <button onClick={addStep} className="btn-ghost text-sm mt-1">+ Schritt hinzufügen</button>
           </div>
           {error && <p className="text-sm text-red-500 mt-3">{error}</p>}
           <div className="flex gap-3 mt-6">
-            <Button variant="ghost" onClick={() => setStep(2)}>← Back</Button>
+            <Button variant="ghost" onClick={() => setStep(2)}>← Zurück</Button>
             <Button onClick={handleSubmit} className="flex-1" disabled={loading}>
-              {loading ? 'Saving…' : '🎉 Publish Recipe'}
+              {loading ? 'Speichern…' : '🎉 Rezept veröffentlichen'}
             </Button>
           </div>
         </Card>
