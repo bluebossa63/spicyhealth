@@ -1,71 +1,62 @@
 'use client';
-
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { Card } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  if (isAuthenticated) { router.replace('/'); return null; }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const fd = new FormData(e.currentTarget);
     try {
-      await login(fd.get('email') as string, fd.get('password') as string);
-      router.push('/');
+      await login(email, password);
+      router.replace('/recipes');
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        <h1 className="font-heading text-3xl text-center text-charcoal mb-2">Welcome back</h1>
-        <p className="text-center text-charcoal-light text-sm mb-8">Sign in to your SpicyHealth account</p>
-
-        <Card>
-          {/* Social login buttons (deferred — S1-03/04/05) */}
-          <div className="flex flex-col gap-3 mb-6 opacity-50 cursor-not-allowed">
-            <div className="flex items-center justify-center gap-3 border border-blush rounded-xl px-4 py-2.5 text-sm font-medium text-charcoal-light">
-              Social login coming soon
-            </div>
+    <main className="min-h-screen flex items-center justify-center px-4 bg-cream-50">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <span className="text-4xl">🌿</span>
+          <h1 className="font-display text-3xl text-charcoal-800 mt-2">Welcome back</h1>
+          <p className="text-charcoal-400 text-sm mt-1">Sign in to your SpicyHealth account</p>
+        </div>
+        <form onSubmit={handleSubmit} className="card p-6 space-y-4">
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">{error}</div>
+          )}
+          <div>
+            <label className="block text-sm font-medium text-charcoal-700 mb-1">Email</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="input-field" placeholder="you@example.com" autoComplete="email" />
           </div>
-
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-blush" />
-            <span className="text-xs text-charcoal-light">or</span>
-            <div className="flex-1 h-px bg-blush" />
+          <div>
+            <label className="block text-sm font-medium text-charcoal-700 mb-1">Password</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="input-field" placeholder="••••••••" autoComplete="current-password" />
           </div>
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <Input label="Email" type="email" name="email" placeholder="you@example.com" required />
-            <Input label="Password" type="password" name="password" placeholder="••••••••" required />
-            {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full mt-2" disabled={loading}>
-              {loading ? 'Signing in…' : 'Sign in'}
-            </Button>
-          </form>
-
-          <p className="text-center text-sm text-charcoal-light mt-5">
-            No account yet?{' '}
-            <Link href="/auth/register" className="text-terracotta font-medium hover:underline">
-              Sign up free
-            </Link>
-          </p>
-        </Card>
+          <button type="submit" disabled={loading} className="btn-primary w-full">
+            {loading ? 'Signing in…' : 'Sign in'}
+          </button>
+        </form>
+        <p className="text-center text-sm text-charcoal-500 mt-4">
+          No account?{' '}
+          <Link href="/auth/register" className="text-terracotta-500 hover:underline font-medium">Create one</Link>
+        </p>
       </div>
-    </div>
+    </main>
   );
 }

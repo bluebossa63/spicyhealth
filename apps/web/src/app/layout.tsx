@@ -5,6 +5,8 @@ import './globals.css';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { AuthProvider } from '@/lib/auth';
+import { BottomTabBar } from '@/components/BottomTabBar';
+import { InstallBanner } from '@/components/InstallBanner';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -32,8 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen flex flex-col bg-cream font-body text-charcoal">
         <AuthProvider>
           <NavBar />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-16 md:pb-0">{children}</main>
           <Footer />
+          <BottomTabBar />
+          <InstallBanner />
         </AuthProvider>
       </body>
     </html>

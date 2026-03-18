@@ -1,20 +1,14 @@
 import { Router, Request, Response } from 'express';
-import { ConfidentialClientApplication } from '@azure/msal-node';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 import { containers } from '../services/cosmos';
 
 export const authRouter = Router();
 
-const msalConfig = {
-  auth: {
-    clientId: process.env.ENTRA_CLIENT_ID!,
-    clientSecret: process.env.ENTRA_CLIENT_SECRET!,
-    authority: `https://${process.env.ENTRA_TENANT}/${process.env.ENTRA_TENANT}/${process.env.ENTRA_POLICY}`,
-    knownAuthorities: [process.env.ENTRA_TENANT!],
-  },
-};
-
-const cca = new ConfidentialClientApplication(msalConfig);
+const JWT_SECRET = process.env.JWT_SECRET || 'spicyhealth-dev-secret-change-in-prod';
+const JWT_EXPIRES_IN = '7d';
 
 const registerSchema = z.object({
   displayName: z.string().min(1).max(100),
@@ -37,33 +31,45 @@ authRouter.post('/register', async (req: Request, res: Response) => {
   const { displayName, email, password } = parsed.data;
 
   try {
-    // Acquire token using ROPC flow to create user
-    const tokenResponse = await cca.acquireTokenByUsernamePassword({
-      scopes: ['openid', 'profile'],
-      username: email,
-      password,
-    });
+    // Check if email already registered
+    const { resources } = await containers.users.items.query({
+      query: 'SELECT * FROM c WHERE c.email = @email',
+      parameters: [{ name: '@email', value: email.toLowerCase() }],
+    }).fetchAll();
 
-    // Create user profile in Cosmos DB
+    if (resources.length > 0) {
+      return res.status(409).json({ error: 'Email already registered' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const userId = uuidv4();
     const now = new Date().toISOString();
+
     const userDoc = {
-      id: tokenResponse?.uniqueId || email,
-      email,
+      id: userId,
+      email: email.toLowerCase(),
       displayName,
+      passwordHash,
       dietaryPreferences: [],
       savedRecipeIds: [],
       createdAt: now,
     };
 
-    await containers.users.items.upsert(userDoc);
+    await containers.users.items.create(userDoc);
+
+    const token = jwt.sign(
+      { sub: userId, email: userDoc.email, displayName },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
 
     res.status(201).json({
-      user: { id: userDoc.id, email, displayName },
-      token: tokenResponse?.idToken,
+      user: { id: userId, email: userDoc.email, displayName },
+      token,
     });
   } catch (err: any) {
     console.error('Register error:', err.message);
-    res.status(400).json({ error: 'Registration failed', message: err.message });
+    res.status(500).json({ error: 'Registration failed' });
   }
 });
 
@@ -77,22 +83,34 @@ authRouter.post('/login', async (req: Request, res: Response) => {
   const { email, password } = parsed.data;
 
   try {
-    const tokenResponse = await cca.acquireTokenByUsernamePassword({
-      scopes: ['openid', 'profile', 'email'],
-      username: email,
-      password,
-    });
+    const { resources } = await containers.users.items.query({
+      query: 'SELECT * FROM c WHERE c.email = @email',
+      parameters: [{ name: '@email', value: email.toLowerCase() }],
+    }).fetchAll();
+
+    const user = resources[0];
+    if (!user || !user.passwordHash) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const valid = await bcrypt.compare(password, user.passwordHash);
+    if (!valid) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const token = jwt.sign(
+      { sub: user.id, email: user.email, displayName: user.displayName },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
 
     res.json({
-      token: tokenResponse?.idToken,
-      user: {
-        id: tokenResponse?.uniqueId,
-        email: tokenResponse?.account?.username,
-      },
+      token,
+      user: { id: user.id, email: user.email, displayName: user.displayName },
     });
   } catch (err: any) {
     console.error('Login error:', err.message);
-    res.status(401).json({ error: 'Invalid email or password' });
+    res.status(500).json({ error: 'Login failed' });
   }
 });
 
@@ -102,7 +120,7 @@ authRouter.get('/me', async (req: Request, res: Response) => {
   if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
   try {
-    const { resource } = await containers.users.item(user.sub || user.oid, user.sub || user.oid).read();
+    const { resource } = await containers.users.item(user.sub, user.sub).read();
     if (!resource) return res.status(404).json({ error: 'User profile not found' });
     res.json({ user: resource });
   } catch {

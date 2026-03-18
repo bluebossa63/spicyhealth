@@ -1,13 +1,25 @@
 {
   "name": "SpicyHealth",
   "short_name": "SpicyHealth",
-  "description": "Healthy food & lifestyle recipes, meal planning, and nutrition tracking",
+  "description": "Healthy recipes, meal planning, and shopping lists",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fdf6f0",
-  "theme_color": "#d4856a",
+  "background_color": "#FDF6F0",
+  "theme_color": "#D96C4B",
+  "orientation": "portrait-primary",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ]
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "health", "lifestyle"]
 }
