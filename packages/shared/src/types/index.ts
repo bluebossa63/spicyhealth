@@ -30,6 +30,10 @@ export interface Ingredient {
   quantity: number;
   unit: string;
   calories?: number;
+  proteinG?: number;
+  carbsG?: number;
+  fatG?: number;
+  fiberG?: number;
   estimatedCostEur?: number;
   openFoodFactsId?: string;
 }
