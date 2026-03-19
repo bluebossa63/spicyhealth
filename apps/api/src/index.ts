@@ -27,7 +27,13 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(helmet());
-app.use(cors({ origin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000' }));
+app.use(cors({
+  origin: (origin, cb) => {
+    const allowed = (process.env.ALLOWED_ORIGIN || 'http://localhost:3000').split(',').map(s => s.trim());
+    if (!origin || allowed.includes(origin)) cb(null, true);
+    else cb(null, false);
+  },
+}));
 app.use(express.json());
 app.use(rateLimit({ windowMs: 60_000, max: 100, standardHeaders: true, legacyHeaders: false }));
 

@@ -79,7 +79,7 @@ resource "azurerm_linux_web_app" "api" {
     COSMOS_KEY         = azurerm_cosmosdb_account.main.primary_key
     B2C_TENANT         = var.b2c_tenant
     B2C_POLICY         = var.b2c_policy
-    ALLOWED_ORIGIN     = "https://spicyhealth.niceneasy.ch"
+    ALLOWED_ORIGIN     = "https://spicyhealth.niceneasy.ch,https://${azurerm_static_web_app.frontend.default_host_name}"
     STORAGE_ACCOUNT    = azurerm_storage_account.media.name
     STORAGE_CONTAINER  = azurerm_storage_container.media.name
     STORAGE_KEY        = azurerm_storage_account.media.primary_access_key

@@ -47,28 +47,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function login(email: string, password: string) {
-    const res = await fetch(`${API}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    let res: Response;
+    try {
+      res = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+    } catch {
+      throw new Error('Server nicht erreichbar. Bitte Internetverbindung prüfen.');
+    }
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || 'Login failed');
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Anmeldung fehlgeschlagen');
     }
     const data = await res.json();
     persist(data.user, data.token);
   }
 
   async function register(displayName: string, email: string, password: string) {
-    const res = await fetch(`${API}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ displayName, email, password }),
-    });
+    let res: Response;
+    try {
+      res = await fetch(`${API}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ displayName, email, password }),
+      });
+    } catch {
+      throw new Error('Server nicht erreichbar. Bitte Internetverbindung prüfen.');
+    }
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || 'Registration failed');
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Registrierung fehlgeschlagen');
     }
     const data = await res.json();
     persist(data.user, data.token);
