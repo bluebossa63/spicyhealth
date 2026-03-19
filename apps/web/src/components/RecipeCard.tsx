@@ -77,7 +77,7 @@ export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
             <div className="flex gap-3 text-xs text-charcoal-light mt-1">
               <span>⏱ {totalTime} min</span>
               <span>🔥 {recipe.nutrition.calories} kcal</span>
-              <span>💰 €{recipe.estimatedCostEur.toFixed(2)}</span>
+              <span>💰 CHF {recipe.estimatedCostEur.toFixed(2)}</span>
             </div>
 
             {/* Quick Add */}

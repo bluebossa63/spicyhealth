@@ -95,7 +95,7 @@ function NewRecipeForm() {
               <Input label="Kochzeit (min)" type="number" value={form.cookTimeMinutes} onChange={e => set('cookTimeMinutes', Number(e.target.value))} />
               <Input label="Portionen" type="number" value={form.servings} onChange={e => set('servings', Number(e.target.value))} />
             </div>
-            <Input label="Geschätzte Kosten (€)" type="number" step="0.5" value={form.estimatedCostEur} onChange={e => set('estimatedCostEur', Number(e.target.value))} />
+            <Input label="Geschätzte Kosten (CHF)" type="number" step="0.5" value={form.estimatedCostEur} onChange={e => set('estimatedCostEur', Number(e.target.value))} />
             <Input label="Tags (kommagetrennt)" value={form.tags} onChange={e => set('tags', e.target.value)} placeholder="vegan, schnell, glutenfrei" />
             <Button onClick={() => setStep(2)} className="w-full">Weiter: Zutaten →</Button>
           </div>
@@ -120,7 +120,7 @@ function NewRecipeForm() {
               <p className="font-semibold text-charcoal-700 mb-1">Geschätzte Gesamtwerte</p>
               <div className="flex gap-6 text-charcoal-500">
                 <span>🔥 {computedNutrition.calories} kcal</span>
-                <span>💶 €{computedCost.toFixed(2)}</span>
+                <span>💰 CHF {computedCost.toFixed(2)}</span>
               </div>
             </div>
           )}

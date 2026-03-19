@@ -178,7 +178,7 @@ function EditRecipeForm() {
                   <input type="number" min="0" value={ing.calories} onChange={e => updateIngredient(i, 'calories', Number(e.target.value))} className="input-field text-sm" placeholder="kcal" />
                 </div>
                 <div className="col-span-1 flex justify-center">
-                  <button onClick={() => removeIngredient(i)} className="text-charcoal-300 hover:text-red-400 text-lg leading-none">×</button>
+                  <button onClick={() => removeIngredient(i)} className="text-charcoal-300 hover:text-red-400 text-lg leading-none" aria-label="Zutat entfernen">×</button>
                 </div>
               </div>
             ))}
@@ -194,7 +194,7 @@ function EditRecipeForm() {
               <p className="font-semibold text-charcoal-700 mb-1">Geschätzte Gesamtwerte</p>
               <div className="flex gap-6 text-charcoal-500">
                 <span>🔥 {computedCalories} kcal</span>
-                <span>💶 €{computedCost.toFixed(2)}</span>
+                <span>💰 CHF {computedCost.toFixed(2)}</span>
               </div>
             </div>
           )}
@@ -218,7 +218,7 @@ function EditRecipeForm() {
                   {i + 1}
                 </span>
                 <textarea value={inst} onChange={e => updateStep(i, e.target.value)} rows={2} className="input-field resize-none flex-1 text-sm" placeholder={`Schritt ${i + 1}…`} />
-                <button onClick={() => removeStep(i)} className="text-charcoal-300 hover:text-red-400 text-lg leading-none mt-1">×</button>
+                <button onClick={() => removeStep(i)} className="text-charcoal-300 hover:text-red-400 text-lg leading-none mt-1" aria-label="Schritt entfernen">×</button>
               </div>
             ))}
           </div>

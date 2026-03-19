@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { api } from '@/lib/api';
 import { api as mealApi } from '@/lib/api';
@@ -34,6 +34,28 @@ function ShoppingList() {
   const [mealPlan, setMealPlan] = useState<any>(null);
   const [newItemName, setNewItemName] = useState('');
   const [addingTo, setAddingTo] = useState<string | null>(null);
+  const [swipingId, setSwipingId] = useState<string | null>(null);
+  const [swipeX, setSwipeX] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+
+  function onTouchStart(e: React.TouchEvent, id: string) {
+    touchStartX.current = e.touches[0].clientX;
+    setSwipingId(id);
+    setSwipeX(0);
+  }
+
+  function onTouchMove(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const dx = e.touches[0].clientX - touchStartX.current;
+    setSwipeX(Math.min(0, dx));
+  }
+
+  function onTouchEnd(id: string) {
+    if (swipeX < -72) handleDelete(id);
+    touchStartX.current = null;
+    setSwipingId(null);
+    setSwipeX(0);
+  }
 
   useEffect(() => {
     Promise.all([
@@ -145,7 +167,7 @@ function ShoppingList() {
             <strong className="text-charcoal-800">{purchasedCount}/{totalItems}</strong> Artikel erledigt
           </span>
           <span className="text-charcoal-600">
-            <strong className="text-charcoal-800">€{totalCost.toFixed(2)}</strong> geschätzte Gesamtkosten
+            <strong className="text-charcoal-800">CHF {totalCost.toFixed(2)}</strong> geschätzte Gesamtkosten
           </span>
           <div className="flex-1 flex items-center min-w-[120px]">
             <div className="w-full bg-cream-200 rounded-full h-2">
@@ -203,33 +225,53 @@ function ShoppingList() {
               </div>
 
               <ul>
-                {group.map((item, i) => (
-                  <li key={item.id} className={`flex items-center gap-3 px-4 py-3 ${i < group.length - 1 ? 'border-b border-cream-50' : ''}`}>
-                    <input
-                      type="checkbox"
-                      checked={item.purchased}
-                      onChange={e => handleToggle(item.id, e.target.checked)}
-                      className="w-5 h-5 rounded accent-sage-500 shrink-0 cursor-pointer"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <span className={`text-sm ${item.purchased ? 'line-through text-charcoal-400' : 'text-charcoal-800'}`}>
-                        {item.name}
-                      </span>
-                      <span className="text-xs text-charcoal-400 ml-2">
-                        {item.quantity} {item.unit}
-                      </span>
+                {group.map((item, i) => {
+                  const isSwiping = swipingId === item.id;
+                  const translate = isSwiping ? swipeX : 0;
+                  return (
+                  <li
+                    key={item.id}
+                    className={`relative overflow-hidden ${i < group.length - 1 ? 'border-b border-cream-50' : ''}`}
+                    onTouchStart={e => onTouchStart(e, item.id)}
+                    onTouchMove={onTouchMove}
+                    onTouchEnd={() => onTouchEnd(item.id)}
+                  >
+                    {/* Swipe-reveal delete background */}
+                    <div className="absolute inset-y-0 right-0 flex items-center justify-center bg-red-400 w-20">
+                      <span className="text-white text-sm font-semibold">Löschen</span>
                     </div>
-                    {item.estimatedCostEur > 0 && (
-                      <span className="text-xs text-charcoal-400 shrink-0">€{item.estimatedCostEur.toFixed(2)}</span>
-                    )}
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="text-charcoal-300 hover:text-red-400 transition-colors shrink-0 text-lg leading-none"
+                    <div
+                      className="flex items-center gap-3 px-4 py-3 bg-white transition-transform"
+                      style={{ transform: `translateX(${translate}px)` }}
                     >
-                      ×
-                    </button>
+                      <input
+                        type="checkbox"
+                        checked={item.purchased}
+                        onChange={e => handleToggle(item.id, e.target.checked)}
+                        className="w-5 h-5 rounded accent-sage-500 shrink-0 cursor-pointer"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <span className={`text-sm ${item.purchased ? 'line-through text-charcoal-400' : 'text-charcoal-800'}`}>
+                          {item.name}
+                        </span>
+                        <span className="text-xs text-charcoal-400 ml-2">
+                          {item.quantity} {item.unit}
+                        </span>
+                      </div>
+                      {item.estimatedCostEur > 0 && (
+                        <span className="text-xs text-charcoal-400 shrink-0">CHF {item.estimatedCostEur.toFixed(2)}</span>
+                      )}
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="text-charcoal-300 hover:text-red-400 transition-colors shrink-0 text-lg leading-none"
+                        aria-label={`${item.name} löschen`}
+                      >
+                        ×
+                      </button>
+                    </div>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
 
               {isAdding && (

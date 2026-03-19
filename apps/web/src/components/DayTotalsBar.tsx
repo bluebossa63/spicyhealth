@@ -9,7 +9,7 @@ export function DayTotalsBar({ totals }: { totals: DayTotals }) {
     <div className="mt-2 text-xs text-charcoal-500 space-y-1">
       <div className="flex justify-between">
         <span>🔥 {Math.round(n.calories)} kcal</span>
-        <span>💶 €{totalCostEur.toFixed(2)}</span>
+        <span>💰 CHF {totalCostEur.toFixed(2)}</span>
       </div>
       <div className="flex justify-between text-charcoal-400">
         <span>E {Math.round(n.proteinG)}g</span>

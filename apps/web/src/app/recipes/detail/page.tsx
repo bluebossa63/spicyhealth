@@ -130,7 +130,7 @@ function RecipeDetail() {
         <div className="flex flex-wrap gap-4 mt-4 text-sm text-charcoal-500">
           <span>⏱ {totalTime} min</span>
           <span>👤 {recipe.servings} Portionen</span>
-          {recipe.estimatedCostEur > 0 && <span>💶 €{recipe.estimatedCostEur.toFixed(2)}</span>}
+          {recipe.estimatedCostEur > 0 && <span>💰 CHF {recipe.estimatedCostEur.toFixed(2)}</span>}
           {recipe.tags?.map((t: string) => (
             <span key={t} className="px-2 py-0.5 bg-cream-100 rounded-full text-xs">{t}</span>
           ))}
@@ -150,7 +150,7 @@ function RecipeDetail() {
               <div className="flex items-center gap-4 text-charcoal-400">
                 <span>{ing.quantity} {ing.unit}</span>
                 {ing.calories && <span>{ing.calories} kcal</span>}
-                {ing.estimatedCostEur && <span>€{ing.estimatedCostEur.toFixed(2)}</span>}
+                {ing.estimatedCostEur && <span>CHF {ing.estimatedCostEur.toFixed(2)}</span>}
               </div>
             </li>
           ))}
@@ -158,7 +158,7 @@ function RecipeDetail() {
         {recipe.estimatedCostEur > 0 && (
           <div className="border-t border-cream-200 mt-4 pt-3 flex justify-between text-sm font-semibold text-charcoal-700">
             <span>Gesamtkosten</span>
-            <span>€{recipe.estimatedCostEur.toFixed(2)} (€{(recipe.estimatedCostEur / recipe.servings).toFixed(2)} / Portion)</span>
+            <span>CHF {recipe.estimatedCostEur.toFixed(2)} (CHF {(recipe.estimatedCostEur / recipe.servings).toFixed(2)} / Portion)</span>
           </div>
         )}
       </section>

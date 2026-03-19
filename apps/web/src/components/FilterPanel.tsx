@@ -66,7 +66,7 @@ export function FilterPanel({ filters, onChange }: Props) {
 
       <div>
         <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">
-          Max. Kosten <span className="text-terracotta">{filters.maxCost === 30 ? 'Beliebig' : `€${filters.maxCost}`}</span>
+          Max. Kosten <span className="text-terracotta">{filters.maxCost === 30 ? 'Beliebig' : `CHF${filters.maxCost}`}</span>
         </p>
         <input type="range" min={1} max={30} step={1} value={filters.maxCost}
           onChange={e => set('maxCost', Number(e.target.value))}

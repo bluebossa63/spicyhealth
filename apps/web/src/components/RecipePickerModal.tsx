@@ -57,7 +57,7 @@ export function RecipePickerModal({ onSelect, onClose }: RecipePickerModalProps)
                 <p className="font-semibold text-sm text-charcoal-800 truncate">{recipe.title}</p>
                 <p className="text-xs text-charcoal-400">
                   {recipe.nutrition?.calories ? `${recipe.nutrition.calories} kcal` : ''}
-                  {recipe.estimatedCostEur ? ` · €${recipe.estimatedCostEur.toFixed(2)}` : ''}
+                  {recipe.estimatedCostEur ? ` · CHF ${recipe.estimatedCostEur.toFixed(2)}` : ''}
                   {recipe.prepTimeMinutes ? ` · ${recipe.prepTimeMinutes + recipe.cookTimeMinutes}min` : ''}
                 </p>
               </div>

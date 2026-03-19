@@ -36,12 +36,13 @@ export function MealSlot({ id, slot, recipe, onClear, onPick }: MealSlotProps) {
               <p className="text-xs font-semibold text-charcoal-800 truncate leading-tight">{recipe.title}</p>
               <p className="text-xs text-charcoal-400">
                 {recipe.nutrition?.calories ? `${recipe.nutrition.calories} kcal` : ''}
-                {recipe.estimatedCostEur ? ` · €${recipe.estimatedCostEur.toFixed(2)}` : ''}
+                {recipe.estimatedCostEur ? ` · CHF ${recipe.estimatedCostEur.toFixed(2)}` : ''}
               </p>
             </div>
           </div>
           <button
             onClick={onClear}
+            aria-label={`${recipe?.title ?? 'Rezept'} entfernen`}
             className="absolute -top-1 -right-1 w-5 h-5 bg-charcoal-400 hover:bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
           >
             ×
@@ -50,6 +51,7 @@ export function MealSlot({ id, slot, recipe, onClear, onPick }: MealSlotProps) {
       ) : (
         <button
           onClick={onPick}
+          aria-label="Rezept hinzufügen"
           className="w-full h-full min-h-[64px] flex items-center justify-center text-charcoal-300 hover:text-sage-500 transition-colors text-xl"
         >
           +

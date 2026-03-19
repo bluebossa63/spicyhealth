@@ -28,7 +28,7 @@ export function WeekTotalsPanel({ days }: WeekTotalsPanelProps) {
           { label: 'Eiweiß', value: `${Math.round(totals.proteinG)}g`, icon: '💪' },
           { label: 'Kohlenhydrate', value: `${Math.round(totals.carbsG)}g`, icon: '🌾' },
           { label: 'Fett', value: `${Math.round(totals.fatG)}g`, icon: '🥑' },
-          { label: 'Gesch. Kosten', value: `€${totals.cost.toFixed(2)}`, icon: '💶' },
+          { label: 'Gesch. Kosten', value: `CHF ${totals.cost.toFixed(2)}`, icon: '💰' },
         ].map(({ label, value, icon }) => (
           <div key={label} className="bg-cream-50 rounded-xl p-3 text-center">
             <div className="text-lg mb-1">{icon}</div>
@@ -39,7 +39,7 @@ export function WeekTotalsPanel({ days }: WeekTotalsPanelProps) {
       </div>
       {activeDays > 0 && (
         <p className="text-xs text-charcoal-400 mt-3 text-center">
-          Ø pro Tag: {Math.round(totals.calories / activeDays)} kcal · €{(totals.cost / activeDays).toFixed(2)}
+          Ø pro Tag: {Math.round(totals.calories / activeDays)} kcal · CHF {(totals.cost / activeDays).toFixed(2)}
         </p>
       )}
     </div>
