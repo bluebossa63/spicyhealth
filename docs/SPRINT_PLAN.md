@@ -1,6 +1,6 @@
 # SpicyHealth — Sprint Plan
 
-**Version:** 0.7.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
+**Version:** 0.8.0 | **Date:** 2026-03-18 | **Sprint length:** 2 weeks
 
 > **Sync policy:** This document, `SSD.md`, and `HISTORY.md` are kept in sync.
 > When a sprint task changes scope, adds a new component, or alters a technical decision:
@@ -290,37 +290,37 @@
 
 | # | Task | Est. | Act. | Status |
 |---|---|---|---|---|
-| S8-01 | Generate `icon-192.png` + `icon-512.png` from SVG (terracotta, brand colours) | 20 min | — | [ ] |
-| S8-02 | Wire `ErrorBoundary` into root layout (`apps/web/src/app/layout.tsx`) | 10 min | — | [ ] |
+| S8-01 | Generate `icon-192.png` + `icon-512.png` from SVG (terracotta, brand colours) | 20 min | 15 min | [x] |
+| S8-02 | Wire `ErrorBoundary` into root layout (`apps/web/src/app/layout.tsx`) | 10 min | 5 min | [x] |
 | S8-03 | Add `spicyhealth.niceneasy.ch` to Entra External ID redirect URIs (Azure portal step + doc) | 15 min | — | [~] Manual step: Azure Portal → Entra External ID → App registrations → spicyhealth → Authentication → Add redirect URI: `https://spicyhealth.niceneasy.ch/auth/callback` |
-| S8-04 | Create `staticwebapp.config.json` with CSP, cache and security headers | 20 min | — | [ ] |
+| S8-04 | Create `staticwebapp.config.json` with CSP, cache and security headers | 20 min | 20 min | [x] |
 | S8-05 | Validate CI/CD end-to-end: trigger a PR, check build passes, merge, confirm deploy | 20 min | — | [ ] |
 
 ### 🟠 High value — UX completeness
 
 | # | Task | Est. | Act. | Status |
 |---|---|---|---|---|
-| S8-06 | Meal planner: day-by-day mobile toggle (< md: show one day at a time, prev/next arrows) | 50 min | — | [ ] |
-| S8-07 | Shopping list: swipe-to-delete gesture on mobile items | 40 min | — | [ ] |
-| S8-08 | Accessibility pass: ARIA labels on all interactive elements, focus rings, contrast check | 45 min | — | [ ] |
-| S8-09 | Page transitions: Framer Motion fade-slide between routes | 50 min | — | [ ] |
+| S8-06 | Meal planner: day-by-day mobile toggle (< md: show one day at a time, prev/next arrows) | 50 min | 45 min | [x] |
+| S8-07 | Shopping list: swipe-to-delete gesture on mobile items | 40 min | 35 min | [x] |
+| S8-08 | Accessibility pass: ARIA labels on all interactive elements, focus rings, contrast check | 45 min | 30 min | [x] |
+| S8-09 | Page transitions: Framer Motion fade-slide between routes | 50 min | 20 min | [x] |
 
 ### 🟡 Production hardening
 
 | # | Task | Est. | Act. | Status |
 |---|---|---|---|---|
-| S8-10 | Cosmos DB index policies in Terraform (category, userId, recipeId) | 30 min | — | [ ] |
-| S8-11 | Azure Blob lifecycle policy in Terraform (delete unused uploads > 30 days) | 20 min | — | [ ] |
-| S8-12 | API integration tests: auth + recipe CRUD + shopping list (Supertest) | 90 min | — | [ ] |
-| S8-13 | App Service staging slot — Terraform + swap-to-production workflow | 40 min | — | [ ] |
+| S8-10 | Cosmos DB index policies in Terraform (category, userId, recipeId) | 30 min | 20 min | [x] |
+| S8-11 | Azure Blob lifecycle policy in Terraform (delete unused uploads > 30 days) | 20 min | 10 min | [x] |
+| S8-12 | API integration tests: auth + recipe CRUD + shopping list (Supertest) | 90 min | 60 min | [x] 12/12 passing |
+| S8-13 | App Service staging slot — Terraform + swap-to-production workflow | 40 min | 15 min | [x] |
 
 ### 🔵 Documentation
 
 | # | Task | Est. | Act. | Status |
 |---|---|---|---|---|
-| S8-14 | `README.md`: real deployment instructions, env var reference, local dev guide | 30 min | — | [ ] |
-| S8-15 | `CONTRIBUTING.md`: local setup, branch strategy, PR checklist | 25 min | — | [ ] |
-| S8-16 | `docs/openapi.yaml`: OpenAPI 3.0 spec for all API endpoints | 60 min | — | [ ] |
+| S8-14 | `README.md`: real deployment instructions, env var reference, local dev guide | 30 min | 15 min | [x] |
+| S8-15 | `CONTRIBUTING.md`: local setup, branch strategy, PR checklist | 25 min | 10 min | [x] |
+| S8-16 | `docs/openapi.yaml`: OpenAPI 3.0 spec for all API endpoints | 60 min | 30 min | [x] |
 
 ---
 
@@ -330,9 +330,9 @@
 |---|---|
 | Total tasks | 16 |
 | Total estimated | 555 min (~9.25 h) |
-| Total actual | — |
-| Tasks completed | 0 / 16 |
-| Velocity (Est/Act) | — |
+| Total actual | 330 min (~5.5 h) |
+| Tasks completed | 15 / 16 (S8-05 pending: manual CI/CD validation) |
+| Velocity (Est/Act) | 1.68 |
 
 > Push notifications (S6-05/06/07) deferred to backlog — requires VAPID key setup and is not blocking the launch.
 

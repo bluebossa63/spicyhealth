@@ -1,0 +1,564 @@
+openapi: 3.0.3
+info:
+  title: SpicyHealth API
+  version: 0.8.0
+  description: REST API for the SpicyHealth recipe and meal-planning platform.
+  contact:
+    email: franziska.ulrich@niceneasy.ch
+
+servers:
+  - url: https://spicyhealth-api-prod.azurewebsites.net
+    description: Production
+  - url: http://localhost:3001
+    description: Local development
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Ingredient:
+      type: object
+      required: [name, quantity, unit]
+      properties:
+        name:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+        calories:
+          type: number
+        proteinG:
+          type: number
+        carbsG:
+          type: number
+        fatG:
+          type: number
+        fiberG:
+          type: number
+        estimatedCostEur:
+          type: number
+        openFoodFactsId:
+          type: string
+
+    Recipe:
+      type: object
+      required: [id, title, description, category, prepTimeMinutes, cookTimeMinutes, servings, ingredients, instructions]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 1000
+        category:
+          type: string
+          enum: [breakfast, lunch, dinner, snack, dessert, smoothie]
+        imageUrl:
+          type: string
+          format: uri
+        prepTimeMinutes:
+          type: integer
+          minimum: 0
+        cookTimeMinutes:
+          type: integer
+          minimum: 0
+        servings:
+          type: integer
+          minimum: 1
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ingredient'
+        instructions:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        estimatedCostEur:
+          type: number
+        nutrition:
+          type: object
+          properties:
+            calories:
+              type: number
+            proteinG:
+              type: number
+            carbsG:
+              type: number
+            fatG:
+              type: number
+            fiberG:
+              type: number
+        authorId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Comment:
+      type: object
+      required: [id, recipeId, userId, body, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipeId:
+          type: string
+        userId:
+          type: string
+        parentId:
+          type: string
+        body:
+          type: string
+          maxLength: 2000
+        likes:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    ShoppingItem:
+      type: object
+      required: [id, name, quantity, unit]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+        checked:
+          type: boolean
+        category:
+          type: string
+          enum: [produce, dairy, meat, grains, pantry, frozen, other]
+
+    MealDay:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        breakfast:
+          $ref: '#/components/schemas/Recipe'
+        lunch:
+          $ref: '#/components/schemas/Recipe'
+        dinner:
+          $ref: '#/components/schemas/Recipe'
+        snacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipe'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, name]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                name:
+                  type: string
+      responses:
+        '201':
+          description: User created, JWT returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already registered
+
+  /api/auth/login:
+    post:
+      summary: Login with email + password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: JWT returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+        '401':
+          description: Invalid credentials
+
+  /api/auth/google:
+    get:
+      summary: Initiate Google OAuth flow
+      security: []
+      responses:
+        '302':
+          description: Redirect to Google
+
+  /api/recipes:
+    get:
+      summary: List recipes
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [breakfast, lunch, dinner, snack, dessert, smoothie]
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: maxCalories
+          in: query
+          schema:
+            type: integer
+        - name: maxPrepTime
+          in: query
+          schema:
+            type: integer
+        - name: maxCost
+          in: query
+          schema:
+            type: number
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 12
+      responses:
+        '200':
+          description: Paginated recipe list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Recipe'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pageSize:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Create a recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '201':
+          description: Recipe created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipe:
+                    $ref: '#/components/schemas/Recipe'
+        '400':
+          description: Validation error
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/recipes/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get a single recipe
+      responses:
+        '200':
+          description: Recipe detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipe:
+                    $ref: '#/components/schemas/Recipe'
+        '404':
+          description: Not found
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      summary: Update a recipe (owner only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '200':
+          description: Updated recipe
+        '403':
+          description: Forbidden — not the owner
+        '404':
+          description: Not found
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    delete:
+      summary: Soft-delete a recipe (owner only)
+      responses:
+        '200':
+          description: Deleted
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/recipes/{id}/comments:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get comments for a recipe
+      responses:
+        '200':
+          description: Comment list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Comment'
+    post:
+      summary: Add a comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body:
+                  type: string
+                  maxLength: 2000
+                parentId:
+                  type: string
+      responses:
+        '201':
+          description: Comment created
+
+  /api/recipes/{id}/quick-add:
+    post:
+      summary: Quick-add recipe to today's meal plan (time-slot auto-detected)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Added to meal plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  slot:
+                    type: string
+
+  /api/recipes/upload-image:
+    post:
+      summary: Request a SAS URL for direct Azure Blob upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename, contentType]
+              properties:
+                filename:
+                  type: string
+                contentType:
+                  type: string
+      responses:
+        '200':
+          description: SAS URL and final blob URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sasUrl:
+                    type: string
+                    format: uri
+                  blobUrl:
+                    type: string
+                    format: uri
+
+  /api/meal-plans:
+    get:
+      summary: Get current week's meal plan
+      responses:
+        '200':
+          description: Meal plan with days array
+    put:
+      summary: Save meal plan
+      responses:
+        '200':
+          description: Saved
+
+  /api/shopping-list:
+    get:
+      summary: Get shopping list
+      responses:
+        '200':
+          description: Shopping list items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ShoppingItem'
+                  listId:
+                    type: string
+
+  /api/nutrition/search:
+    get:
+      summary: Search Open Food Facts
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product list
+
+  /api/users/me:
+    get:
+      summary: Get current user profile
+      responses:
+        '200':
+          description: User profile
+    put:
+      summary: Update profile
+      responses:
+        '200':
+          description: Updated
+
+  components:
+    responses:
+      Unauthorized:
+        description: Missing or invalid JWT
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'

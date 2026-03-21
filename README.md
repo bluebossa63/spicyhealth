@@ -111,6 +111,39 @@ terraform init
 terraform apply
 ```
 
+#### Staging slot
+
+A staging slot (`spicyhealth-api-prod/staging`) is provisioned by Terraform. To deploy and swap:
+
+```bash
+# Deploy to staging slot (via Azure CLI)
+az webapp deployment source config-zip \
+  --resource-group rg-spicyhealth-prod \
+  --name spicyhealth-api-prod \
+  --slot staging \
+  --src dist.zip
+
+# Warm-up check
+curl https://spicyhealth-api-prod-staging.azurewebsites.net/health
+
+# Swap staging → production (zero-downtime)
+az webapp deployment slot swap \
+  --resource-group rg-spicyhealth-prod \
+  --name spicyhealth-api-prod \
+  --slot staging \
+  --target-slot production
+```
+
+### Running tests
+
+```bash
+# API integration tests (no Azure connection required)
+npm test --workspace=apps/api
+
+# Frontend type-check
+npm run build --workspace=apps/web
+```
+
 ## Project structure
 
 ```

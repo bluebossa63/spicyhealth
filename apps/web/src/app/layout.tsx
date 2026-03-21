@@ -8,6 +8,7 @@ import { AuthProvider } from '@/lib/auth';
 import { BottomTabBar } from '@/components/BottomTabBar';
 import { InstallBanner } from '@/components/InstallBanner';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { PageTransition } from '@/components/PageTransition';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -36,7 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <ErrorBoundary>
             <NavBar />
-            <main className="flex-1 pb-16 md:pb-0">{children}</main>
+            <main className="flex-1 pb-16 md:pb-0">
+              <PageTransition>{children}</PageTransition>
+            </main>
             <Footer />
             <BottomTabBar />
             <InstallBanner />

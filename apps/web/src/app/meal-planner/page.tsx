@@ -53,6 +53,10 @@ function MealPlanner() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [picker, setPicker] = useState<{ date: string; slot: string } | null>(null);
   const [activeRecipe, setActiveRecipe] = useState<any>(null);
+  const [activeDayIndex, setActiveDayIndex] = useState<number>(() => {
+    const today = new Date().getDay();
+    return today === 0 ? 6 : today - 1; // Mon=0 … Sun=6
+  });
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -137,12 +141,64 @@ function MealPlanner() {
       </div>
 
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        {/* Grid: mobile = day-per-row, desktop = 7 columns */}
-        <div className="overflow-x-auto">
+        {/* Mobile: single day view */}
+        {days.length > 0 && (
+          <div className="md:hidden">
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setActiveDayIndex(i => Math.max(0, i - 1))}
+                disabled={activeDayIndex === 0}
+                className="btn-ghost px-3 py-2 text-lg disabled:opacity-30"
+                aria-label="Vorheriger Tag"
+              >‹</button>
+              <div className="text-center">
+                <p className="text-xs font-semibold text-charcoal-500">{DAY_NAMES[activeDayIndex]}</p>
+                <p className="text-2xl font-bold text-charcoal-700">
+                  {new Date(days[activeDayIndex].date + 'T00:00:00Z').getUTCDate()}.
+                  {new Date(days[activeDayIndex].date + 'T00:00:00Z').getUTCMonth() + 1}.
+                </p>
+              </div>
+              <button
+                onClick={() => setActiveDayIndex(i => Math.min(days.length - 1, i + 1))}
+                disabled={activeDayIndex === days.length - 1}
+                className="btn-ghost px-3 py-2 text-lg disabled:opacity-30"
+                aria-label="Nächster Tag"
+              >›</button>
+            </div>
+            <div className="space-y-2">
+              {SLOTS.map(slot => {
+                const day = days[activeDayIndex];
+                const droppableId = `${day.date}-${slot}`;
+                const recipe = slot === 'snacks' ? day.snacks?.[0] : day[slot];
+                return (
+                  <div key={slot} className="flex items-center gap-3">
+                    <span className="text-xs font-semibold text-charcoal-500 w-24 shrink-0">{SLOT_LABELS[slot]}</span>
+                    <div className="flex-1">
+                      <MealSlot
+                        id={droppableId}
+                        date={day.date}
+                        slot={slot}
+                        recipe={recipe}
+                        onClear={() => handleClear(day.date, slot)}
+                        onPick={() => setPicker({ date: day.date, slot })}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-4">
+              <DayTotalsBar totals={days[activeDayIndex]} />
+            </div>
+          </div>
+        )}
+
+        {/* Desktop: full week grid */}
+        <div className="hidden md:block overflow-x-auto">
           <div className="min-w-[700px]">
             {/* Day headers */}
             <div className="grid grid-cols-8 gap-2 mb-2">
-              <div /> {/* slot label column */}
+              <div />
               {days.map((day, i) => {
                 const isToday = day.date === new Date().toISOString().slice(0, 10);
                 return (
