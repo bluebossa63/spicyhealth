@@ -66,6 +66,19 @@ Azure Blob Storage ◄── image uploads from API
 4. Create User Flow: `B2C_1_signupsignin`
 5. Set `B2C_TENANT` + `B2C_POLICY` env vars in API
 
+## Secrets Management
+
+Secrets are stored in project-specific files under `~/` — never committed to git.
+
+| File | Project | Contents |
+|------|---------|----------|
+| `~/.spicyhealth-secrets` | SpicyHealth | Cosmos, JWT, Google OAuth, Entra B2C, API config |
+| `~/.niceneasy-secrets` | niceneasy.ch | Cosmos, JWT, Google/Microsoft/LinkedIn OAuth, API config |
+| `~/.openclaw-secrets` | Oopsie/OpenClaw | Agent infra, M365 Graph API, OpenRouter, ACR, LiteLLM |
+
+Local development: `apps/api/.env` (gitignored, copied from secrets file).
+Production: Azure App Service environment variables via Terraform `app_settings`.
+
 ## Pricing Estimate (West Europe, low traffic)
 
 | Service | Tier | ~Cost/month |
