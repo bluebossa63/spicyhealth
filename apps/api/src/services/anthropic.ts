@@ -1,7 +1,6 @@
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 
-// Provider selection: 'openrouter' (free/cheap) or 'anthropic' (premium)
-const STYLE_LLM_PROVIDER = process.env.STYLE_LLM_PROVIDER || 'openrouter';
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 const SYSTEM_PROMPT = `Du bist die persönliche Style-Beraterin im Bereich "Umstyling" der App Spicy Health.
 Du begleitest Frauen dabei, ihren eigenen Stil zu entdecken, weiterzuentwickeln und
@@ -67,100 +66,32 @@ interface MessageInput {
   imageUrls?: string[];
 }
 
-// --- OpenRouter provider (OpenAI-compatible, free models available) ---
-
-async function chatViaOpenRouter(messages: MessageInput[]): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error('OPENROUTER_API_KEY not configured');
-
-  const model = process.env.OPENROUTER_MODEL || 'openrouter/free';
-
-  const openRouterMessages = [
-    { role: 'system' as const, content: SYSTEM_PROMPT },
-    ...messages.map((m) => {
+export async function chatWithStyleConsultant(messages: MessageInput[]): Promise<string> {
+  const openaiMessages: OpenAI.ChatCompletionMessageParam[] = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...messages.map((m): OpenAI.ChatCompletionMessageParam => {
       if (m.role === 'user' && m.imageUrls?.length) {
-        return {
-          role: 'user' as const,
-          content: [
-            ...m.imageUrls.map((url) => ({
-              type: 'image_url' as const,
-              image_url: { url },
-            })),
-            { type: 'text' as const, text: m.content || 'Bitte analysiere dieses Bild.' },
-          ],
-        };
+        const content: OpenAI.ChatCompletionContentPart[] = [
+          ...m.imageUrls.map((url): OpenAI.ChatCompletionContentPart => ({
+            type: 'image_url',
+            image_url: { url },
+          })),
+          { type: 'text', text: m.content || 'Bitte analysiere dieses Bild.' },
+        ];
+        return { role: 'user', content };
       }
-      return { role: m.role, content: m.content };
+      if (m.role === 'assistant') {
+        return { role: 'assistant', content: m.content };
+      }
+      return { role: 'user', content: m.content };
     }),
   ];
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-      'HTTP-Referer': 'https://spicyhealth.niceneasy.ch',
-      'X-Title': 'SpicyHealth Stilberatung',
-    },
-    body: JSON.stringify({
-      model,
-      messages: openRouterMessages,
-      max_tokens: 2048,
-    }),
-  });
-
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`OpenRouter error ${response.status}: ${err}`);
-  }
-
-  const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
-  return data.choices?.[0]?.message?.content || '';
-}
-
-// --- Anthropic provider (premium, high quality) ---
-
-async function chatViaAnthropic(messages: MessageInput[]): Promise<string> {
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
-
-  const anthropicMessages: Anthropic.MessageParam[] = messages.map((m) => {
-    if (m.role === 'user' && m.imageUrls?.length) {
-      const imageBlocks: Anthropic.ImageBlockParam[] = m.imageUrls.map((url) => ({
-        type: 'image',
-        source: { type: 'url', url },
-      }));
-      const textBlock: Anthropic.TextBlockParam = {
-        type: 'text',
-        text: m.content || 'Bitte analysiere dieses Bild.',
-      };
-      return { role: 'user' as const, content: [...imageBlocks, textBlock] };
-    }
-    return { role: m.role, content: m.content };
-  });
-
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o',
     max_tokens: 2048,
-    system: SYSTEM_PROMPT,
-    messages: anthropicMessages,
+    messages: openaiMessages,
   });
 
-  return response.content
-    .filter((block): block is Anthropic.TextBlock => block.type === 'text')
-    .map((block) => block.text)
-    .join('\n');
-}
-
-// --- Public API: routes through configured provider with fallback ---
-
-export async function chatWithStyleConsultant(messages: MessageInput[]): Promise<string> {
-  if (STYLE_LLM_PROVIDER === 'openrouter') {
-    try {
-      return await chatViaOpenRouter(messages);
-    } catch (err) {
-      console.warn('OpenRouter failed, falling back to Anthropic:', (err as Error).message);
-      return chatViaAnthropic(messages);
-    }
-  }
-  return chatViaAnthropic(messages);
+  return response.choices[0]?.message?.content || '';
 }
