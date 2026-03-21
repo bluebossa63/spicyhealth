@@ -68,45 +68,39 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     // Call Claude
     const reply = await chatWithStyleConsultant(conversation.messages);
 
-    // Parse markers and generate images
-    const generatedImages: string[] = [];
-    let cleanedReply = reply;
+    // Strip any markers Claude might have used (clean up response text)
+    let cleanedReply = reply
+      .replace(/\[LOOK_VORSCHLAG:\s*.+?\]/g, '')
+      .replace(/\[INSPIRATION:\s*.+?\]/g, '')
+      .trim();
 
-    // Find the latest user image (for LOOK_VORSCHLAG edits)
+    // --- Automatic image generation ---
+    // The app decides when to generate images, not Claude.
+    const generatedImages: string[] = [];
+
+    // Find the latest user-uploaded photo
     const latestUserImage = [...conversation.messages]
       .reverse()
       .find((m) => m.role === 'user' && m.imageUrls?.length)
       ?.imageUrls?.[0];
 
-    // Process [LOOK_VORSCHLAG: ...] markers (edit user's photo)
-    const lookMatches = reply.matchAll(/\[LOOK_VORSCHLAG:\s*(.+?)\]/g);
-    for (const match of lookMatches) {
-      if (latestUserImage) {
-        try {
-          const url = await generateStyledImage(
-            latestUserImage,
-            `Bearbeite dieses Foto und zeige: ${match[1]}. Realistisch, natürlich, Gesicht beibehalten.`,
-          );
-          generatedImages.push(url);
-        } catch (err) {
-          console.warn('Look generation failed:', (err as Error).message);
-        }
-      }
-      cleanedReply = cleanedReply.replace(match[0], '').trim();
-    }
-
-    // Process [INSPIRATION: ...] markers (generate new image)
-    const inspirationMatches = reply.matchAll(/\[INSPIRATION:\s*(.+?)\]/g);
-    for (const match of inspirationMatches) {
+    // Auto-generate styled image when: user has uploaded a photo AND
+    // the conversation suggests style changes (reply is substantial)
+    if (latestUserImage && cleanedReply.length > 150) {
       try {
-        const url = await generateStyleImage(
-          `Modisches Inspirationsbild: ${match[1]}. Hochwertig, stilvoll, wie aus einem Modemagazin.`,
+        // Extract a concise style description from Claude's reply (first 500 chars)
+        const styleContext = cleanedReply.substring(0, 500);
+        const url = await generateStyledImage(
+          latestUserImage,
+          `Verändere das Foto dieser Person basierend auf folgenden Stilvorschlägen: ${styleContext}. ` +
+          `Zeige die Person mit dem neuen Look. Behalte Gesicht und Körperform bei, ` +
+          `ändere Kleidung, Frisur, Make-up oder Accessoires entsprechend der Vorschläge. ` +
+          `Das Ergebnis soll realistisch und natürlich aussehen.`,
         );
         generatedImages.push(url);
       } catch (err) {
-        console.warn('Inspiration generation failed:', (err as Error).message);
+        console.warn('Auto look generation failed:', (err as Error).message);
       }
-      cleanedReply = cleanedReply.replace(match[0], '').trim();
     }
 
     // Append assistant reply
