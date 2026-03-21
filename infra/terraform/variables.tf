@@ -71,7 +71,14 @@ variable "google_client_secret" {
 }
 
 variable "anthropic_api_key" {
-  description = "Anthropic API key for style consultant"
+  description = "Anthropic API key for style consultant (premium fallback)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "openrouter_api_key" {
+  description = "OpenRouter API key for free/cheap LLM access"
   type        = string
   sensitive   = true
   default     = ""
