@@ -87,6 +87,7 @@ resource "azurerm_linux_web_app" "api" {
     GOOGLE_CLIENT_ID     = var.google_client_id
     GOOGLE_CLIENT_SECRET = var.google_client_secret
     GOOGLE_REDIRECT_URI  = "https://spicyhealth-api-prod.azurewebsites.net/api/auth/google/callback"
+    ANTHROPIC_API_KEY = var.anthropic_api_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.main.connection_string
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
   }
@@ -196,6 +197,14 @@ resource "azurerm_cosmosdb_sql_container" "comments" {
 
 resource "azurerm_cosmosdb_sql_container" "shopping_lists" {
   name                = "shopping-lists"
+  resource_group_name = azurerm_resource_group.main.name
+  account_name        = azurerm_cosmosdb_account.main.name
+  database_name       = azurerm_cosmosdb_sql_database.main.name
+  partition_key_path  = "/userId"
+}
+
+resource "azurerm_cosmosdb_sql_container" "conversations" {
+  name                = "conversations"
   resource_group_name = azurerm_resource_group.main.name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name

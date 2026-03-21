@@ -69,3 +69,10 @@ variable "google_client_secret" {
   sensitive   = true
   default     = ""
 }
+
+variable "anthropic_api_key" {
+  description = "Anthropic API key for style consultant"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

@@ -8,6 +8,7 @@ const navLinks = [
   { href: '/recipes',       label: 'Rezepte' },
   { href: '/meal-planner',  label: 'Mahlzeitenplaner' },
   { href: '/shopping-list', label: 'Einkaufsliste' },
+  { href: '/umstyling',    label: 'Stilberatung' },
 ];
 
 const authNavLinks = [

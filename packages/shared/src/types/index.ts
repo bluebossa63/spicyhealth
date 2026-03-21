@@ -98,3 +98,21 @@ export interface UserProfile {
   savedRecipeIds: string[];
   createdAt: string;
 }
+
+// --- Umstyling / Style Consultant ---
+
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  imageUrls?: string[];
+  timestamp: string;
+}
+
+export interface Conversation {
+  id: string;
+  userId: string;
+  title: string;
+  messages: ChatMessage[];
+  createdAt: string;
+  updatedAt: string;
+}

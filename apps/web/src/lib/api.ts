@@ -99,4 +99,22 @@ export const api = {
     deleteItem: (id: string) =>
       fetchJson<{ success: boolean }>(`/shopping-list/items/${id}`, { method: 'DELETE' }),
   },
+  umstyling: {
+    chat: (data: { conversationId?: string; message: string; imageUrls?: string[] }) =>
+      fetchJson<{ conversation: any; reply: string }>('/umstyling/chat', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    listConversations: () =>
+      fetchJson<{ conversations: any[] }>('/umstyling/conversations'),
+    getConversation: (id: string) =>
+      fetchJson<{ conversation: any }>(`/umstyling/conversations/${id}`),
+    deleteConversation: (id: string) =>
+      fetchJson<{ success: boolean }>(`/umstyling/conversations/${id}`, { method: 'DELETE' }),
+    uploadImage: (filename: string, contentType: string) =>
+      fetchJson<{ uploadUrl: string; publicUrl: string }>('/umstyling/upload-image', {
+        method: 'POST',
+        body: JSON.stringify({ filename, contentType }),
+      }),
+  },
 };
