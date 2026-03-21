@@ -101,7 +101,7 @@ export const api = {
   },
   umstyling: {
     chat: (data: { conversationId?: string; message: string; imageUrls?: string[] }) =>
-      fetchJson<{ conversation: any; reply: string }>('/umstyling/chat', {
+      fetchJson<{ conversation: any; reply: string; generatedImages?: string[] }>('/umstyling/chat', {
         method: 'POST',
         body: JSON.stringify(data),
       }),
@@ -115,6 +115,16 @@ export const api = {
       fetchJson<{ uploadUrl: string; publicUrl: string }>('/umstyling/upload-image', {
         method: 'POST',
         body: JSON.stringify({ filename, contentType }),
+      }),
+    generateLook: (data: { conversationId: string; sourceImageUrl: string; styleDescription: string }) =>
+      fetchJson<{ conversation: any; generatedImageUrl: string }>('/umstyling/generate-look', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    generateSuggestion: (data: { conversationId: string; styleDescription: string }) =>
+      fetchJson<{ conversation: any; generatedImageUrl: string }>('/umstyling/generate-suggestion', {
+        method: 'POST',
+        body: JSON.stringify(data),
       }),
   },
 };

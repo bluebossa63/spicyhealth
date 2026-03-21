@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { containers } from '../services/cosmos';
 import { chatWithStyleConsultant } from '../services/anthropic';
+import { generateStyledImage, generateStyleImage } from '../services/image-gen';
 import rateLimit from 'express-rate-limit';
 import type { Conversation, ChatMessage } from '@spicyhealth/shared';
 
@@ -67,10 +68,52 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     // Call Claude
     const reply = await chatWithStyleConsultant(conversation.messages);
 
+    // Parse markers and generate images
+    const generatedImages: string[] = [];
+    let cleanedReply = reply;
+
+    // Find the latest user image (for LOOK_VORSCHLAG edits)
+    const latestUserImage = [...conversation.messages]
+      .reverse()
+      .find((m) => m.role === 'user' && m.imageUrls?.length)
+      ?.imageUrls?.[0];
+
+    // Process [LOOK_VORSCHLAG: ...] markers (edit user's photo)
+    const lookMatches = reply.matchAll(/\[LOOK_VORSCHLAG:\s*(.+?)\]/g);
+    for (const match of lookMatches) {
+      if (latestUserImage) {
+        try {
+          const url = await generateStyledImage(
+            latestUserImage,
+            `Bearbeite dieses Foto und zeige: ${match[1]}. Realistisch, natürlich, Gesicht beibehalten.`,
+          );
+          generatedImages.push(url);
+        } catch (err) {
+          console.warn('Look generation failed:', (err as Error).message);
+        }
+      }
+      cleanedReply = cleanedReply.replace(match[0], '').trim();
+    }
+
+    // Process [INSPIRATION: ...] markers (generate new image)
+    const inspirationMatches = reply.matchAll(/\[INSPIRATION:\s*(.+?)\]/g);
+    for (const match of inspirationMatches) {
+      try {
+        const url = await generateStyleImage(
+          `Modisches Inspirationsbild: ${match[1]}. Hochwertig, stilvoll, wie aus einem Modemagazin.`,
+        );
+        generatedImages.push(url);
+      } catch (err) {
+        console.warn('Inspiration generation failed:', (err as Error).message);
+      }
+      cleanedReply = cleanedReply.replace(match[0], '').trim();
+    }
+
     // Append assistant reply
     const assistantMessage: ChatMessage = {
       role: 'assistant',
-      content: reply,
+      content: cleanedReply,
+      imageUrls: generatedImages.length ? generatedImages : undefined,
       timestamp: new Date().toISOString(),
     };
     conversation.messages.push(assistantMessage);
@@ -79,7 +122,7 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     // Persist
     await containers.conversations.items.upsert(conversation);
 
-    res.json({ conversation, reply });
+    res.json({ conversation, reply: cleanedReply, generatedImages });
   } catch (err: any) {
     console.error('Umstyling chat error:', err);
     res.status(500).json({ error: 'Stilberatung vorübergehend nicht verfügbar' });
@@ -134,6 +177,100 @@ umstylingRouter.delete('/conversations/:id', async (req: Request, res: Response)
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: 'Konversation konnte nicht gelöscht werden' });
+  }
+});
+
+const generateLookSchema = z.object({
+  conversationId: z.string(),
+  sourceImageUrl: z.string().url(),
+  styleDescription: z.string().min(1).max(2000),
+});
+
+// POST /api/umstyling/generate-look — edit a photo with a style suggestion
+umstylingRouter.post('/generate-look', chatLimiter, async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    const userId = user?.sub || user?.oid;
+    const parsed = generateLookSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+
+    const { conversationId, sourceImageUrl, styleDescription } = parsed.data;
+
+    // Load conversation
+    const { resources } = await containers.conversations.items
+      .query({ query: 'SELECT * FROM c WHERE c.id = @id AND c.userId = @userId', parameters: [{ name: '@id', value: conversationId }, { name: '@userId', value: userId }] })
+      .fetchAll();
+    if (!resources.length) return res.status(404).json({ error: 'Konversation nicht gefunden' });
+    const conversation = resources[0] as Conversation;
+
+    // Generate styled image via OpenAI
+    const generatedImageUrl = await generateStyledImage(
+      sourceImageUrl,
+      `Bearbeite dieses Foto einer Person und zeige folgende Stil-Änderung: ${styleDescription}. ` +
+      `Das Ergebnis soll realistisch und natürlich aussehen. Behalte das Gesicht und die Körperform bei, ` +
+      `ändere nur Kleidung, Frisur, Make-up oder Accessoires wie beschrieben.`,
+    );
+
+    // Append to conversation as assistant message with image
+    const assistantMessage: ChatMessage = {
+      role: 'assistant',
+      content: `Hier ist mein Vorschlag: ${styleDescription}`,
+      imageUrls: [generatedImageUrl],
+      timestamp: new Date().toISOString(),
+    };
+    conversation.messages.push(assistantMessage);
+    conversation.updatedAt = new Date().toISOString();
+    await containers.conversations.items.upsert(conversation);
+
+    res.json({ conversation, generatedImageUrl });
+  } catch (err: any) {
+    console.error('Generate look error:', err);
+    res.status(500).json({ error: 'Bild konnte nicht generiert werden. Bitte versuche es nochmal.' });
+  }
+});
+
+const generateSuggestionSchema = z.object({
+  conversationId: z.string(),
+  styleDescription: z.string().min(1).max(2000),
+});
+
+// POST /api/umstyling/generate-suggestion — generate a style image without source photo
+umstylingRouter.post('/generate-suggestion', chatLimiter, async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    const userId = user?.sub || user?.oid;
+    const parsed = generateSuggestionSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+
+    const { conversationId, styleDescription } = parsed.data;
+
+    // Load conversation
+    const { resources } = await containers.conversations.items
+      .query({ query: 'SELECT * FROM c WHERE c.id = @id AND c.userId = @userId', parameters: [{ name: '@id', value: conversationId }, { name: '@userId', value: userId }] })
+      .fetchAll();
+    if (!resources.length) return res.status(404).json({ error: 'Konversation nicht gefunden' });
+    const conversation = resources[0] as Conversation;
+
+    // Generate suggestion image via OpenAI
+    const generatedImageUrl = await generateStyleImage(
+      `Erstelle ein modisches, inspirierendes Bild: ${styleDescription}. ` +
+      `Das Bild soll stilvoll, modern und ansprechend sein — wie aus einem hochwertigen Modemagazin.`,
+    );
+
+    const assistantMessage: ChatMessage = {
+      role: 'assistant',
+      content: `Hier ist eine Inspiration: ${styleDescription}`,
+      imageUrls: [generatedImageUrl],
+      timestamp: new Date().toISOString(),
+    };
+    conversation.messages.push(assistantMessage);
+    conversation.updatedAt = new Date().toISOString();
+    await containers.conversations.items.upsert(conversation);
+
+    res.json({ conversation, generatedImageUrl });
+  } catch (err: any) {
+    console.error('Generate suggestion error:', err);
+    res.status(500).json({ error: 'Bild konnte nicht generiert werden. Bitte versuche es nochmal.' });
   }
 });
 

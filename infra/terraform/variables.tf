@@ -77,6 +77,13 @@ variable "anthropic_api_key" {
   default     = ""
 }
 
+variable "openai_api_key" {
+  description = "OpenAI API key for image generation (gpt-image-1)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "openrouter_api_key" {
   description = "OpenRouter API key for free/cheap LLM access"
   type        = string

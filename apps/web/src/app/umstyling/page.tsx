@@ -12,6 +12,7 @@ function StyleConsultant() {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [conversations, setConversations] = useState<{ id: string; title: string; updatedAt: string }[]>([]);
   const [loading, setLoading] = useState(false);
+  const [generatingLook, setGeneratingLook] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -86,6 +87,38 @@ function StyleConsultant() {
       ]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateLook = async (styleDescription: string) => {
+    if (!conversationId || generatingLook) return;
+
+    // Find latest user-uploaded image
+    const latestUserImage = [...messages]
+      .reverse()
+      .find((m) => m.role === 'user' && m.imageUrls?.length)
+      ?.imageUrls?.[0];
+
+    setGeneratingLook(true);
+    try {
+      if (latestUserImage) {
+        const { conversation } = await api.umstyling.generateLook({
+          conversationId,
+          sourceImageUrl: latestUserImage,
+          styleDescription,
+        });
+        setMessages(conversation.messages);
+      } else {
+        const { conversation } = await api.umstyling.generateSuggestion({
+          conversationId,
+          styleDescription,
+        });
+        setMessages(conversation.messages);
+      }
+    } catch {
+      alert('Bild konnte nicht erstellt werden. Bitte versuche es nochmal.');
+    } finally {
+      setGeneratingLook(false);
     }
   };
 
@@ -193,7 +226,12 @@ function StyleConsultant() {
           )}
 
           {messages.map((msg, i) => (
-            <ChatMessage key={i} message={msg} />
+            <ChatMessage
+              key={i}
+              message={msg}
+              onGenerateLook={handleGenerateLook}
+              isGenerating={generatingLook}
+            />
           ))}
 
           {loading && (
