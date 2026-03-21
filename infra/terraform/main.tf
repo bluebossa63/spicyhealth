@@ -90,7 +90,7 @@ resource "azurerm_linux_web_app" "api" {
     ANTHROPIC_API_KEY    = var.anthropic_api_key
     OPENROUTER_API_KEY   = var.openrouter_api_key
     OPENROUTER_MODEL     = "openrouter/free"
-    STYLE_LLM_PROVIDER   = "openrouter"
+    STYLE_LLM_PROVIDER   = "anthropic"
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.main.connection_string
     ApplicationInsightsAgent_EXTENSION_VERSION = "~3"
   }
