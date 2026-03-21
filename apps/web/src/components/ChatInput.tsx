@@ -37,6 +37,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
       setImages((prev) => [...prev, ...newImages].slice(0, 3));
     } catch (err) {
       console.error('Image upload failed:', err);
+      alert('Bild-Upload fehlgeschlagen. Bitte versuche es nochmal.');
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
