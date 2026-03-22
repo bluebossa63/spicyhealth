@@ -55,6 +55,8 @@ function NewRecipeForm() {
     try {
       const { recipe } = await api.recipes.create({
         ...form,
+        ingredients: form.ingredients.filter(i => i.name.trim()),
+        instructions: form.instructions.filter(s => s.trim()),
         estimatedCostEur: form.estimatedCostEur || computedCost,
         tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
       });

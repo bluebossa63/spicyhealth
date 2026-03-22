@@ -9,8 +9,8 @@ export const recipesRouter = Router();
 
 const ingredientSchema = z.object({
   name: z.string().min(1),
-  quantity: z.number().positive(),
-  unit: z.string().min(1),
+  quantity: z.number().min(0).default(1),
+  unit: z.string().default(''),
   calories: z.number().optional(),
   proteinG: z.number().optional(),
   carbsG: z.number().optional(),
@@ -22,14 +22,14 @@ const ingredientSchema = z.object({
 
 const recipeSchema = z.object({
   title: z.string().min(1).max(200),
-  description: z.string().min(1).max(1000),
+  description: z.string().max(1000).default(''),
   category: z.enum(['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'smoothie']),
-  imageUrl: z.string().url().optional(),
-  prepTimeMinutes: z.number().int().min(0),
-  cookTimeMinutes: z.number().int().min(0),
-  servings: z.number().int().min(1),
-  ingredients: z.array(ingredientSchema).min(1),
-  instructions: z.array(z.string().min(1)).min(1),
+  imageUrl: z.string().url().optional().or(z.literal('')),
+  prepTimeMinutes: z.number().int().min(0).default(0),
+  cookTimeMinutes: z.number().int().min(0).default(0),
+  servings: z.number().int().min(1).default(1),
+  ingredients: z.array(ingredientSchema).default([]),
+  instructions: z.array(z.string()).default([]),
   tags: z.array(z.string()).default([]),
   estimatedCostEur: z.number().min(0).default(0),
 });
