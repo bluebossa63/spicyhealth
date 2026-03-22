@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { api } from '@/lib/api';
+import { RecipeImageUpload } from '@/components/RecipeImageUpload';
 
 const CATEGORIES = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'smoothie'];
 
@@ -38,7 +39,7 @@ function NewRecipeForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    title: '', description: '', category: 'lunch',
+    title: '', description: '', category: 'lunch', imageUrl: '',
     prepTimeMinutes: 10, cookTimeMinutes: 20, servings: 2,
     estimatedCostEur: 5,
     ingredients: [emptyIngredient()] as IngredientForm[],
@@ -143,6 +144,7 @@ function NewRecipeForm() {
         .map(({ nutritionLoaded, nutritionLoading, _per100g, ...rest }: any) => rest);
       const { recipe } = await api.recipes.create({
         ...form,
+        imageUrl: form.imageUrl || undefined,
         ingredients: cleanIngredients,
         instructions: form.instructions.filter(s => s.trim()),
         estimatedCostEur: form.estimatedCostEur || computedCost,
@@ -187,6 +189,7 @@ function NewRecipeForm() {
             </div>
             <Input label="Geschätzte Kosten (CHF)" type="number" step="0.5" value={form.estimatedCostEur} onChange={e => set('estimatedCostEur', Number(e.target.value))} />
             <Input label="Tags (kommagetrennt)" value={form.tags} onChange={e => set('tags', e.target.value)} placeholder="vegan, schnell, glutenfrei" />
+            <RecipeImageUpload imageUrl={form.imageUrl} onImageChange={url => set('imageUrl', url)} />
             <Button onClick={() => setStep(2)} className="w-full">Weiter: Zutaten →</Button>
           </div>
         </Card>

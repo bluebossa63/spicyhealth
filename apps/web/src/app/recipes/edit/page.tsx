@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { api } from '@/lib/api';
+import { RecipeImageUpload } from '@/components/RecipeImageUpload';
 
 const CATEGORIES = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'smoothie'];
 const CATEGORY_LABELS: Record<string, string> = {
@@ -64,7 +65,7 @@ function EditRecipeForm() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
-    title: '', description: '', category: 'lunch',
+    title: '', description: '', category: 'lunch', imageUrl: '',
     prepTimeMinutes: 10, cookTimeMinutes: 20, servings: 2,
     estimatedCostEur: 0,
     ingredients: [emptyIngredient()] as IngredientForm[],
@@ -79,6 +80,7 @@ function EditRecipeForm() {
         title: recipe.title,
         description: recipe.description,
         category: recipe.category,
+        imageUrl: recipe.imageUrl || '',
         prepTimeMinutes: recipe.prepTimeMinutes,
         cookTimeMinutes: recipe.cookTimeMinutes,
         servings: recipe.servings,
@@ -189,6 +191,7 @@ function EditRecipeForm() {
         .map(({ nutritionLoaded, nutritionLoading, _per100g, ...rest }) => rest);
       await api.recipes.update(id!, {
         ...form,
+        imageUrl: form.imageUrl || undefined,
         ingredients: cleanIngredients,
         instructions: form.instructions.filter((s: string) => s.trim()),
         estimatedCostEur: form.estimatedCostEur || computedCost,
@@ -240,6 +243,7 @@ function EditRecipeForm() {
             <label className="block text-sm font-medium text-charcoal mb-1">Tags (kommagetrennt)</label>
             <input value={form.tags} onChange={e => set('tags', e.target.value)} className="input-field" placeholder="vegan, schnell, glutenfrei" />
           </div>
+          <RecipeImageUpload imageUrl={form.imageUrl} onImageChange={url => set('imageUrl', url)} />
           <button onClick={() => setStep(2)} className="btn-primary w-full">Weiter: Zutaten →</button>
         </div>
       )}
