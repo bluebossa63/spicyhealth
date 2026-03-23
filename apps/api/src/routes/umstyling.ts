@@ -73,9 +73,11 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     let cleanedReply = reply
       .replace(/\[LOOK_VORSCHLAG:\s*.+?\]/g, '')
       .replace(/\[INSPIRATION:\s*.+?\]/g, '')
-      .replace(/[Ii]ch kann (leider\s+)?(keine?\s+)?(Bilder?|Fotos?)\s+(direkt\s+)?(erstellen|anzeigen|bearbeiten|generieren|verändern|modifizieren)[^.!]*[.!]?/g, '')
+      .replace(/[Ii]ch kann[^.!]*?(Bilder?|Fotos?|Personen)[^.!]*?(erstellen|anzeigen|bearbeiten|generieren|verändern|modifizieren|erkennen|analysieren)[^.!]*[.!]?/g, '')
+      .replace(/[Ii]ch kann[^.!]*?(nicht|keine)[^.!]*?(sehen|erkennen|analysieren|bearbeiten)[^.!]*[.!]?/g, '')
       .replace(/[Dd]as ist (leider\s+)?(technisch\s+)?nicht möglich[^.!]*[.!]?/g, '')
       .replace(/[Bb]itte (überprüfe|prüfe|schau)[^.!]*App[^.!]*[.!]?/g, '')
+      .replace(/[Aa]ber ich helfe dir gerne[,!]?\s*/g, '')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
 
