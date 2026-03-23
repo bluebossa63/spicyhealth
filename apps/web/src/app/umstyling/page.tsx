@@ -14,6 +14,7 @@ function StyleConsultant() {
   const [loading, setLoading] = useState(false);
   const [generatingLook, setGeneratingLook] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const garmentInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -122,6 +123,46 @@ function StyleConsultant() {
     }
   };
 
+  const handleTryOnGarment = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !conversationId || generatingLook) return;
+
+    const latestUserImage = [...messages]
+      .reverse()
+      .find((m) => m.role === 'user' && m.imageUrls?.length)
+      ?.imageUrls?.[0];
+
+    if (!latestUserImage) {
+      alert('Bitte lade zuerst ein Foto von dir hoch, damit ich das Kleidungsstück anprobieren kann.');
+      return;
+    }
+
+    setGeneratingLook(true);
+    try {
+      // Upload garment image
+      const { uploadUrl, publicUrl } = await api.umstyling.uploadImage(file.name, file.type);
+      await fetch(uploadUrl, {
+        method: 'PUT',
+        headers: { 'x-ms-blob-type': 'BlockBlob', 'Content-Type': file.type },
+        body: file,
+      });
+
+      // Call virtual try-on
+      const { conversation } = await api.umstyling.generateLook({
+        conversationId,
+        sourceImageUrl: latestUserImage,
+        garmentImageUrl: publicUrl,
+        styleDescription: 'Virtual Try-On',
+      });
+      setMessages(conversation.messages);
+    } catch {
+      alert('Anprobieren fehlgeschlagen. Bitte versuche es nochmal.');
+    } finally {
+      setGeneratingLook(false);
+      if (garmentInputRef.current) garmentInputRef.current.value = '';
+    }
+  };
+
   return (
     <div className="flex h-[calc(100vh-4rem-3.5rem)] md:h-[calc(100vh-4rem)] max-w-5xl mx-auto">
       {/* Sidebar — conversation history (desktop always, mobile toggle) */}
@@ -184,10 +225,27 @@ function StyleConsultant() {
           <div className="w-8 h-8 rounded-full bg-sage-light flex items-center justify-center">
             <span className="text-sm">👗</span>
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="font-heading text-base font-semibold text-charcoal">Deine Stilberaterin</h1>
             <p className="text-[10px] text-charcoal-light">Persönliche Style-Beratung</p>
           </div>
+          {conversationId && (
+            <button
+              onClick={() => garmentInputRef.current?.click()}
+              disabled={generatingLook}
+              className="px-3 py-1.5 rounded-full bg-terracotta-light hover:bg-terracotta text-charcoal text-xs font-medium transition-colors disabled:opacity-40"
+              title="Lade ein Bild eines Kleidungsstücks hoch und probiere es virtuell an"
+            >
+              {generatingLook ? 'Wird erstellt...' : '👗 Anprobieren'}
+            </button>
+          )}
+          <input
+            ref={garmentInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleTryOnGarment}
+          />
         </div>
 
         {/* Messages */}

@@ -116,7 +116,7 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ filename, contentType }),
       }),
-    generateLook: (data: { conversationId: string; sourceImageUrl: string; styleDescription: string }) =>
+    generateLook: (data: { conversationId: string; sourceImageUrl: string; garmentImageUrl?: string; styleDescription: string }) =>
       fetchJson<{ conversation: any; generatedImageUrl: string }>('/umstyling/generate-look', {
         method: 'POST',
         body: JSON.stringify(data),

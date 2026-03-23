@@ -77,6 +77,13 @@ variable "anthropic_api_key" {
   default     = ""
 }
 
+variable "fashn_api_key" {
+  description = "FASHN.ai API key for virtual try-on"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "openai_api_key" {
   description = "OpenAI API key for image generation (gpt-image-1)"
   type        = string

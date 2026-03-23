@@ -5,6 +5,7 @@ import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, 
 import { containers } from '../services/cosmos';
 import { chatWithStyleConsultant } from '../services/anthropic';
 import { generateStyleImage } from '../services/image-gen';
+import { virtualTryOn } from '../services/fashn';
 import rateLimit from 'express-rate-limit';
 import type { Conversation, ChatMessage } from '@spicyhealth/shared';
 
@@ -172,10 +173,11 @@ umstylingRouter.delete('/conversations/:id', async (req: Request, res: Response)
 const generateLookSchema = z.object({
   conversationId: z.string(),
   sourceImageUrl: z.string().url(),
+  garmentImageUrl: z.string().url().optional(),
   styleDescription: z.string().min(1).max(2000),
 });
 
-// POST /api/umstyling/generate-look — edit a photo with a style suggestion
+// POST /api/umstyling/generate-look — try on a garment or generate a style image
 umstylingRouter.post('/generate-look', chatLimiter, async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
@@ -183,7 +185,7 @@ umstylingRouter.post('/generate-look', chatLimiter, async (req: Request, res: Re
     const parsed = generateLookSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
 
-    const { conversationId, sourceImageUrl, styleDescription } = parsed.data;
+    const { conversationId, sourceImageUrl, garmentImageUrl, styleDescription } = parsed.data;
 
     // Load conversation
     const { resources } = await containers.conversations.items
@@ -192,15 +194,24 @@ umstylingRouter.post('/generate-look', chatLimiter, async (req: Request, res: Re
     if (!resources.length) return res.status(404).json({ error: 'Konversation nicht gefunden' });
     const conversation = resources[0] as Conversation;
 
-    // Generate styled image via DALL-E 3
-    const generatedImageUrl = await generateStyleImage(
-      `Modefoto: ${styleDescription}. Realistisch, hochwertig, wie ein Modefoto.`,
-    );
+    let generatedImageUrl: string;
+
+    if (garmentImageUrl) {
+      // FASHN Virtual Try-On: person photo + garment photo → person wearing garment
+      generatedImageUrl = await virtualTryOn(sourceImageUrl, garmentImageUrl);
+    } else {
+      // DALL-E 3: generate inspiration image from description
+      generatedImageUrl = await generateStyleImage(
+        `Modefoto: ${styleDescription}. Realistisch, hochwertig, wie ein Modefoto.`,
+      );
+    }
 
     // Append to conversation as assistant message with image
     const assistantMessage: ChatMessage = {
       role: 'assistant',
-      content: `Hier ist mein Vorschlag: ${styleDescription}`,
+      content: garmentImageUrl
+        ? `Hier siehst du, wie das Kleidungsstück an dir aussehen würde!`
+        : `Hier ist mein Vorschlag: ${styleDescription}`,
       imageUrls: [generatedImageUrl],
       timestamp: new Date().toISOString(),
     };
