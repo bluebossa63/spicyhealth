@@ -96,8 +96,8 @@ function NewRecipeForm() {
     try {
       const { products } = await api.nutrition.search(ing.name);
       if (products?.length > 0) {
-        const results: SearchResult[] = products.slice(0, 5).map((p: any) => ({
-          name: p.product_name || ing.name,
+        const results: SearchResult[] = products.slice(0, 8).map((p: any) => ({
+          name: p.brands ? `${p.product_name} (${p.brands})` : (p.product_name || ing.name),
           per100g: {
             calories: p.nutriments?.['energy-kcal_100g'] || 0,
             proteinG: p.nutriments?.['proteins_100g'] || 0,
