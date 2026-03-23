@@ -14,6 +14,15 @@ export default function NewRecipePage() {
   return <ProtectedRoute><NewRecipeForm /></ProtectedRoute>;
 }
 
+interface NutritionPer100g {
+  calories: number; proteinG: number; carbsG: number; fatG: number; fiberG: number;
+}
+
+interface SearchResult {
+  name: string;
+  per100g: NutritionPer100g;
+}
+
 interface IngredientForm {
   name: string;
   quantity: number;
@@ -26,7 +35,8 @@ interface IngredientForm {
   estimatedCostEur: number;
   nutritionLoaded: boolean;
   nutritionLoading: boolean;
-  _per100g?: { calories: number; proteinG: number; carbsG: number; fatG: number; fiberG: number };
+  searchResults?: SearchResult[];
+  _per100g?: NutritionPer100g;
 }
 
 function emptyIngredient(): IngredientForm {
@@ -74,41 +84,42 @@ function NewRecipeForm() {
     set('ingredients', ings);
   }
 
-  // Lookup nutrition from Open Food Facts
+  // Lookup nutrition from Open Food Facts — shows results for user to pick
   const lookupNutrition = useCallback(async (index: number) => {
     const ing = form.ingredients[index];
     if (!ing.name.trim() || ing.nutritionLoading) return;
 
     const ings = [...form.ingredients];
-    ings[index] = { ...ings[index], nutritionLoading: true };
+    ings[index] = { ...ings[index], nutritionLoading: true, searchResults: undefined };
     set('ingredients', ings);
 
     try {
       const { products } = await api.nutrition.search(ing.name);
       if (products?.length > 0) {
-        const product = products[0];
-        const n = product.nutriments || {};
-        const per100g = {
-          calories: n['energy-kcal_100g'] || 0,
-          proteinG: n['proteins_100g'] || 0,
-          carbsG: n['carbohydrates_100g'] || 0,
-          fatG: n['fat_100g'] || 0,
-          fiberG: n['fiber_100g'] || 0,
-        };
-        const factor = ing.quantity / 100;
-        const updated = [...form.ingredients];
-        updated[index] = {
-          ...updated[index],
-          calories: Math.round(per100g.calories * factor),
-          proteinG: Math.round(per100g.proteinG * factor * 10) / 10,
-          carbsG: Math.round(per100g.carbsG * factor * 10) / 10,
-          fatG: Math.round(per100g.fatG * factor * 10) / 10,
-          fiberG: Math.round(per100g.fiberG * factor * 10) / 10,
-          nutritionLoaded: true,
-          nutritionLoading: false,
-          _per100g: per100g,
-        } as any;
-        set('ingredients', updated);
+        const results: SearchResult[] = products.slice(0, 5).map((p: any) => ({
+          name: p.product_name || ing.name,
+          per100g: {
+            calories: p.nutriments?.['energy-kcal_100g'] || 0,
+            proteinG: p.nutriments?.['proteins_100g'] || 0,
+            carbsG: p.nutriments?.['carbohydrates_100g'] || 0,
+            fatG: p.nutriments?.['fat_100g'] || 0,
+            fiberG: p.nutriments?.['fiber_100g'] || 0,
+          },
+        })).filter((r: SearchResult) => r.per100g.calories > 0);
+
+        if (results.length === 1) {
+          // Only one result — apply directly
+          applyNutrition(index, results[0].per100g);
+        } else if (results.length > 1) {
+          // Multiple results — show selection
+          const updated = [...form.ingredients];
+          updated[index] = { ...updated[index], nutritionLoading: false, searchResults: results };
+          set('ingredients', updated);
+        } else {
+          const updated = [...form.ingredients];
+          updated[index] = { ...updated[index], nutritionLoading: false };
+          set('ingredients', updated);
+        }
       } else {
         const updated = [...form.ingredients];
         updated[index] = { ...updated[index], nutritionLoading: false };
@@ -120,6 +131,24 @@ function NewRecipeForm() {
       set('ingredients', updated);
     }
   }, [form.ingredients]);
+
+  function applyNutrition(index: number, per100g: NutritionPer100g) {
+    const factor = form.ingredients[index].quantity / 100;
+    const updated = [...form.ingredients];
+    updated[index] = {
+      ...updated[index],
+      calories: Math.round(per100g.calories * factor),
+      proteinG: Math.round(per100g.proteinG * factor * 10) / 10,
+      carbsG: Math.round(per100g.carbsG * factor * 10) / 10,
+      fatG: Math.round(per100g.fatG * factor * 10) / 10,
+      fiberG: Math.round(per100g.fiberG * factor * 10) / 10,
+      nutritionLoaded: true,
+      nutritionLoading: false,
+      searchResults: undefined,
+      _per100g: per100g,
+    };
+    set('ingredients', updated);
+  }
 
   function addStep() { set('instructions', [...form.instructions, '']); }
   function updateStep(i: number, value: string) {
@@ -226,9 +255,30 @@ function NewRecipeForm() {
                     <span className="bg-cream rounded-lg px-2 py-0.5">🥑 {ing.fatG}g Fett</span>
                   </div>
                 )}
-                {!ing.nutritionLoaded && !ing.nutritionLoading && ing.name.trim() && (
+                {/* Search results — pick the right product */}
+                {ing.searchResults && ing.searchResults.length > 1 && (
+                  <div className="mt-2 border border-blush rounded-lg overflow-hidden">
+                    <p className="text-xs font-medium text-charcoal px-2 py-1 bg-blush-light">Welches Produkt meinst du?</p>
+                    {ing.searchResults.map((result, ri) => (
+                      <button
+                        key={ri}
+                        onClick={() => applyNutrition(i, result.per100g)}
+                        className="w-full text-left px-2 py-1.5 text-xs hover:bg-cream-dark transition-colors border-t border-cream-dark flex justify-between items-center"
+                      >
+                        <span className="font-medium text-charcoal truncate flex-1">{result.name}</span>
+                        <span className="text-charcoal-light ml-2 shrink-0">{Math.round(result.per100g.calories)} kcal/100g</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {!ing.nutritionLoaded && !ing.nutritionLoading && !ing.searchResults && ing.name.trim() && (
                   <button onClick={() => lookupNutrition(i)} className="text-xs text-terracotta hover:text-terracotta-dark mt-2">
                     Nährwerte suchen
+                  </button>
+                )}
+                {ing.nutritionLoaded && (
+                  <button onClick={() => lookupNutrition(i)} className="text-xs text-charcoal-light hover:text-terracotta mt-1">
+                    Anderes Produkt wählen
                   </button>
                 )}
               </div>
