@@ -100,3 +100,28 @@ export async function chatWithStyleConsultant(messages: MessageInput[]): Promise
 
   return response.choices[0]?.message?.content || '';
 }
+
+/**
+ * Extract a precise garment description from a style suggestion.
+ * Used to generate a realistic product photo with DALL-E 3.
+ */
+export async function extractGarmentDescription(styleSuggestion: string): Promise<string> {
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    max_tokens: 200,
+    messages: [
+      {
+        role: 'system',
+        content: `Du bist ein Mode-Experte. Extrahiere aus dem Stilvorschlag EIN konkretes,
+tragbares Kleidungsstück und beschreibe es als englische DALL-E Prompt für ein
+E-Commerce Produktfoto. Nur das Kleidungsstück, kein Model, weisser Hintergrund.
+Beispiel-Output: "A tailored navy blue blazer with gold buttons, slim fit,
+professional style, product photo on pure white background, high quality fashion photography"
+Antworte NUR mit der englischen Beschreibung, nichts anderes.`,
+      },
+      { role: 'user', content: styleSuggestion },
+    ],
+  });
+
+  return response.choices[0]?.message?.content || 'Elegant blazer, product photo on white background';
+}

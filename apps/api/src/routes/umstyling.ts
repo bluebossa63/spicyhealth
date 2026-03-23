@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { containers } from '../services/cosmos';
-import { chatWithStyleConsultant } from '../services/anthropic';
+import { chatWithStyleConsultant, extractGarmentDescription } from '../services/anthropic';
 import { generateStyleImage } from '../services/image-gen';
 import { virtualTryOn } from '../services/fashn';
 import rateLimit from 'express-rate-limit';
@@ -94,14 +94,14 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     // with DALL-E 3, then use FASHN to show the user wearing it
     if (latestUserImage && cleanedReply.length > 50) {
       try {
-        const styleContext = cleanedReply.substring(0, 300);
-        console.log('Auto-generating try-on for:', styleContext.substring(0, 80));
+        const styleContext = cleanedReply.substring(0, 500);
 
-        // Step 1: Generate a garment image with DALL-E 3
-        const garmentUrl = await generateStyleImage(
-          `Einzelnes Kleidungsstueck auf weissem Hintergrund, Produktfoto: ${styleContext}. ` +
-          `Freigestellt, kein Model, nur das Kleidungsstueck, E-Commerce Produktfoto.`,
-        );
+        // Step 0: Extract a precise garment description from the style advice
+        const garmentDescription = await extractGarmentDescription(styleContext);
+        console.log('Garment description:', garmentDescription);
+
+        // Step 1: Generate a garment product photo with DALL-E 3
+        const garmentUrl = await generateStyleImage(garmentDescription);
         console.log('Garment generated:', garmentUrl);
 
         // Step 2: Virtual try-on with FASHN (user photo + generated garment)
