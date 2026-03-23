@@ -55,7 +55,7 @@ function CommentItem({
           {/* Like */}
           <button
             onClick={() => onLike(comment.id)}
-            className={`flex items-center gap-1 text-xs transition-colors ${liked ? 'text-terracotta-500 font-semibold' : 'text-charcoal-400 hover:text-terracotta-400'}`}
+            className={`flex items-center gap-1 text-xs transition-colors ${liked ? 'text-regency-dark font-semibold' : 'text-charcoal-400 hover:text-regency-400'}`}
           >
             ♥ {comment.likes || 0}
           </button>
@@ -152,7 +152,7 @@ export function CommentThread({ recipeId, initialComments }: { recipeId: string;
       {/* New comment form */}
       {user && (
         <form onSubmit={e => handleSubmit(e)} className="flex gap-3">
-          <div className="w-8 h-8 rounded-full bg-blush-200 flex items-center justify-center text-xs font-bold text-blush-700 shrink-0 mt-1">
+          <div className="w-8 h-8 rounded-full bg-rose-200 flex items-center justify-center text-xs font-bold text-blush-700 shrink-0 mt-1">
             {(user.displayName || user.email || 'U')[0].toUpperCase()}
           </div>
           <div className="flex-1">

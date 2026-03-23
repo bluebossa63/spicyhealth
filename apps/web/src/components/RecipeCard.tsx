@@ -50,14 +50,14 @@ export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
       <Link href={`/recipes/detail?id=${recipe.id}`} className="group block">
         <div className="card overflow-hidden h-full flex flex-col group-hover:shadow-card-hover transition-shadow">
           {/* Image */}
-          <div className="relative h-48 bg-gradient-to-br from-blush-light to-cream-dark flex-shrink-0">
+          <div className="relative h-48 bg-gradient-to-br from-rose-light to-cream-dark flex-shrink-0">
             {recipe.imageUrl ? (
               <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-4xl">🥗</div>
             )}
             {/* Category chip */}
-            <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-xs font-semibold px-2.5 py-1 rounded-full text-terracotta capitalize">
+            <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-xs font-semibold px-2.5 py-1 rounded-full text-regency-dark capitalize">
               {recipe.category}
             </span>
             {/* Save button */}
@@ -65,7 +65,7 @@ export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
               onClick={e => { e.preventDefault(); onSaveToggle?.(recipe.id); }}
               className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:scale-110 transition-transform"
             >
-              <span className={saved ? 'text-terracotta' : 'text-charcoal-light'}>♥</span>
+              <span className={saved ? 'text-regency-dark' : 'text-charcoal-light'}>♥</span>
             </button>
           </div>
 

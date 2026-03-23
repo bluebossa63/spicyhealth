@@ -51,7 +51,7 @@ export function RecipePickerModal({ onSelect, onClose }: RecipePickerModalProps)
               {recipe.imageUrl ? (
                 <img src={recipe.imageUrl} alt={recipe.title} className="w-12 h-12 rounded-lg object-cover shrink-0" />
               ) : (
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blush-100 to-sage-100 flex items-center justify-center text-xl shrink-0">🍽️</div>
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-rose-light to-pistachio-light flex items-center justify-center text-xl shrink-0">🍽️</div>
               )}
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-charcoal-800 truncate">{recipe.title}</p>

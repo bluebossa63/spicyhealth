@@ -77,7 +77,7 @@ export default function RegisterPage() {
         </form>
         <p className="text-center text-sm text-charcoal-500 mt-4">
           Bereits ein Konto?{' '}
-          <Link href="/auth/login" className="text-terracotta-500 hover:underline font-medium">Anmelden</Link>
+          <Link href="/auth/login" className="text-regency-dark hover:underline font-medium">Anmelden</Link>
         </p>
       </div>
     </main>

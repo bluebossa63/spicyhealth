@@ -92,14 +92,14 @@ function RecipeDetail() {
       {recipe.imageUrl ? (
         <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-64 object-cover rounded-2xl mb-6" />
       ) : (
-        <div className="w-full h-64 bg-gradient-to-br from-blush-100 to-sage-100 rounded-2xl mb-6 flex items-center justify-center text-6xl">
+        <div className="w-full h-64 bg-gradient-to-br from-rose-light to-pistachio-light rounded-2xl mb-6 flex items-center justify-center text-6xl">
           🍽️
         </div>
       )}
 
       {/* Title + meta */}
       <div className="mb-6">
-        <span className="inline-block px-3 py-1 bg-blush-100 text-blush-700 text-xs font-semibold rounded-full uppercase tracking-wide mb-3">
+        <span className="inline-block px-3 py-1 bg-rose-light text-blush-700 text-xs font-semibold rounded-full uppercase tracking-wide mb-3">
           {recipe.category}
         </span>
         <div className="flex items-start justify-between gap-4">
@@ -120,7 +120,7 @@ function RecipeDetail() {
             )}
             <button
               onClick={handleSave}
-              className={`text-2xl transition-colors ${saved ? 'text-terracotta-500' : 'text-charcoal-300 hover:text-terracotta-400'}`}
+              className={`text-2xl transition-colors ${saved ? 'text-regency-dark' : 'text-charcoal-300 hover:text-regency-400'}`}
             >
               {saved ? '♥' : '♡'}
             </button>
@@ -172,7 +172,7 @@ function RecipeDetail() {
         <ol className="space-y-4">
           {recipe.instructions?.map((step: string, i: number) => (
             <li key={i} className="flex gap-4">
-              <span className="shrink-0 w-7 h-7 rounded-full bg-terracotta-100 text-terracotta-700 text-sm font-bold flex items-center justify-center">
+              <span className="shrink-0 w-7 h-7 rounded-full bg-regency-light text-regency-dark text-sm font-bold flex items-center justify-center">
                 {i + 1}
               </span>
               <p className="text-charcoal-700 leading-relaxed pt-0.5">{step}</p>

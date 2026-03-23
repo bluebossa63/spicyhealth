@@ -190,7 +190,7 @@ function NewRecipeForm() {
       <h1 className="font-heading text-3xl text-charcoal mb-2">Neues Rezept</h1>
       <div className="flex gap-2 mb-8">
         {[1, 2, 3].map(s => (
-          <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors ${step >= s ? 'bg-terracotta' : 'bg-blush-light'}`} />
+          <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors ${step >= s ? 'bg-regency' : 'bg-rose-light'}`} />
         ))}
       </div>
 
@@ -257,8 +257,8 @@ function NewRecipeForm() {
                 )}
                 {/* Search results — pick the right product */}
                 {ing.searchResults && ing.searchResults.length > 1 && (
-                  <div className="mt-2 border border-blush rounded-lg overflow-hidden">
-                    <p className="text-xs font-medium text-charcoal px-2 py-1 bg-blush-light">Welches Produkt meinst du?</p>
+                  <div className="mt-2 border border-rose-light rounded-lg overflow-hidden">
+                    <p className="text-xs font-medium text-charcoal px-2 py-1 bg-rose-light">Welches Produkt meinst du?</p>
                     {ing.searchResults.map((result, ri) => (
                       <button
                         key={ri}
@@ -272,12 +272,12 @@ function NewRecipeForm() {
                   </div>
                 )}
                 {!ing.nutritionLoaded && !ing.nutritionLoading && !ing.searchResults && ing.name.trim() && (
-                  <button onClick={() => lookupNutrition(i)} className="text-xs text-terracotta hover:text-terracotta-dark mt-2">
+                  <button onClick={() => lookupNutrition(i)} className="text-xs text-regency hover:text-regency-dark mt-2">
                     Nährwerte suchen
                   </button>
                 )}
                 {ing.nutritionLoaded && (
-                  <button onClick={() => lookupNutrition(i)} className="text-xs text-charcoal-light hover:text-terracotta mt-1">
+                  <button onClick={() => lookupNutrition(i)} className="text-xs text-charcoal-light hover:text-regency mt-1">
                     Anderes Produkt wählen
                   </button>
                 )}
@@ -311,7 +311,7 @@ function NewRecipeForm() {
           <div className="flex flex-col gap-3">
             {form.instructions.map((step_, i) => (
               <div key={i} className="flex gap-3 items-start">
-                <span className="flex-shrink-0 w-6 h-6 bg-terracotta text-white text-xs font-bold rounded-full flex items-center justify-center mt-2.5">{i + 1}</span>
+                <span className="flex-shrink-0 w-6 h-6 bg-regency text-white text-xs font-bold rounded-full flex items-center justify-center mt-2.5">{i + 1}</span>
                 <textarea value={step_} onChange={e => updateStep(i, e.target.value)}
                   rows={2} placeholder={`Schritt ${i + 1}…`}
                   className="input-field flex-1 resize-none text-sm" />

@@ -13,7 +13,7 @@ interface ToastProps {
 const typeStyles: Record<ToastType, string> = {
   success: 'bg-sage text-white',
   error:   'bg-red-500 text-white',
-  info:    'bg-terracotta text-white',
+  info:    'bg-regency text-white',
 };
 
 export function Toast({ message, type = 'success', duration = 3000, onClose }: ToastProps) {

@@ -5,11 +5,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        blush:      { DEFAULT: '#f4b8b0', light: '#fde8e5', dark: '#e8917f' },
-        sage:       { DEFAULT: '#8fad88', light: '#c4d9c0', dark: '#5e8a5a' },
-        cream:      { DEFAULT: '#fdf6f0', dark: '#f5e8d8' },
-        terracotta: { DEFAULT: '#d4856a', light: '#e8b09a', dark: '#b5634a' },
-        charcoal:   { DEFAULT: '#3a3a3a', light: '#6b6b6b' },
+        // Bridgerton / Regency palette
+        blush:      { DEFAULT: '#e8c4c4', light: '#f5e1e1', dark: '#d4a0a0' },
+        sage:       { DEFAULT: '#a3b899', light: '#d0ddc9', dark: '#7a9470' },
+        cream:      { DEFAULT: '#faf6f1', dark: '#efe6da' },
+        terracotta: { DEFAULT: '#7b9eb8', light: '#a8c4d8', dark: '#5a7d99' },
+        charcoal:   { DEFAULT: '#3d3d4a', light: '#6e6e7a' },
+        regency:    { DEFAULT: '#8faabe', light: '#c5d5e0', dark: '#6b8da5' },
+        pistachio:  { DEFAULT: '#b5c9a8', light: '#dbe6d3', dark: '#8aab78' },
+        rose:       { DEFAULT: '#d4a5a5', light: '#ecd4d4', dark: '#b88080' },
       },
       fontFamily: {
         heading: ['var(--font-playfair)', 'Georgia', 'serif'],

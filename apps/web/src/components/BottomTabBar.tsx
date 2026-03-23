@@ -19,7 +19,7 @@ export function BottomTabBar() {
   if (!isAuthenticated) return null;
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-cream-200 flex">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-regency-light flex">
       {TABS.map(({ href, icon, label }) => {
         const active = pathname === href || (href !== '/' && pathname.startsWith(href));
         return (
@@ -27,11 +27,11 @@ export function BottomTabBar() {
             key={href}
             href={href}
             className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition-colors min-h-[56px] ${
-              active ? 'text-terracotta-500' : 'text-charcoal-400 hover:text-charcoal-700'
+              active ? 'text-regency-dark' : 'text-charcoal-400 hover:text-charcoal-700'
             }`}
           >
             <span className="text-xl leading-none">{icon}</span>
-            <span className={`text-[10px] font-medium ${active ? 'text-terracotta-500' : ''}`}>{label}</span>
+            <span className={`text-[10px] font-medium ${active ? 'text-regency-dark' : ''}`}>{label}</span>
           </Link>
         );
       })}

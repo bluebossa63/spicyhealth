@@ -65,7 +65,7 @@ export default function LoginPage() {
         </form>
         <p className="text-center text-sm text-charcoal-500 mt-4">
           Noch kein Konto?{' '}
-          <Link href="/auth/register" className="text-terracotta-500 hover:underline font-medium">Jetzt registrieren</Link>
+          <Link href="/auth/register" className="text-regency-dark hover:underline font-medium">Jetzt registrieren</Link>
         </p>
       </div>
     </main>

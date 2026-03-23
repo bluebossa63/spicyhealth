@@ -30,7 +30,7 @@ export default function HomePage() {
       <section className="max-w-6xl mx-auto px-4 pt-16 pb-12 text-center">
         <h1 className="font-heading text-5xl md:text-6xl font-bold text-charcoal leading-tight mb-4">
           Gut essen.<br />
-          <span className="text-terracotta">Großartig fühlen.</span>
+          <span className="text-regency">Großartig fühlen.</span>
         </h1>
         <p className="text-lg text-charcoal-light max-w-xl mx-auto mb-8">
           Gesunde Rezepte, wöchentliche Mahlzeitenplanung, Nährwert-Tracking und smarte Einkaufslisten — alles in einer wunderschönen App.
@@ -42,7 +42,7 @@ export default function HomePage() {
       </section>
 
       {/* Placeholder lifestyle image strip */}
-      <section className="w-full h-64 bg-gradient-to-r from-blush-light via-cream-dark to-sage-light flex items-center justify-center mb-16">
+      <section className="w-full h-64 bg-gradient-to-r from-rose-light via-cream-dark to-sage-light flex items-center justify-center mb-16">
         <p className="text-charcoal-light text-sm italic">[ Lifestyle-Fotografie ]</p>
       </section>
 

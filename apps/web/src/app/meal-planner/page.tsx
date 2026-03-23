@@ -203,10 +203,10 @@ function MealPlanner() {
                 const isToday = day.date === new Date().toISOString().slice(0, 10);
                 return (
                   <div key={day.date} className="text-center">
-                    <p className={`text-xs font-semibold ${isToday ? 'text-terracotta-600' : 'text-charcoal-500'}`}>
+                    <p className={`text-xs font-semibold ${isToday ? 'text-regency-dark' : 'text-charcoal-500'}`}>
                       {DAY_NAMES[i]}
                     </p>
-                    <p className={`text-lg font-bold ${isToday ? 'text-terracotta-500' : 'text-charcoal-700'}`}>
+                    <p className={`text-lg font-bold ${isToday ? 'text-regency-dark' : 'text-charcoal-700'}`}>
                       {new Date(day.date + 'T00:00:00Z').getUTCDate()}
                     </p>
                   </div>
@@ -250,7 +250,7 @@ function MealPlanner() {
 
         <DragOverlay>
           {activeRecipe && (
-            <div className="bg-white border-2 border-terracotta-400 rounded-xl p-2 shadow-xl text-xs font-semibold text-charcoal-800 max-w-[120px] truncate">
+            <div className="bg-white border-2 border-regency rounded-xl p-2 shadow-xl text-xs font-semibold text-charcoal-800 max-w-[120px] truncate">
               {activeRecipe.title}
             </div>
           )}

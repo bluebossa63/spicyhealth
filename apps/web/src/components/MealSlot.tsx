@@ -18,7 +18,7 @@ export function MealSlot({ id, slot, recipe, onClear, onPick }: MealSlotProps) {
       ref={setNodeRef}
       className={`min-h-[80px] rounded-xl border-2 transition-colors p-2 ${
         isOver
-          ? 'border-terracotta-400 bg-terracotta-50'
+          ? 'border-regency bg-regency-light'
           : recipe
           ? 'border-sage-200 bg-white'
           : 'border-dashed border-charcoal-200 bg-cream-50 hover:border-sage-300'
@@ -30,7 +30,7 @@ export function MealSlot({ id, slot, recipe, onClear, onPick }: MealSlotProps) {
             {recipe.imageUrl ? (
               <img src={recipe.imageUrl} alt={recipe.title} className="w-10 h-10 rounded-lg object-cover shrink-0" />
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blush-100 to-sage-100 flex items-center justify-center text-lg shrink-0">🍽️</div>
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-light to-pistachio-light flex items-center justify-center text-lg shrink-0">🍽️</div>
             )}
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-charcoal truncate leading-tight">{recipe.title}</p>

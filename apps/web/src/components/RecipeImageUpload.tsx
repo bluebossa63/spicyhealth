@@ -60,7 +60,7 @@ export function RecipeImageUpload({ imageUrl, onImageChange }: RecipeImageUpload
           </button>
         </div>
       ) : (
-        <div className="border-2 border-dashed border-blush rounded-xl p-6 text-center">
+        <div className="border-2 border-dashed border-regency-light rounded-xl p-6 text-center">
           <p className="text-sm text-charcoal-light mb-3">Noch kein Bild</p>
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <button

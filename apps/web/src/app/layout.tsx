@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   title: { default: 'SpicyHealth', template: '%s | SpicyHealth' },
   description: 'Gesunde Ernährung & Lifestyle-Rezepte, Mahlzeitenplanung und Nährwert-Tracking',
   manifest: '/manifest.json',
-  themeColor: '#d4856a',
+  themeColor: '#7b9eb8',
   viewport: { width: 'device-width', initialScale: 1 },
 };
 

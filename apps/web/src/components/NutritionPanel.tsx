@@ -16,8 +16,8 @@ export function NutritionPanel({ nutrition, servings = 1 }: Props) {
 
   const macros = [
     { label: 'Eiweiß', value: per(nutrition.proteinG), unit: 'g', color: 'bg-sage' },
-    { label: 'Kohlenhydrate', value: per(nutrition.carbsG), unit: 'g', color: 'bg-blush' },
-    { label: 'Fett', value: per(nutrition.fatG), unit: 'g', color: 'bg-terracotta' },
+    { label: 'Kohlenhydrate', value: per(nutrition.carbsG), unit: 'g', color: 'bg-rose' },
+    { label: 'Fett', value: per(nutrition.fatG), unit: 'g', color: 'bg-regency' },
     ...(nutrition.fiberG ? [{ label: 'Ballaststoffe', value: per(nutrition.fiberG), unit: 'g', color: 'bg-cream-dark' }] : []),
   ];
 
@@ -27,7 +27,7 @@ export function NutritionPanel({ nutrition, servings = 1 }: Props) {
     <div className="card p-5">
       <h3 className="font-heading font-semibold text-charcoal mb-4">Nährwerte pro Portion</h3>
       <div className="text-center mb-4">
-        <span className="text-3xl font-bold text-terracotta">{per(nutrition.calories)}</span>
+        <span className="text-3xl font-bold text-regency">{per(nutrition.calories)}</span>
         <span className="text-sm text-charcoal-light ml-1">kcal</span>
       </div>
       {/* Macro bar */}

@@ -29,7 +29,7 @@ export function ChatMessage({ message, onGenerateLook, isGenerating }: ChatMessa
           <div
             className={`rounded-2xl px-4 py-3 ${
               isUser
-                ? 'bg-terracotta-light text-charcoal rounded-br-md'
+                ? 'bg-regency-light text-charcoal rounded-br-md'
                 : 'bg-white text-charcoal shadow-sm border border-cream-dark rounded-bl-md'
             }`}
           >

@@ -77,7 +77,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         <div className="flex gap-2 mb-2">
           {images.map((img, i) => (
             <div key={i} className="relative">
-              <img src={img.previewUrl} alt="" className="w-16 h-16 object-cover rounded-xl border border-blush" />
+              <img src={img.previewUrl} alt="" className="w-16 h-16 object-cover rounded-xl border border-rose" />
               <button
                 type="button"
                 onClick={() => removeImage(i)}
@@ -94,7 +94,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || uploading || images.length >= 3}
-          className="flex-shrink-0 p-2.5 rounded-xl bg-blush-light hover:bg-blush transition-colors disabled:opacity-40"
+          className="flex-shrink-0 p-2.5 rounded-xl bg-rose-light hover:bg-rose transition-colors disabled:opacity-40"
           title="Bild hochladen"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-charcoal-light">

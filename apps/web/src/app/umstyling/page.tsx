@@ -188,7 +188,7 @@ function StyleConsultant() {
               <div
                 key={conv.id}
                 className={`group flex items-center gap-1 p-2.5 rounded-xl mb-1 cursor-pointer transition-colors ${
-                  conv.id === conversationId ? 'bg-blush-light' : 'hover:bg-cream-dark'
+                  conv.id === conversationId ? 'bg-regency-light' : 'hover:bg-cream-dark'
                 }`}
                 onClick={() => loadConversation(conv.id)}
               >
@@ -214,7 +214,7 @@ function StyleConsultant() {
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-cream-dark bg-cream/50">
           <button
-            className="md:hidden p-1.5 rounded-lg hover:bg-blush-light transition-colors"
+            className="md:hidden p-1.5 rounded-lg hover:bg-regency-light transition-colors"
             onClick={() => setSidebarOpen(true)}
             title="Gespräche"
           >
@@ -233,7 +233,7 @@ function StyleConsultant() {
             <button
               onClick={() => garmentInputRef.current?.click()}
               disabled={generatingLook}
-              className="px-3 py-1.5 rounded-full bg-terracotta-light hover:bg-terracotta text-charcoal text-xs font-medium transition-colors disabled:opacity-40"
+              className="px-3 py-1.5 rounded-full bg-regency-light hover:bg-regency text-charcoal text-xs font-medium transition-colors disabled:opacity-40"
               title="Lade ein Bild eines Kleidungsstücks hoch und probiere es virtuell an"
             >
               {generatingLook ? 'Wird erstellt...' : '👗 Anprobieren'}
@@ -271,7 +271,7 @@ function StyleConsultant() {
                   <button
                     key={suggestion}
                     onClick={() => handleSend(suggestion)}
-                    className="px-4 py-2 rounded-full border border-blush text-sm text-charcoal hover:bg-blush-light transition-colors"
+                    className="px-4 py-2 rounded-full border border-regency-light text-sm text-charcoal hover:bg-regency-light transition-colors"
                   >
                     {suggestion}
                   </button>
