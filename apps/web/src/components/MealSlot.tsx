@@ -35,7 +35,7 @@ export function MealSlot({ id, slot, recipe, onClear, onPick }: MealSlotProps) {
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-charcoal-800 truncate leading-tight">{recipe.title}</p>
               <p className="text-xs text-charcoal-400">
-                {recipe.nutrition?.calories ? `${recipe.nutrition.calories} kcal` : ''}
+                {recipe.nutrition?.calories ? `${Math.round(recipe.nutrition.calories / (recipe.servings || 1))} kcal` : ''}
                 {recipe.estimatedCostEur ? ` · CHF ${recipe.estimatedCostEur.toFixed(2)}` : ''}
               </p>
             </div>
