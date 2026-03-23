@@ -29,16 +29,17 @@ function calcTotals(day: any) {
   const totals = { calories: 0, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0 };
   let cost = 0;
   for (const r of slots) {
+    const servings = r?.servings || 1;
     if (r?.nutrition) {
-      totals.calories += r.nutrition.calories || 0;
-      totals.proteinG += r.nutrition.proteinG || 0;
-      totals.carbsG += r.nutrition.carbsG || 0;
-      totals.fatG += r.nutrition.fatG || 0;
-      totals.fiberG += r.nutrition.fiberG || 0;
+      totals.calories += (r.nutrition.calories || 0) / servings;
+      totals.proteinG += (r.nutrition.proteinG || 0) / servings;
+      totals.carbsG += (r.nutrition.carbsG || 0) / servings;
+      totals.fatG += (r.nutrition.fatG || 0) / servings;
+      totals.fiberG += (r.nutrition.fiberG || 0) / servings;
     }
-    cost += r?.estimatedCostEur || 0;
+    cost += (r?.estimatedCostEur || 0) / servings;
   }
-  return { totalNutrition: totals, totalCostEur: cost };
+  return { totalNutrition: totals, totalCostEur: Math.round(cost * 100) / 100 };
 }
 
 function buildWeekDays(weekStart: string): string[] {
