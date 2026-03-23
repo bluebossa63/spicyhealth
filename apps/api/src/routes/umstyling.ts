@@ -90,17 +90,30 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
       .find((m) => m.role === 'user' && m.imageUrls?.length)
       ?.imageUrls?.[0];
 
-    // Auto-generate styled image when user has uploaded a photo
-    // Lower threshold (50 chars) so even short replies trigger generation
+    // Auto-generate: when user has uploaded a photo, generate a garment
+    // with DALL-E 3, then use FASHN to show the user wearing it
     if (latestUserImage && cleanedReply.length > 50) {
       try {
         const styleContext = cleanedReply.substring(0, 300);
-        console.log('Auto-generating style image for:', styleContext.substring(0, 80));
-        const url = await generateStyleImage(
-          `Modefoto einer Frau: ${styleContext}. Realistisch, hochwertig, Modefotografie.`,
+        console.log('Auto-generating try-on for:', styleContext.substring(0, 80));
+
+        // Step 1: Generate a garment image with DALL-E 3
+        const garmentUrl = await generateStyleImage(
+          `Einzelnes Kleidungsstueck auf weissem Hintergrund, Produktfoto: ${styleContext}. ` +
+          `Freigestellt, kein Model, nur das Kleidungsstueck, E-Commerce Produktfoto.`,
         );
-        generatedImages.push(url);
-        console.log('Style image generated:', url);
+        console.log('Garment generated:', garmentUrl);
+
+        // Step 2: Virtual try-on with FASHN (user photo + generated garment)
+        try {
+          const tryOnUrl = await virtualTryOn(latestUserImage, garmentUrl);
+          generatedImages.push(tryOnUrl);
+          console.log('Try-on generated:', tryOnUrl);
+        } catch (tryOnErr) {
+          // Fallback: show just the garment if try-on fails
+          console.warn('FASHN try-on failed, showing garment only:', (tryOnErr as Error).message);
+          generatedImages.push(garmentUrl);
+        }
       } catch (err) {
         console.error('Auto look generation FAILED:', (err as Error).message);
       }
