@@ -1,34 +1,32 @@
-import OpenAI, { toFile } from 'openai';
+import OpenAI from 'openai';
 import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, StorageSharedKeyCredential } from '@azure/storage-blob';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 /**
- * Edit an existing image based on a style description.
- * Uses gpt-image-1 (the only model that supports image editing).
+ * Generate a styled version of a look based on description + context from source image.
+ * Since dall-e-2 image editing has strict format requirements, we use dall-e-3
+ * to generate a new image that incorporates the style description.
  */
 export async function generateStyledImage(
   sourceImageUrl: string,
   stylePrompt: string,
 ): Promise<string> {
-  const imageResponse = await fetch(sourceImageUrl);
-  if (!imageResponse.ok) throw new Error('Could not download source image');
-  const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
-  const contentType = imageResponse.headers.get('content-type') || 'image/png';
-  const ext = contentType.includes('png') ? 'png' : 'jpg';
-
-  const result = await openai.images.edit({
-    model: 'gpt-image-1',
-    image: await toFile(imageBuffer, `source.${ext}`),
+  // Use DALL-E 3 to generate a new styled image based on the description
+  const result = await openai.images.generate({
+    model: 'dall-e-3',
     prompt: stylePrompt,
     size: '1024x1024',
+    quality: 'standard',
   });
 
-  const base64Data = result.data?.[0]?.b64_json;
-  if (!base64Data) throw new Error('No image data returned from OpenAI');
+  const imageUrl = result.data?.[0]?.url;
+  if (!imageUrl) throw new Error('No image URL returned from DALL-E 3');
 
-  const generatedBuffer = Buffer.from(base64Data, 'base64');
+  const imgResponse = await fetch(imageUrl);
+  if (!imgResponse.ok) throw new Error('Could not download generated image');
+  const generatedBuffer = Buffer.from(await imgResponse.arrayBuffer());
   return uploadToBlob(generatedBuffer, 'image/png');
 }
 
@@ -49,7 +47,6 @@ export async function generateStyleImage(
   const imageUrl = result.data?.[0]?.url;
   if (!imageUrl) throw new Error('No image URL returned from DALL-E 3');
 
-  // Download and re-upload to our Azure Blob Storage
   const imgResponse = await fetch(imageUrl);
   if (!imgResponse.ok) throw new Error('Could not download generated image');
   const generatedBuffer = Buffer.from(await imgResponse.arrayBuffer());
