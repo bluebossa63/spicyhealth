@@ -83,6 +83,7 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
 
     // --- Automatic image generation ---
     const generatedImages: string[] = [];
+    let garmentDescriptionDE = '';
 
     // Find the latest user-uploaded photo
     const latestUserImage = [...conversation.messages]
@@ -97,11 +98,12 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
         const styleContext = cleanedReply.substring(0, 500);
 
         // Step 0: Extract a precise garment description from the style advice
-        const garmentDescription = await extractGarmentDescription(styleContext);
-        console.log('Garment description:', garmentDescription);
+        const garment = await extractGarmentDescription(styleContext);
+        garmentDescriptionDE = garment.description;
+        console.log('Garment:', garment.prompt);
 
         // Step 1: Generate a garment product photo with DALL-E 3
-        const garmentUrl = await generateStyleImage(garmentDescription);
+        const garmentUrl = await generateStyleImage(garment.prompt);
         console.log('Garment generated:', garmentUrl);
 
         // Step 2: Virtual try-on with FASHN (user photo + generated garment)
@@ -119,10 +121,14 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
       }
     }
 
-    // Append assistant reply
+    // Append assistant reply — add garment description if image was generated
+    const replyWithImage = generatedImages.length && garmentDescriptionDE
+      ? `${cleanedReply}\n\n👗 **Mein Vorschlag für dich:** ${garmentDescriptionDE}`
+      : cleanedReply;
+
     const assistantMessage: ChatMessage = {
       role: 'assistant',
-      content: cleanedReply,
+      content: replyWithImage,
       imageUrls: generatedImages.length ? generatedImages : undefined,
       timestamp: new Date().toISOString(),
     };

@@ -105,23 +105,30 @@ export async function chatWithStyleConsultant(messages: MessageInput[]): Promise
  * Extract a precise garment description from a style suggestion.
  * Used to generate a realistic product photo with DALL-E 3.
  */
-export async function extractGarmentDescription(styleSuggestion: string): Promise<string> {
+export async function extractGarmentDescription(styleSuggestion: string): Promise<{ prompt: string; description: string }> {
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
-    max_tokens: 200,
+    max_tokens: 300,
     messages: [
       {
         role: 'system',
         content: `Du bist ein Mode-Experte. Extrahiere aus dem Stilvorschlag EIN konkretes,
-tragbares Kleidungsstück und beschreibe es als englische DALL-E Prompt für ein
-E-Commerce Produktfoto. Nur das Kleidungsstück, kein Model, weisser Hintergrund.
-Beispiel-Output: "A tailored navy blue blazer with gold buttons, slim fit,
-professional style, product photo on pure white background, high quality fashion photography"
-Antworte NUR mit der englischen Beschreibung, nichts anderes.`,
+tragbares Kleidungsstück. Antworte in genau diesem JSON-Format:
+{"prompt": "English DALL-E prompt for product photo on white background, e.g. A tailored navy blue blazer with gold buttons, slim fit, product photo on pure white background, fashion photography", "description": "Deutsche Beschreibung für die Userin, z.B. Ein taillierter marineblauer Blazer mit goldenen Knöpfen, schmale Passform — sportlich-elegant und perfekt für den Frühling"}
+Antworte NUR mit dem JSON, nichts anderes.`,
       },
       { role: 'user', content: styleSuggestion },
     ],
   });
 
-  return response.choices[0]?.message?.content || 'Elegant blazer, product photo on white background';
+  const raw = response.choices[0]?.message?.content || '';
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      prompt: parsed.prompt || 'Elegant blazer, product photo on white background',
+      description: parsed.description || 'Ein elegantes Kleidungsstück',
+    };
+  } catch {
+    return { prompt: raw, description: 'Ein stilvolles Kleidungsstück basierend auf deinem Wunsch' };
+  }
 }
