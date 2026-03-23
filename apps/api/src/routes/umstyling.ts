@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { containers } from '../services/cosmos';
 import { chatWithStyleConsultant } from '../services/anthropic';
-import { generateStyledImage, generateStyleImage } from '../services/image-gen';
+import { generateStyleImage } from '../services/image-gen';
 import rateLimit from 'express-rate-limit';
 import type { Conversation, ChatMessage } from '@spicyhealth/shared';
 
@@ -88,14 +88,9 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     // the conversation suggests style changes (reply is substantial)
     if (latestUserImage && cleanedReply.length > 150) {
       try {
-        // Extract a concise style description from Claude's reply (first 500 chars)
-        const styleContext = cleanedReply.substring(0, 500);
-        const url = await generateStyledImage(
-          latestUserImage,
-          `Verändere das Foto dieser Person basierend auf folgenden Stilvorschlägen: ${styleContext}. ` +
-          `Zeige die Person mit dem neuen Look. Behalte Gesicht und Körperform bei, ` +
-          `ändere Kleidung, Frisur, Make-up oder Accessoires entsprechend der Vorschläge. ` +
-          `Das Ergebnis soll realistisch und natürlich aussehen.`,
+        const styleContext = cleanedReply.substring(0, 300);
+        const url = await generateStyleImage(
+          `Modefoto basierend auf: ${styleContext}. Realistisch, hochwertig.`,
         );
         generatedImages.push(url);
       } catch (err) {
@@ -197,12 +192,9 @@ umstylingRouter.post('/generate-look', chatLimiter, async (req: Request, res: Re
     if (!resources.length) return res.status(404).json({ error: 'Konversation nicht gefunden' });
     const conversation = resources[0] as Conversation;
 
-    // Generate styled image via OpenAI
-    const generatedImageUrl = await generateStyledImage(
-      sourceImageUrl,
-      `Bearbeite dieses Foto einer Person und zeige folgende Stil-Änderung: ${styleDescription}. ` +
-      `Das Ergebnis soll realistisch und natürlich aussehen. Behalte das Gesicht und die Körperform bei, ` +
-      `ändere nur Kleidung, Frisur, Make-up oder Accessoires wie beschrieben.`,
+    // Generate styled image via DALL-E 3
+    const generatedImageUrl = await generateStyleImage(
+      `Modefoto: ${styleDescription}. Realistisch, hochwertig, wie ein Modefoto.`,
     );
 
     // Append to conversation as assistant message with image
