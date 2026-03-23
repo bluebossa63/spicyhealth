@@ -13,6 +13,7 @@ interface Recipe {
   imageUrl?: string;
   prepTimeMinutes: number;
   cookTimeMinutes: number;
+  servings: number;
   nutrition: { calories: number };
   estimatedCostEur: number;
   tags?: string[];
@@ -76,7 +77,7 @@ export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
             {/* Meta badges */}
             <div className="flex gap-3 text-xs text-charcoal-light mt-1">
               <span>⏱ {totalTime} min</span>
-              <span>🔥 {recipe.nutrition.calories} kcal</span>
+              <span>🔥 {Math.round(recipe.nutrition.calories / (recipe.servings || 1))} kcal</span>
               <span>💰 CHF {recipe.estimatedCostEur.toFixed(2)}</span>
             </div>
 
