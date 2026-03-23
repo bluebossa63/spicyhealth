@@ -66,17 +66,20 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     };
     conversation.messages.push(userMessage);
 
-    // Call Claude
+    // Call GPT-4o for style advice
     const reply = await chatWithStyleConsultant(conversation.messages);
 
-    // Strip any markers Claude might have used (clean up response text)
+    // Clean up: remove markers and "I can't edit images" disclaimers
     let cleanedReply = reply
       .replace(/\[LOOK_VORSCHLAG:\s*.+?\]/g, '')
       .replace(/\[INSPIRATION:\s*.+?\]/g, '')
+      .replace(/[Ii]ch kann (leider\s+)?(keine?\s+)?(Bilder?|Fotos?)\s+(direkt\s+)?(erstellen|anzeigen|bearbeiten|generieren|verändern|modifizieren)[^.!]*[.!]?/g, '')
+      .replace(/[Dd]as ist (leider\s+)?(technisch\s+)?nicht möglich[^.!]*[.!]?/g, '')
+      .replace(/[Bb]itte (überprüfe|prüfe|schau)[^.!]*App[^.!]*[.!]?/g, '')
+      .replace(/\n{3,}/g, '\n\n')
       .trim();
 
     // --- Automatic image generation ---
-    // The app decides when to generate images, not Claude.
     const generatedImages: string[] = [];
 
     // Find the latest user-uploaded photo
@@ -85,17 +88,19 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
       .find((m) => m.role === 'user' && m.imageUrls?.length)
       ?.imageUrls?.[0];
 
-    // Auto-generate styled image when: user has uploaded a photo AND
-    // the conversation suggests style changes (reply is substantial)
-    if (latestUserImage && cleanedReply.length > 150) {
+    // Auto-generate styled image when user has uploaded a photo
+    // Lower threshold (50 chars) so even short replies trigger generation
+    if (latestUserImage && cleanedReply.length > 50) {
       try {
         const styleContext = cleanedReply.substring(0, 300);
+        console.log('Auto-generating style image for:', styleContext.substring(0, 80));
         const url = await generateStyleImage(
-          `Modefoto basierend auf: ${styleContext}. Realistisch, hochwertig.`,
+          `Modefoto einer Frau: ${styleContext}. Realistisch, hochwertig, Modefotografie.`,
         );
         generatedImages.push(url);
+        console.log('Style image generated:', url);
       } catch (err) {
-        console.warn('Auto look generation failed:', (err as Error).message);
+        console.error('Auto look generation FAILED:', (err as Error).message);
       }
     }
 
