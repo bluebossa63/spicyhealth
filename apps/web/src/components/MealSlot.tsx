@@ -33,26 +33,38 @@ export function MealSlot({ id, slot, recipe, onClear, onPick }: MealSlotProps) {
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blush-100 to-sage-100 flex items-center justify-center text-lg shrink-0">🍽️</div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-charcoal-800 truncate leading-tight">{recipe.title}</p>
-              <p className="text-xs text-charcoal-400">
+              <p className="text-xs font-semibold text-charcoal truncate leading-tight">{recipe.title}</p>
+              <p className="text-xs text-charcoal-light">
                 {recipe.nutrition?.calories ? `${Math.round(recipe.nutrition.calories / (recipe.servings || 1))} kcal` : ''}
-                {recipe.estimatedCostEur ? ` · CHF ${recipe.estimatedCostEur.toFixed(2)}` : ''}
+                {recipe.estimatedCostEur ? ` · CHF ${(recipe.estimatedCostEur / (recipe.servings || 1)).toFixed(2)}` : ''}
               </p>
             </div>
           </div>
-          <button
-            onClick={onClear}
-            aria-label={`${recipe?.title ?? 'Rezept'} entfernen`}
-            className="absolute -top-1 -right-1 w-5 h-5 bg-charcoal-400 hover:bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            ×
-          </button>
+          {/* Action buttons — visible on hover */}
+          <div className="absolute -top-1 -right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={onPick}
+              aria-label="Rezept austauschen"
+              title="Austauschen"
+              className="w-5 h-5 bg-sage hover:bg-sage-dark text-white rounded-full text-[10px] flex items-center justify-center"
+            >
+              ↻
+            </button>
+            <button
+              onClick={onClear}
+              aria-label={`${recipe?.title ?? 'Rezept'} entfernen`}
+              title="Entfernen"
+              className="w-5 h-5 bg-charcoal-light hover:bg-red-500 text-white rounded-full text-xs flex items-center justify-center"
+            >
+              ×
+            </button>
+          </div>
         </div>
       ) : (
         <button
           onClick={onPick}
           aria-label="Rezept hinzufügen"
-          className="w-full h-full min-h-[64px] flex items-center justify-center text-charcoal-300 hover:text-sage-500 transition-colors text-xl"
+          className="w-full h-full min-h-[64px] flex items-center justify-center text-charcoal-light hover:text-sage transition-colors text-xl"
         >
           +
         </button>
