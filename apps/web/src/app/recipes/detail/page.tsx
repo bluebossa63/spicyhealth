@@ -119,6 +119,22 @@ function RecipeDetail() {
               </>
             )}
             <button
+              onClick={() => {
+                const url = window.location.href;
+                const text = `Schau dir dieses Rezept an: ${recipe.title} — ${url}`;
+                if (navigator.share) {
+                  navigator.share({ title: recipe.title, text: recipe.description, url });
+                } else {
+                  navigator.clipboard.writeText(text);
+                  alert('Link kopiert! Du kannst ihn jetzt teilen.');
+                }
+              }}
+              className="text-charcoal-light hover:text-regency transition-colors text-sm"
+              title="Rezept teilen"
+            >
+              📤 Teilen
+            </button>
+            <button
               onClick={handleSave}
               className={`text-2xl transition-colors ${saved ? 'text-regency-dark' : 'text-charcoal-300 hover:text-regency-400'}`}
             >

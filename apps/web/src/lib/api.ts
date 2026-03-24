@@ -99,6 +99,11 @@ export const api = {
     deleteItem: (id: string) =>
       fetchJson<{ success: boolean }>(`/shopping-list/items/${id}`, { method: 'DELETE' }),
   },
+  dailyLogs: {
+    get: (date: string) => fetchJson<{ log: any }>(`/daily-logs?date=${date}`),
+    getRange: (from: string, to: string) => fetchJson<{ logs: any[] }>(`/daily-logs?from=${from}&to=${to}`),
+    update: (data: any) => fetchJson<{ log: any }>('/daily-logs', { method: 'PUT', body: JSON.stringify(data) }),
+  },
   umstyling: {
     chat: (data: { conversationId?: string; message: string; imageUrls?: string[] }) =>
       fetchJson<{ conversation: any; reply: string; generatedImages?: string[] }>('/umstyling/chat', {

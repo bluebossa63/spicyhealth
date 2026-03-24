@@ -22,6 +22,7 @@ import { nutritionRouter } from './routes/nutrition';
 import { usersRouter } from './routes/users';
 import { commentsRouter } from './routes/comments';
 import { umstylingRouter } from './routes/umstyling';
+import { dailyLogsRouter } from './routes/daily-logs';
 import { authMiddleware } from './middleware/auth';
 
 const app = express();
@@ -49,6 +50,7 @@ app.use('/api/meal-plans', authMiddleware, mealPlansRouter);
 app.use('/api/shopping-list', authMiddleware, shoppingListRouter);
 app.use('/api/nutrition', authMiddleware, nutritionRouter);
 app.use('/api/umstyling', authMiddleware, umstylingRouter);
+app.use('/api/daily-logs', authMiddleware, dailyLogsRouter);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 

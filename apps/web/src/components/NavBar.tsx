@@ -9,6 +9,8 @@ const navLinks = [
   { href: '/meal-planner',  label: 'Mahlzeitenplaner' },
   { href: '/shopping-list', label: 'Einkaufsliste' },
   { href: '/umstyling',    label: 'Stilberatung' },
+  { href: '/mein-tag',     label: 'Mein Tag' },
+  { href: '/saisonkalender', label: 'Saison' },
 ];
 
 const authNavLinks = [

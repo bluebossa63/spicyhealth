@@ -4,10 +4,9 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 
 const TABS = [
-  { href: '/', icon: '🏠', label: 'Startseite' },
+  { href: '/mein-tag', icon: '✨', label: 'Mein Tag' },
   { href: '/recipes', icon: '📖', label: 'Rezepte' },
   { href: '/meal-planner', icon: '📅', label: 'Planer' },
-  { href: '/shopping-list', icon: '🛒', label: 'Liste' },
   { href: '/umstyling', icon: '👗', label: 'Styling' },
   { href: '/profile', icon: '👤', label: 'Profil' },
 ];
