@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { SearchBar } from '@/components/SearchBar';
 import { FilterPanel, Filters } from '@/components/FilterPanel';
@@ -10,9 +11,10 @@ import { api } from '@/lib/api';
 const DEFAULT_FILTERS: Filters = { category: '', maxCalories: 1500, maxPrepTime: 120, maxCost: 30 };
 
 export default function RecipesPage() {
+  const params = useSearchParams();
   const [recipes, setRecipes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(params.get('search') || '');
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);

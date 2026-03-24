@@ -9,76 +9,136 @@ interface SeasonalItem {
   name: string;
   emoji: string;
   type: 'gemuese' | 'frucht' | 'kraeuter';
+  searchTerms: string[]; // terms to search recipes for
 }
 
 const SEASONAL: Record<number, SeasonalItem[]> = {
   0: [ // Januar
-    { name: 'Rüebli', emoji: '🥕', type: 'gemuese' }, { name: 'Lauch', emoji: '🧅', type: 'gemuese' },
-    { name: 'Rosenkohl', emoji: '🥦', type: 'gemuese' }, { name: 'Kabis', emoji: '🥬', type: 'gemuese' },
-    { name: 'Sellerie', emoji: '🥬', type: 'gemuese' }, { name: 'Äpfel (Lager)', emoji: '🍎', type: 'frucht' },
-    { name: 'Birnen (Lager)', emoji: '🍐', type: 'frucht' },
+    { name: 'Rüebli / Karotten', emoji: '🥕', type: 'gemuese', searchTerms: ['karotten', 'rüebli', 'karotte'] },
+    { name: 'Lauch', emoji: '🧅', type: 'gemuese', searchTerms: ['lauch'] },
+    { name: 'Rosenkohl', emoji: '🥦', type: 'gemuese', searchTerms: ['rosenkohl'] },
+    { name: 'Kabis / Weisskohl', emoji: '🥬', type: 'gemuese', searchTerms: ['kabis', 'kohl', 'weisskohl'] },
+    { name: 'Sellerie', emoji: '🥬', type: 'gemuese', searchTerms: ['sellerie'] },
+    { name: 'Kartoffeln', emoji: '🥔', type: 'gemuese', searchTerms: ['kartoffel', 'kartoffeln'] },
+    { name: 'Zwiebeln', emoji: '🧅', type: 'gemuese', searchTerms: ['zwiebel', 'zwiebeln'] },
+    { name: 'Äpfel (Lager)', emoji: '🍎', type: 'frucht', searchTerms: ['apfel', 'äpfel'] },
+    { name: 'Birnen (Lager)', emoji: '🍐', type: 'frucht', searchTerms: ['birne', 'birnen'] },
   ],
   1: [ // Februar
-    { name: 'Nüsslisalat', emoji: '🥬', type: 'gemuese' }, { name: 'Rüebli', emoji: '🥕', type: 'gemuese' },
-    { name: 'Lauch', emoji: '🧅', type: 'gemuese' }, { name: 'Chicorée', emoji: '🥬', type: 'gemuese' },
-    { name: 'Kabis', emoji: '🥬', type: 'gemuese' }, { name: 'Äpfel (Lager)', emoji: '🍎', type: 'frucht' },
+    { name: 'Nüsslisalat', emoji: '🥬', type: 'gemuese', searchTerms: ['nüsslisalat', 'salat'] },
+    { name: 'Rüebli / Karotten', emoji: '🥕', type: 'gemuese', searchTerms: ['karotten', 'rüebli'] },
+    { name: 'Lauch', emoji: '🧅', type: 'gemuese', searchTerms: ['lauch'] },
+    { name: 'Chicorée', emoji: '🥬', type: 'gemuese', searchTerms: ['chicorée'] },
+    { name: 'Kabis', emoji: '🥬', type: 'gemuese', searchTerms: ['kabis', 'kohl'] },
+    { name: 'Kartoffeln', emoji: '🥔', type: 'gemuese', searchTerms: ['kartoffel'] },
+    { name: 'Randen / Rote Bete', emoji: '🔴', type: 'gemuese', searchTerms: ['randen', 'rote bete'] },
+    { name: 'Äpfel (Lager)', emoji: '🍎', type: 'frucht', searchTerms: ['apfel'] },
   ],
   2: [ // März
-    { name: 'Spinat', emoji: '🥬', type: 'gemuese' }, { name: 'Nüsslisalat', emoji: '🥬', type: 'gemuese' },
-    { name: 'Rüebli', emoji: '🥕', type: 'gemuese' }, { name: 'Bärlauch', emoji: '🌿', type: 'kraeuter' },
-    { name: 'Rhabarber', emoji: '🌱', type: 'frucht' },
+    { name: 'Spinat', emoji: '🥬', type: 'gemuese', searchTerms: ['spinat'] },
+    { name: 'Nüsslisalat', emoji: '🥬', type: 'gemuese', searchTerms: ['nüsslisalat', 'salat'] },
+    { name: 'Rüebli / Karotten', emoji: '🥕', type: 'gemuese', searchTerms: ['karotten', 'rüebli'] },
+    { name: 'Kartoffeln', emoji: '🥔', type: 'gemuese', searchTerms: ['kartoffel'] },
+    { name: 'Bärlauch', emoji: '🌿', type: 'kraeuter', searchTerms: ['bärlauch'] },
+    { name: 'Rhabarber', emoji: '🌱', type: 'frucht', searchTerms: ['rhabarber'] },
+    { name: 'Lauch', emoji: '🧅', type: 'gemuese', searchTerms: ['lauch'] },
   ],
   3: [ // April
-    { name: 'Spargel', emoji: '🌿', type: 'gemuese' }, { name: 'Spinat', emoji: '🥬', type: 'gemuese' },
-    { name: 'Radieschen', emoji: '🔴', type: 'gemuese' }, { name: 'Rhabarber', emoji: '🌱', type: 'frucht' },
-    { name: 'Bärlauch', emoji: '🌿', type: 'kraeuter' }, { name: 'Schnittlauch', emoji: '🌿', type: 'kraeuter' },
+    { name: 'Spargel', emoji: '🌿', type: 'gemuese', searchTerms: ['spargel'] },
+    { name: 'Spinat', emoji: '🥬', type: 'gemuese', searchTerms: ['spinat'] },
+    { name: 'Radieschen', emoji: '🔴', type: 'gemuese', searchTerms: ['radieschen'] },
+    { name: 'Rhabarber', emoji: '🌱', type: 'frucht', searchTerms: ['rhabarber'] },
+    { name: 'Bärlauch', emoji: '🌿', type: 'kraeuter', searchTerms: ['bärlauch'] },
+    { name: 'Schnittlauch', emoji: '🌿', type: 'kraeuter', searchTerms: ['schnittlauch'] },
+    { name: 'Kopfsalat', emoji: '🥗', type: 'gemuese', searchTerms: ['salat', 'kopfsalat'] },
+    { name: 'Kartoffeln (neu)', emoji: '🥔', type: 'gemuese', searchTerms: ['kartoffel'] },
   ],
   4: [ // Mai
-    { name: 'Spargel', emoji: '🌿', type: 'gemuese' }, { name: 'Erdbeeren', emoji: '🍓', type: 'frucht' },
-    { name: 'Spinat', emoji: '🥬', type: 'gemuese' }, { name: 'Radieschen', emoji: '🔴', type: 'gemuese' },
-    { name: 'Kohlrabi', emoji: '🥬', type: 'gemuese' }, { name: 'Rhabarber', emoji: '🌱', type: 'frucht' },
-    { name: 'Kopfsalat', emoji: '🥗', type: 'gemuese' },
+    { name: 'Spargel', emoji: '🌿', type: 'gemuese', searchTerms: ['spargel'] },
+    { name: 'Erdbeeren', emoji: '🍓', type: 'frucht', searchTerms: ['erdbeere', 'erdbeeren'] },
+    { name: 'Spinat', emoji: '🥬', type: 'gemuese', searchTerms: ['spinat'] },
+    { name: 'Radieschen', emoji: '🔴', type: 'gemuese', searchTerms: ['radieschen'] },
+    { name: 'Kohlrabi', emoji: '🥬', type: 'gemuese', searchTerms: ['kohlrabi'] },
+    { name: 'Rhabarber', emoji: '🌱', type: 'frucht', searchTerms: ['rhabarber'] },
+    { name: 'Kopfsalat', emoji: '🥗', type: 'gemuese', searchTerms: ['salat'] },
+    { name: 'Erbsen', emoji: '🟢', type: 'gemuese', searchTerms: ['erbsen'] },
   ],
   5: [ // Juni
-    { name: 'Erdbeeren', emoji: '🍓', type: 'frucht' }, { name: 'Kirschen', emoji: '🍒', type: 'frucht' },
-    { name: 'Zucchetti', emoji: '🥒', type: 'gemuese' }, { name: 'Erbsen', emoji: '🟢', type: 'gemuese' },
-    { name: 'Blumenkohl', emoji: '🥦', type: 'gemuese' }, { name: 'Gurken', emoji: '🥒', type: 'gemuese' },
-    { name: 'Brokkoli', emoji: '🥦', type: 'gemuese' },
+    { name: 'Erdbeeren', emoji: '🍓', type: 'frucht', searchTerms: ['erdbeere', 'erdbeeren'] },
+    { name: 'Kirschen', emoji: '🍒', type: 'frucht', searchTerms: ['kirsche', 'kirschen'] },
+    { name: 'Zucchetti / Zucchini', emoji: '🥒', type: 'gemuese', searchTerms: ['zucchetti', 'zucchini'] },
+    { name: 'Erbsen', emoji: '🟢', type: 'gemuese', searchTerms: ['erbsen'] },
+    { name: 'Blumenkohl', emoji: '🥦', type: 'gemuese', searchTerms: ['blumenkohl'] },
+    { name: 'Gurken', emoji: '🥒', type: 'gemuese', searchTerms: ['gurke', 'gurken'] },
+    { name: 'Brokkoli', emoji: '🥦', type: 'gemuese', searchTerms: ['brokkoli'] },
+    { name: 'Bohnen', emoji: '🟢', type: 'gemuese', searchTerms: ['bohne', 'bohnen'] },
+    { name: 'Basilikum', emoji: '🌿', type: 'kraeuter', searchTerms: ['basilikum'] },
   ],
   6: [ // Juli
-    { name: 'Tomaten', emoji: '🍅', type: 'gemuese' }, { name: 'Peperoni', emoji: '🌶️', type: 'gemuese' },
-    { name: 'Heidelbeeren', emoji: '🫐', type: 'frucht' }, { name: 'Himbeeren', emoji: '🫐', type: 'frucht' },
-    { name: 'Aprikosen', emoji: '🍑', type: 'frucht' }, { name: 'Bohnen', emoji: '🟢', type: 'gemuese' },
-    { name: 'Aubergine', emoji: '🍆', type: 'gemuese' }, { name: 'Basilikum', emoji: '🌿', type: 'kraeuter' },
+    { name: 'Tomaten', emoji: '🍅', type: 'gemuese', searchTerms: ['tomate', 'tomaten'] },
+    { name: 'Peperoni / Paprika', emoji: '🌶️', type: 'gemuese', searchTerms: ['peperoni', 'paprika'] },
+    { name: 'Heidelbeeren', emoji: '🫐', type: 'frucht', searchTerms: ['heidelbeere', 'blaubeere', 'beeren'] },
+    { name: 'Himbeeren', emoji: '🫐', type: 'frucht', searchTerms: ['himbeere', 'beeren'] },
+    { name: 'Aprikosen', emoji: '🍑', type: 'frucht', searchTerms: ['aprikose'] },
+    { name: 'Bohnen', emoji: '🟢', type: 'gemuese', searchTerms: ['bohne', 'bohnen'] },
+    { name: 'Aubergine', emoji: '🍆', type: 'gemuese', searchTerms: ['aubergine'] },
+    { name: 'Zucchetti', emoji: '🥒', type: 'gemuese', searchTerms: ['zucchetti', 'zucchini'] },
+    { name: 'Gurken', emoji: '🥒', type: 'gemuese', searchTerms: ['gurke', 'gurken'] },
+    { name: 'Basilikum', emoji: '🌿', type: 'kraeuter', searchTerms: ['basilikum'] },
   ],
   7: [ // August
-    { name: 'Tomaten', emoji: '🍅', type: 'gemuese' }, { name: 'Peperoni', emoji: '🌶️', type: 'gemuese' },
-    { name: 'Pflaumen', emoji: '🫐', type: 'frucht' }, { name: 'Heidelbeeren', emoji: '🫐', type: 'frucht' },
-    { name: 'Mais', emoji: '🌽', type: 'gemuese' }, { name: 'Aubergine', emoji: '🍆', type: 'gemuese' },
-    { name: 'Pfirsiche', emoji: '🍑', type: 'frucht' }, { name: 'Fenchel', emoji: '🥬', type: 'gemuese' },
+    { name: 'Tomaten', emoji: '🍅', type: 'gemuese', searchTerms: ['tomate', 'tomaten'] },
+    { name: 'Peperoni / Paprika', emoji: '🌶️', type: 'gemuese', searchTerms: ['peperoni', 'paprika', 'peperoni'] },
+    { name: 'Pflaumen / Zwetschgen', emoji: '🫐', type: 'frucht', searchTerms: ['pflaume', 'zwetschge'] },
+    { name: 'Heidelbeeren', emoji: '🫐', type: 'frucht', searchTerms: ['heidelbeere', 'beeren'] },
+    { name: 'Mais', emoji: '🌽', type: 'gemuese', searchTerms: ['mais'] },
+    { name: 'Aubergine', emoji: '🍆', type: 'gemuese', searchTerms: ['aubergine'] },
+    { name: 'Pfirsiche', emoji: '🍑', type: 'frucht', searchTerms: ['pfirsich'] },
+    { name: 'Fenchel', emoji: '🥬', type: 'gemuese', searchTerms: ['fenchel'] },
+    { name: 'Bohnen', emoji: '🟢', type: 'gemuese', searchTerms: ['bohne', 'bohnen'] },
   ],
   8: [ // September
-    { name: 'Trauben', emoji: '🍇', type: 'frucht' }, { name: 'Äpfel', emoji: '🍎', type: 'frucht' },
-    { name: 'Birnen', emoji: '🍐', type: 'frucht' }, { name: 'Kürbis', emoji: '🎃', type: 'gemuese' },
-    { name: 'Randen', emoji: '🔴', type: 'gemuese' }, { name: 'Tomaten', emoji: '🍅', type: 'gemuese' },
-    { name: 'Zwetschgen', emoji: '🫐', type: 'frucht' },
+    { name: 'Trauben', emoji: '🍇', type: 'frucht', searchTerms: ['traube', 'trauben'] },
+    { name: 'Äpfel', emoji: '🍎', type: 'frucht', searchTerms: ['apfel', 'äpfel'] },
+    { name: 'Birnen', emoji: '🍐', type: 'frucht', searchTerms: ['birne', 'birnen'] },
+    { name: 'Kürbis', emoji: '🎃', type: 'gemuese', searchTerms: ['kürbis'] },
+    { name: 'Randen / Rote Bete', emoji: '🔴', type: 'gemuese', searchTerms: ['randen', 'rote bete'] },
+    { name: 'Tomaten', emoji: '🍅', type: 'gemuese', searchTerms: ['tomate', 'tomaten'] },
+    { name: 'Zwetschgen', emoji: '🫐', type: 'frucht', searchTerms: ['zwetschge'] },
+    { name: 'Süsskartoffeln', emoji: '🍠', type: 'gemuese', searchTerms: ['süsskartoffel'] },
+    { name: 'Brokkoli', emoji: '🥦', type: 'gemuese', searchTerms: ['brokkoli'] },
   ],
   9: [ // Oktober
-    { name: 'Kürbis', emoji: '🎃', type: 'gemuese' }, { name: 'Äpfel', emoji: '🍎', type: 'frucht' },
-    { name: 'Birnen', emoji: '🍐', type: 'frucht' }, { name: 'Randen', emoji: '🔴', type: 'gemuese' },
-    { name: 'Federkohl', emoji: '🥬', type: 'gemuese' }, { name: 'Süsskartoffeln', emoji: '🍠', type: 'gemuese' },
-    { name: 'Quitten', emoji: '🍎', type: 'frucht' },
+    { name: 'Kürbis', emoji: '🎃', type: 'gemuese', searchTerms: ['kürbis'] },
+    { name: 'Äpfel', emoji: '🍎', type: 'frucht', searchTerms: ['apfel', 'äpfel'] },
+    { name: 'Birnen', emoji: '🍐', type: 'frucht', searchTerms: ['birne'] },
+    { name: 'Randen / Rote Bete', emoji: '🔴', type: 'gemuese', searchTerms: ['randen'] },
+    { name: 'Federkohl / Grünkohl', emoji: '🥬', type: 'gemuese', searchTerms: ['federkohl', 'grünkohl', 'kohl'] },
+    { name: 'Süsskartoffeln', emoji: '🍠', type: 'gemuese', searchTerms: ['süsskartoffel'] },
+    { name: 'Quitten', emoji: '🍎', type: 'frucht', searchTerms: ['quitte'] },
+    { name: 'Kartoffeln', emoji: '🥔', type: 'gemuese', searchTerms: ['kartoffel'] },
+    { name: 'Spinat', emoji: '🥬', type: 'gemuese', searchTerms: ['spinat'] },
   ],
   10: [ // November
-    { name: 'Kürbis', emoji: '🎃', type: 'gemuese' }, { name: 'Federkohl', emoji: '🥬', type: 'gemuese' },
-    { name: 'Rüebli', emoji: '🥕', type: 'gemuese' }, { name: 'Lauch', emoji: '🧅', type: 'gemuese' },
-    { name: 'Äpfel (Lager)', emoji: '🍎', type: 'frucht' }, { name: 'Sellerie', emoji: '🥬', type: 'gemuese' },
+    { name: 'Kürbis', emoji: '🎃', type: 'gemuese', searchTerms: ['kürbis'] },
+    { name: 'Federkohl / Grünkohl', emoji: '🥬', type: 'gemuese', searchTerms: ['federkohl', 'kohl'] },
+    { name: 'Rüebli / Karotten', emoji: '🥕', type: 'gemuese', searchTerms: ['karotten', 'rüebli'] },
+    { name: 'Lauch', emoji: '🧅', type: 'gemuese', searchTerms: ['lauch'] },
+    { name: 'Sellerie', emoji: '🥬', type: 'gemuese', searchTerms: ['sellerie'] },
+    { name: 'Kartoffeln', emoji: '🥔', type: 'gemuese', searchTerms: ['kartoffel'] },
+    { name: 'Äpfel (Lager)', emoji: '🍎', type: 'frucht', searchTerms: ['apfel'] },
+    { name: 'Birnen (Lager)', emoji: '🍐', type: 'frucht', searchTerms: ['birne'] },
   ],
   11: [ // Dezember
-    { name: 'Rosenkohl', emoji: '🥦', type: 'gemuese' }, { name: 'Rüebli', emoji: '🥕', type: 'gemuese' },
-    { name: 'Lauch', emoji: '🧅', type: 'gemuese' }, { name: 'Kabis', emoji: '🥬', type: 'gemuese' },
-    { name: 'Nüsse', emoji: '🥜', type: 'frucht' }, { name: 'Äpfel (Lager)', emoji: '🍎', type: 'frucht' },
-    { name: 'Mandarinen', emoji: '🍊', type: 'frucht' },
+    { name: 'Rosenkohl', emoji: '🥦', type: 'gemuese', searchTerms: ['rosenkohl'] },
+    { name: 'Rüebli / Karotten', emoji: '🥕', type: 'gemuese', searchTerms: ['karotten', 'rüebli'] },
+    { name: 'Lauch', emoji: '🧅', type: 'gemuese', searchTerms: ['lauch'] },
+    { name: 'Kabis', emoji: '🥬', type: 'gemuese', searchTerms: ['kabis', 'kohl'] },
+    { name: 'Kartoffeln', emoji: '🥔', type: 'gemuese', searchTerms: ['kartoffel'] },
+    { name: 'Nüsse', emoji: '🥜', type: 'frucht', searchTerms: ['nüsse', 'walnüsse', 'mandeln'] },
+    { name: 'Äpfel (Lager)', emoji: '🍎', type: 'frucht', searchTerms: ['apfel'] },
+    { name: 'Mandarinen', emoji: '🍊', type: 'frucht', searchTerms: ['mandarine'] },
+    { name: 'Orangen', emoji: '🍊', type: 'frucht', searchTerms: ['orange'] },
   ],
 };
 
@@ -98,7 +158,7 @@ export default function SaisonkalenderPage() {
     <main className="max-w-2xl mx-auto px-4 py-8">
       <h1 className="font-heading text-3xl text-charcoal mb-2">🍓 Saisonkalender</h1>
       <p className="text-sm text-charcoal-light mb-6">
-        Was hat gerade Saison in der Schweiz? Frisch, regional und nachhaltig einkaufen.
+        Was hat gerade Saison in der Schweiz? Tippe auf eine Zutat um passende Rezepte zu finden.
       </p>
 
       {/* Month selector */}
@@ -128,9 +188,13 @@ export default function SaisonkalenderPage() {
             <h3 className="font-medium text-charcoal mb-3">{TYPE_LABELS[type]}</h3>
             <div className="flex flex-wrap gap-2">
               {group.map(item => (
-                <span key={item.name} className="bg-cream rounded-xl px-3 py-1.5 text-sm text-charcoal flex items-center gap-1.5">
+                <Link
+                  key={item.name}
+                  href={`/recipes?search=${encodeURIComponent(item.searchTerms[0])}`}
+                  className="bg-cream rounded-xl px-3 py-1.5 text-sm text-charcoal flex items-center gap-1.5 hover:bg-regency-light transition-colors"
+                >
                   {item.emoji} {item.name}
-                </span>
+                </Link>
               ))}
             </div>
           </Card>
@@ -139,7 +203,7 @@ export default function SaisonkalenderPage() {
 
       <div className="text-center mt-6">
         <Link href="/recipes" className="btn-primary text-sm">
-          Passende Rezepte finden →
+          Alle Rezepte anzeigen →
         </Link>
       </div>
     </main>
