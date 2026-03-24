@@ -301,6 +301,25 @@ function MealPlanner() {
       {/* Week totals */}
       {days.length > 0 && <WeekTotalsPanel days={days} />}
 
+      {/* Generate shopping list */}
+      {mealPlan?.id && (
+        <div className="text-center mt-6">
+          <button
+            onClick={async () => {
+              try {
+                await api.shoppingList.generate(mealPlan.id);
+                alert('Einkaufsliste wurde erstellt! Du findest sie unter Einkaufsliste.');
+              } catch {
+                alert('Einkaufsliste konnte nicht erstellt werden.');
+              }
+            }}
+            className="btn-primary"
+          >
+            🛒 Einkaufsliste aus diesem Plan erstellen
+          </button>
+        </div>
+      )}
+
       {/* Recipe picker modal */}
       {picker && (
         <RecipePickerModal
