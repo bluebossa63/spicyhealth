@@ -21,6 +21,12 @@ const features = [
     description: 'Generiere deine Einkaufsliste automatisch aus dem wöchentlichen Mahlzeitenplan.',
     href: '/shopping-list',
   },
+  {
+    icon: '👗',
+    title: 'Styling',
+    description: 'Deine persönliche Stilberaterin — entdecke deinen Look mit KI-gestützter Modeberatung.',
+    href: '/umstyling',
+  },
 ];
 
 export default function HomePage() {
@@ -49,7 +55,7 @@ export default function HomePage() {
       {/* Features */}
       <section className="max-w-6xl mx-auto px-4 pb-16">
         <h2 className="font-heading text-3xl text-center text-charcoal mb-10">Alles, was du brauchst</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {features.map(({ icon, title, description, href }) => (
             <Link key={href} href={href} className="group block">
               <Card className="h-full group-hover:shadow-card-hover transition-shadow text-center">
