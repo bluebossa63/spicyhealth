@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { containers } from '../services/cosmos';
-import { chatWithStyleConsultant, extractGarmentDescription } from '../services/anthropic';
+import { chatWithStyleConsultant, extractGarmentDescription, type UserProfile } from '../services/anthropic';
 import { generateStyleImage } from '../services/image-gen';
 import { virtualTryOn } from '../services/fashn';
 import rateLimit from 'express-rate-limit';
@@ -66,8 +66,28 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     };
     conversation.messages.push(userMessage);
 
-    // Call GPT-4o for style advice
-    const reply = await chatWithStyleConsultant(conversation.messages);
+    // Load user profile for personalized advice
+    let profile: UserProfile | undefined;
+    try {
+      const { resource } = await containers.users.item(userId, userId).read();
+      if (resource) {
+        profile = {
+          displayName: resource.displayName,
+          birthYear: resource.birthYear,
+          heightCm: resource.heightCm,
+          weightKg: resource.weightKg,
+          clothingSize: resource.clothingSize,
+          shoeSize: resource.shoeSize,
+          hairColor: resource.hairColor,
+          waistCm: resource.waistCm,
+          bustCm: resource.bustCm,
+          dietaryPreferences: resource.dietaryPreferences,
+        };
+      }
+    } catch {}
+
+    // Call GPT-4o for style advice with profile context
+    const reply = await chatWithStyleConsultant(conversation.messages, profile);
 
     // Clean up: remove markers and "I can't edit images" disclaimers
     let cleanedReply = reply

@@ -82,9 +82,45 @@ interface MessageInput {
   imageUrls?: string[];
 }
 
-export async function chatWithStyleConsultant(messages: MessageInput[]): Promise<string> {
+export interface UserProfile {
+  displayName?: string;
+  birthYear?: number;
+  heightCm?: number;
+  weightKg?: number;
+  clothingSize?: string;
+  shoeSize?: number;
+  hairColor?: string;
+  waistCm?: number;
+  bustCm?: number;
+  dietaryPreferences?: string[];
+}
+
+function buildProfileContext(profile?: UserProfile): string {
+  if (!profile) return '';
+  const lines: string[] = [];
+  if (profile.displayName) lines.push(`Name: ${profile.displayName}`);
+  if (profile.birthYear) {
+    const age = new Date().getFullYear() - profile.birthYear;
+    lines.push(`Alter: ${age} Jahre`);
+  }
+  if (profile.heightCm) lines.push(`Grösse: ${profile.heightCm} cm`);
+  if (profile.clothingSize) lines.push(`Kleidergrösse: ${profile.clothingSize}`);
+  if (profile.shoeSize) lines.push(`Schuhgrösse: ${profile.shoeSize}`);
+  if (profile.hairColor) lines.push(`Haarfarbe: ${profile.hairColor}`);
+  if (profile.waistCm) lines.push(`Taillenumfang: ${profile.waistCm} cm`);
+  if (profile.bustCm) lines.push(`Brustumfang: ${profile.bustCm} cm`);
+  if (profile.dietaryPreferences?.length) lines.push(`Ernährungsweise: ${profile.dietaryPreferences.join(', ')}`);
+  if (!lines.length) return '';
+  return `\n\n## Profil der Userin\nDie folgenden Informationen hat die Userin in ihrem Profil hinterlegt. ` +
+    `Nutze sie für passende Empfehlungen (Grössen, Farben, Altersgruppe). ` +
+    `Erwähne die Daten nicht direkt, aber lass sie in deine Vorschläge einfliessen.\n` +
+    lines.join('\n');
+}
+
+export async function chatWithStyleConsultant(messages: MessageInput[], profile?: UserProfile): Promise<string> {
+  const systemPrompt = SYSTEM_PROMPT + buildProfileContext(profile);
   const openaiMessages: OpenAI.ChatCompletionMessageParam[] = [
-    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'system', content: systemPrompt },
     ...messages.map((m): OpenAI.ChatCompletionMessageParam => {
       if (m.role === 'user' && m.imageUrls?.length) {
         const content: OpenAI.ChatCompletionContentPart[] = [
