@@ -121,6 +121,22 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
       }
     }
 
+    // Save generated images to permanent gallery
+    if (generatedImages.length) {
+      const userId = user?.sub || user?.oid;
+      for (const url of generatedImages) {
+        try {
+          await containers.outfitGallery.items.create({
+            id: uuidv4(),
+            userId,
+            imageUrl: url,
+            description: garmentDescriptionDE || cleanedReply.substring(0, 150),
+            createdAt: new Date().toISOString(),
+          });
+        } catch {}
+      }
+    }
+
     // Append assistant reply — add garment description if image was generated
     const replyWithImage = generatedImages.length && garmentDescriptionDE
       ? `${cleanedReply}\n\n👗 **Mein Vorschlag für dich:** ${garmentDescriptionDE}`
@@ -245,6 +261,15 @@ umstylingRouter.post('/generate-look', chatLimiter, async (req: Request, res: Re
     conversation.updatedAt = new Date().toISOString();
     await containers.conversations.items.upsert(conversation);
 
+    // Save to permanent gallery
+    try {
+      await containers.outfitGallery.items.create({
+        id: uuidv4(), userId, imageUrl: generatedImageUrl,
+        description: styleDescription.substring(0, 150),
+        createdAt: new Date().toISOString(),
+      });
+    } catch {}
+
     res.json({ conversation, generatedImageUrl });
   } catch (err: any) {
     console.error('Generate look error:', err);
@@ -290,10 +315,60 @@ umstylingRouter.post('/generate-suggestion', chatLimiter, async (req: Request, r
     conversation.updatedAt = new Date().toISOString();
     await containers.conversations.items.upsert(conversation);
 
+    // Save to permanent gallery
+    try {
+      await containers.outfitGallery.items.create({
+        id: uuidv4(), userId, imageUrl: generatedImageUrl,
+        description: styleDescription.substring(0, 150),
+        createdAt: new Date().toISOString(),
+      });
+    } catch {}
+
     res.json({ conversation, generatedImageUrl });
   } catch (err: any) {
     console.error('Generate suggestion error:', err);
     res.status(500).json({ error: 'Bild konnte nicht generiert werden. Bitte versuche es nochmal.' });
+  }
+});
+
+// GET /api/umstyling/gallery — load all saved outfit images
+umstylingRouter.get('/gallery', async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.sub || (req as any).user?.oid;
+    const { resources } = await containers.outfitGallery.items
+      .query({
+        query: 'SELECT * FROM c WHERE c.userId = @userId ORDER BY c.createdAt DESC',
+        parameters: [{ name: '@userId', value: userId }],
+      })
+      .fetchAll();
+    res.json({ images: resources });
+  } catch {
+    res.status(500).json({ error: 'Galerie konnte nicht geladen werden' });
+  }
+});
+
+// DELETE /api/umstyling/gallery/:id — delete one gallery image
+umstylingRouter.delete('/gallery/:id', async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.sub || (req as any).user?.oid;
+    await containers.outfitGallery.item(req.params.id, userId).delete();
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: 'Bild konnte nicht gelöscht werden' });
+  }
+});
+
+// DELETE /api/umstyling/gallery — delete all gallery images
+umstylingRouter.delete('/gallery', async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.sub || (req as any).user?.oid;
+    const { resources } = await containers.outfitGallery.items
+      .query({ query: 'SELECT * FROM c WHERE c.userId = @userId', parameters: [{ name: '@userId', value: userId }] })
+      .fetchAll();
+    await Promise.all(resources.map((r: any) => containers.outfitGallery.item(r.id, userId).delete()));
+    res.json({ success: true, deleted: resources.length });
+  } catch {
+    res.status(500).json({ error: 'Galerie konnte nicht gelöscht werden' });
   }
 });
 

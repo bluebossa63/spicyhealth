@@ -9,35 +9,32 @@ export default function OutfitGaleriePage() {
 }
 
 function OutfitGalerie() {
-  const [conversations, setConversations] = useState<any[]>([]);
-  const [images, setImages] = useState<{ url: string; text: string; date: string }[]>([]);
+  const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load all style conversations and extract images
-    api.umstyling.listConversations().then(async (res) => {
-      const allImages: { url: string; text: string; date: string }[] = [];
-      // Load each conversation to get images
-      for (const conv of res.conversations.slice(0, 20)) {
-        try {
-          const { conversation } = await api.umstyling.getConversation(conv.id);
-          for (const msg of conversation.messages) {
-            if (msg.imageUrls?.length) {
-              for (const url of msg.imageUrls) {
-                allImages.push({
-                  url,
-                  text: msg.content?.substring(0, 100) || '',
-                  date: msg.timestamp,
-                });
-              }
-            }
-          }
-        } catch {}
-      }
-      setImages(allImages);
-    }).catch(() => {}).finally(() => setLoading(false));
+    api.umstyling.gallery()
+      .then(d => setImages(d.images || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
+
+  const deleteImage = async (id: string) => {
+    if (!confirm('Dieses Bild wirklich löschen?')) return;
+    try {
+      await api.umstyling.deleteGalleryImage(id);
+      setImages(prev => prev.filter(img => img.id !== id));
+    } catch {}
+  };
+
+  const deleteAll = async () => {
+    if (!confirm(`Alle ${images.length} Bilder wirklich löschen?`)) return;
+    try {
+      await api.umstyling.deleteAllGallery();
+      setImages([]);
+    } catch {}
+  };
 
   if (loading) return (
     <main className="max-w-4xl mx-auto px-4 py-8">
@@ -48,9 +45,16 @@ function OutfitGalerie() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="font-heading text-3xl text-charcoal mb-2">👗 Meine Outfit-Galerie</h1>
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="font-heading text-3xl text-charcoal">👗 Meine Outfit-Galerie</h1>
+        {images.length > 0 && (
+          <button onClick={deleteAll} className="text-xs text-red-400 hover:text-red-600 transition-colors">
+            🗑 Alle löschen
+          </button>
+        )}
+      </div>
       <p className="text-sm text-charcoal-light mb-6">
-        Alle Bilder aus deinen Stilberatungen — dein persönliches Style-Board.
+        Alle Bilder aus deinen Stilberatungen — dein persönliches Style-Board. Bilder bleiben auch wenn du Chats löschst.
       </p>
 
       {images.length === 0 ? (
@@ -63,22 +67,29 @@ function OutfitGalerie() {
         </Card>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {images.map((img, i) => (
-            <div key={i} className="group relative">
-              <button onClick={() => setExpanded(img.url)} className="block w-full">
+          {images.map((img) => (
+            <div key={img.id} className="group relative">
+              <button onClick={() => setExpanded(img.imageUrl)} className="block w-full">
                 <img
-                  src={img.url}
-                  alt={img.text || 'Outfit'}
+                  src={img.imageUrl}
+                  alt={img.description || 'Outfit'}
                   className="w-full aspect-square object-cover rounded-2xl hover:opacity-90 transition-opacity"
                 />
               </button>
-              {img.text && (
+              {img.description && (
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity">
-                  <p className="text-white text-xs line-clamp-2">{img.text}</p>
+                  <p className="text-white text-xs line-clamp-2">{img.description}</p>
                 </div>
               )}
+              <button
+                onClick={() => deleteImage(img.id)}
+                className="absolute top-2 right-2 w-7 h-7 bg-black/50 hover:bg-red-500 text-white rounded-full text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Bild löschen"
+              >
+                ×
+              </button>
               <p className="text-[10px] text-charcoal-light mt-1 text-center">
-                {new Date(img.date).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}
+                {new Date(img.createdAt).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}
               </p>
             </div>
           ))}

@@ -116,6 +116,9 @@ export const api = {
       fetchJson<{ conversation: any }>(`/umstyling/conversations/${id}`),
     deleteConversation: (id: string) =>
       fetchJson<{ success: boolean }>(`/umstyling/conversations/${id}`, { method: 'DELETE' }),
+    gallery: () => fetchJson<{ images: any[] }>('/umstyling/gallery'),
+    deleteGalleryImage: (id: string) => fetchJson<{ success: boolean }>(`/umstyling/gallery/${id}`, { method: 'DELETE' }),
+    deleteAllGallery: () => fetchJson<{ success: boolean }>('/umstyling/gallery', { method: 'DELETE' }),
     uploadImage: (filename: string, contentType: string) =>
       fetchJson<{ uploadUrl: string; publicUrl: string }>('/umstyling/upload-image', {
         method: 'POST',
