@@ -81,6 +81,7 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
           hairColor: resource.hairColor,
           waistCm: resource.waistCm,
           bustCm: resource.bustCm,
+          eyeColor: resource.eyeColor,
           dietaryPreferences: resource.dietaryPreferences,
         };
       }

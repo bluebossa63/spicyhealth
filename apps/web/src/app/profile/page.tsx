@@ -13,6 +13,7 @@ const DIETARY_LABELS: Record<string, string> = {
 
 const CLOTHING_SIZES = ['32', '34', '36', '38', '40', '42', '44', '46', '48', '50', '52', '54', '56', '58', '60'];
 const HAIR_COLORS = ['Blond', 'Dunkelblond', 'Braun', 'Dunkelbraun', 'Schwarz', 'Rot', 'Grau', 'Weiss', 'Gefärbt'];
+const EYE_COLORS = ['Blau', 'Grün', 'Braun', 'Grau', 'Haselnuss', 'Bernstein'];
 const ACTIVITY_LEVELS = [
   { value: 'sedentary', label: 'Wenig aktiv (Büroarbeit)' },
   { value: 'light', label: 'Leicht aktiv (1-2x Sport/Woche)' },
@@ -71,6 +72,7 @@ function Profile() {
   const [hairColor, setHairColor] = useState('');
   const [waistCm, setWaistCm] = useState<number | ''>('');
   const [bustCm, setBustCm] = useState<number | ''>('');
+  const [eyeColor, setEyeColor] = useState('');
 
   useEffect(() => {
     api.users.me().then(d => {
@@ -87,6 +89,7 @@ function Profile() {
       setHairColor(u.hairColor || '');
       setWaistCm(u.waistCm || '');
       setBustCm(u.bustCm || '');
+      setEyeColor(u.eyeColor || '');
       const ids: string[] = u.savedRecipeIds || [];
       Promise.all(ids.map((id: string) => api.recipes.get(id).then(r => r.recipe).catch(() => null)))
         .then(results => setSavedRecipes(results.filter(Boolean)));
@@ -109,7 +112,7 @@ function Profile() {
     try {
       const data: Record<string, any> = {
         displayName, dietaryPreferences: dietary, activityLevel,
-        clothingSize, hairColor,
+        clothingSize, hairColor, eyeColor,
       };
       if (birthYear) data.birthYear = Number(birthYear);
       if (heightCm) data.heightCm = Number(heightCm);
@@ -234,6 +237,13 @@ function Profile() {
               <select value={hairColor} onChange={e => setHairColor(e.target.value)} className="input-field">
                 <option value="">— wählen —</option>
                 {HAIR_COLORS.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Augenfarbe</label>
+              <select value={eyeColor} onChange={e => setEyeColor(e.target.value)} className="input-field">
+                <option value="">— wählen —</option>
+                {EYE_COLORS.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
           </div>

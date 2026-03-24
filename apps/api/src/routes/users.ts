@@ -19,6 +19,7 @@ const updateProfileSchema = z.object({
   hairColor: z.string().max(50).optional(),
   waistCm: z.number().min(40).max(200).optional(),
   bustCm: z.number().min(50).max(200).optional(),
+  eyeColor: z.string().max(50).optional(),
 });
 
 // GET /api/users/me

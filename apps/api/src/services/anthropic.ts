@@ -92,6 +92,7 @@ export interface UserProfile {
   hairColor?: string;
   waistCm?: number;
   bustCm?: number;
+  eyeColor?: string;
   dietaryPreferences?: string[];
 }
 
@@ -109,6 +110,7 @@ function buildProfileContext(profile?: UserProfile): string {
   if (profile.hairColor) lines.push(`Haarfarbe: ${profile.hairColor}`);
   if (profile.waistCm) lines.push(`Taillenumfang: ${profile.waistCm} cm`);
   if (profile.bustCm) lines.push(`Brustumfang: ${profile.bustCm} cm`);
+  if (profile.eyeColor) lines.push(`Augenfarbe: ${profile.eyeColor}`);
   if (profile.dietaryPreferences?.length) lines.push(`Ernährungsweise: ${profile.dietaryPreferences.join(', ')}`);
   if (!lines.length) return '';
   return `\n\n## Profil der Userin\nDie folgenden Informationen hat die Userin in ihrem Profil hinterlegt. ` +
