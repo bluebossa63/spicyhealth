@@ -27,7 +27,7 @@ const CATEGORY_KEYWORDS: Record<ShoppingCategory, string[]> = {
   ],
   dairy: [
     'milch', 'käse', 'butter', 'rahm', 'sahne', 'joghurt', 'quark', 'skyr',
-    'ei ', 'eier', 'mozzarella', 'parmesan', 'feta', 'gruyère', 'emmentaler',
+    'eier', 'eigelb', 'eiweiss', 'mozzarella', 'parmesan', 'feta', 'gruyère', 'emmentaler',
     'mascarpone', 'ricotta', 'hüttenkäse', 'cottage', 'halloumi', 'burrata',
     'frischkäse', 'schmand', 'crème', 'gelatine',
   ],
@@ -60,8 +60,21 @@ const CATEGORY_KEYWORDS: Record<ShoppingCategory, string[]> = {
   other: [],
 };
 
+// Exact words that should match even as standalone (e.g. "Ei")
+const EXACT_MATCH: Record<string, ShoppingCategory> = {
+  'ei': 'dairy',
+};
+
 function categorize(name: string): ShoppingCategory {
-  const lower = name.toLowerCase();
+  const lower = name.toLowerCase().trim();
+  // Check exact match first
+  if (EXACT_MATCH[lower]) return EXACT_MATCH[lower];
+  // Check word-level exact matches
+  const words = lower.split(/\s+/);
+  for (const word of words) {
+    if (EXACT_MATCH[word]) return EXACT_MATCH[word];
+  }
+  // Check keyword includes
   for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS) as [ShoppingCategory, string[]][]) {
     if (cat === 'other') continue;
     if (keywords.some(k => lower.includes(k))) return cat;
