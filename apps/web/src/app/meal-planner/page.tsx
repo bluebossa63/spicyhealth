@@ -70,6 +70,7 @@ function MealPlanner() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [picker, setPicker] = useState<{ date: string; slot: string } | null>(null);
   const [activeRecipe, setActiveRecipe] = useState<any>(null);
+  const [autoPlanning, setAutoPlanning] = useState(false);
   const [activeDayIndex, setActiveDayIndex] = useState<number>(() => {
     const today = new Date().getDay();
     return today === 0 ? 6 : today - 1; // Mon=0 … Sun=6
@@ -169,6 +170,46 @@ function MealPlanner() {
           })()}
         </div>
       </div>
+
+      {/* Auto plan button */}
+      {mealPlan && (
+        <div className="mb-4">
+          <button
+            onClick={async () => {
+              if (!confirm('Soll ich dir einen ausgewogenen Wochenplan zusammenstellen? Bestehende Einträge werden ersetzt.')) return;
+              setAutoPlanning(true);
+              try {
+                const { recipes } = await api.recipes.list({ pageSize: 100 });
+                const byCategory: Record<string, any[]> = { breakfast: [], lunch: [], dinner: [], snack: [] };
+                for (const r of recipes) {
+                  if (byCategory[r.category]) byCategory[r.category].push(r);
+                }
+                // Shuffle
+                for (const cat of Object.keys(byCategory)) {
+                  byCategory[cat].sort(() => Math.random() - 0.5);
+                }
+                // Assign recipes to each day
+                for (let i = 0; i < days.length; i++) {
+                  const day = days[i];
+                  const bf = byCategory.breakfast[i % byCategory.breakfast.length];
+                  const lu = byCategory.lunch[i % byCategory.lunch.length];
+                  const di = byCategory.dinner[i % byCategory.dinner.length];
+                  if (bf) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'breakfast', bf);
+                  if (lu) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'lunch', lu);
+                  if (di) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'dinner', di);
+                }
+                await loadPlan(weekOffset);
+              } catch {
+                alert('Automatische Planung fehlgeschlagen.');
+              } finally { setAutoPlanning(false); }
+            }}
+            disabled={autoPlanning}
+            className="btn-secondary text-sm w-full"
+          >
+            {autoPlanning ? 'Wird geplant...' : '✨ Woche automatisch planen'}
+          </button>
+        </div>
+      )}
 
       {/* Seasonal inspiration */}
       <Link href="/saisonkalender" className="block mb-4">

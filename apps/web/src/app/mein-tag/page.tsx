@@ -216,6 +216,13 @@ function MeinTag() {
         </p>
       </Card>
 
+      {/* Progress link */}
+      <div className="text-center mt-6">
+        <a href="/fortschritt" className="btn-ghost text-sm">
+          📊 Mein Fortschritt der letzten 30 Tage →
+        </a>
+      </div>
+
       {/* Reminder */}
       <Card className="p-6 mt-6">
         <h2 className="font-heading text-xl text-charcoal mb-3">🔔 Erinnerungen</h2>

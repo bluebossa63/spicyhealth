@@ -8,7 +8,7 @@ import { RecipeCard } from '@/components/RecipeCard';
 import { SkeletonCard } from '@/components/ui/SkeletonLoader';
 import { api } from '@/lib/api';
 
-const DEFAULT_FILTERS: Filters = { category: '', maxCalories: 1500, maxPrepTime: 120, maxCost: 30 };
+const DEFAULT_FILTERS: Filters = { category: '', tag: '', maxCalories: 1500, maxPrepTime: 120, maxCost: 30 };
 
 export default function RecipesPage() {
   return (
@@ -45,7 +45,11 @@ function RecipesContent() {
       if (filters.maxCost < 30) params.maxCost = filters.maxCost;
 
       const { recipes: data } = await api.recipes.list(params);
-      const sorted = data.sort((a: any, b: any) => a.title.localeCompare(b.title, 'de'));
+      // Client-side tag filter
+      const filtered = filters.tag
+        ? data.filter((r: any) => r.tags?.some((t: string) => t.toLowerCase().includes(filters.tag.toLowerCase())))
+        : data;
+      const sorted = filtered.sort((a: any, b: any) => a.title.localeCompare(b.title, 'de'));
       setRecipes(prev => reset ? sorted : [...prev, ...sorted]);
       setHasMore(data.length === 12);
     } catch {

@@ -6,8 +6,24 @@ const CATEGORY_LABELS: Record<string, string> = {
   snack: '🍎 Snack', dessert: '🍓 Dessert', smoothie: '🥤 Smoothie',
 };
 
+const TAGS = [
+  { id: 'vegan', label: '🌱 Vegan' },
+  { id: 'vegetarisch', label: '🥬 Vegetarisch' },
+  { id: 'proteinreich', label: '💪 Proteinreich' },
+  { id: 'schnell', label: '⚡ Schnell' },
+  { id: 'ballaststoffreich', label: '🌾 Ballaststoffreich' },
+  { id: 'lowcarb', label: '🥑 Low Carb' },
+  { id: 'glutenfrei', label: '🌾 Glutenfrei' },
+  { id: 'schweiz', label: '🇨🇭 Schweiz' },
+  { id: 'asiatisch', label: '🍜 Asiatisch' },
+  { id: 'italienisch', label: '🍝 Italienisch' },
+  { id: 'günstig', label: '💰 Günstig' },
+  { id: 'mealprep', label: '📦 Vorbereiten' },
+];
+
 export interface Filters {
   category: string;
+  tag: string;
   maxCalories: number;
   maxPrepTime: number;
   maxCost: number;
@@ -45,6 +61,22 @@ export function FilterPanel({ filters, onChange }: Props) {
         </div>
       </div>
 
+      {/* Tag chips */}
+      <div>
+        <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">Eigenschaft</p>
+        <div className="flex flex-wrap gap-1.5">
+          {TAGS.map(tag => (
+            <button
+              key={tag.id}
+              onClick={() => set('tag', filters.tag === tag.id ? '' : tag.id)}
+              className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${filters.tag === tag.id ? 'bg-pistachio text-white' : 'bg-cream-dark text-charcoal-light hover:bg-pistachio-light'}`}
+            >
+              {tag.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Sliders */}
       <div>
         <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">
@@ -66,7 +98,7 @@ export function FilterPanel({ filters, onChange }: Props) {
 
       <div>
         <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">
-          Max. Kosten <span className="text-regency">{filters.maxCost === 30 ? 'Beliebig' : `CHF${filters.maxCost}`}</span>
+          Max. Kosten <span className="text-regency">{filters.maxCost === 30 ? 'Beliebig' : `CHF ${filters.maxCost}`}</span>
         </p>
         <input type="range" min={1} max={30} step={1} value={filters.maxCost}
           onChange={e => set('maxCost', Number(e.target.value))}
@@ -74,7 +106,7 @@ export function FilterPanel({ filters, onChange }: Props) {
       </div>
 
       <button
-        onClick={() => onChange({ category: '', maxCalories: 1500, maxPrepTime: 120, maxCost: 30 })}
+        onClick={() => onChange({ category: '', tag: '', maxCalories: 1500, maxPrepTime: 120, maxCost: 30 })}
         className="text-xs text-charcoal-light hover:text-regency transition-colors text-left"
       >
         Filter zurücksetzen
