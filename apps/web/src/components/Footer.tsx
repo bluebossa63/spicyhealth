@@ -12,7 +12,7 @@ export function Footer() {
         <div className="flex justify-center gap-6 mt-4 text-xs text-charcoal-light">
           <Link href="/datenschutz" className="hover:text-regency transition-colors">Datenschutz</Link>
           <Link href="/impressum" className="hover:text-regency transition-colors">Impressum</Link>
-          <Link href="/feedback" className="hover:text-regency transition-colors">Feedback</Link>
+          <Link href="/feedback" className="hover:text-regency transition-colors">Rückmeldung</Link>
         </div>
       </div>
     </footer>

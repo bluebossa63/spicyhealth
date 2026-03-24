@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/Button';
 import { api } from '@/lib/api';
 
 const CATEGORIES = [
-  { id: 'feature', label: 'Feature-Wunsch', emoji: '💡' },
+  { id: 'feature', label: 'Neue Idee / Wunsch', emoji: '💡' },
   { id: 'bug', label: 'Fehler melden', emoji: '🐛' },
-  { id: 'design', label: 'Design & Usability', emoji: '🎨' },
+  { id: 'design', label: 'Gestaltung & Bedienung', emoji: '🎨' },
   { id: 'recipe', label: 'Rezepte & Ernährung', emoji: '🥗' },
   { id: 'styling', label: 'Stilberatung', emoji: '👗' },
   { id: 'general', label: 'Allgemeines', emoji: '💬' },
@@ -17,7 +17,7 @@ const CATEGORIES = [
 const RATINGS = [
   { value: 5, emoji: '😍', label: 'Liebe es!' },
   { value: 4, emoji: '😊', label: 'Sehr gut' },
-  { value: 3, emoji: '🙂', label: 'Okay' },
+  { value: 3, emoji: '🙂', label: 'Geht so' },
   { value: 2, emoji: '😕', label: 'Könnte besser sein' },
   { value: 1, emoji: '😞', label: 'Nicht gut' },
 ];
@@ -45,7 +45,7 @@ function FeedbackForm() {
       });
       setSubmitted(true);
     } catch {
-      alert('Feedback konnte nicht gesendet werden. Bitte versuche es nochmal.');
+      alert('Rückmeldung konnte nicht gesendet werden. Bitte versuche es nochmal.');
     } finally {
       setSending(false);
     }
@@ -57,11 +57,11 @@ function FeedbackForm() {
         <div className="text-6xl mb-4">💝</div>
         <h1 className="font-heading text-3xl text-charcoal mb-3">Vielen Dank!</h1>
         <p className="text-charcoal-light mb-6">
-          Dein Feedback hilft uns, SpicyHealth noch besser zu machen.
+          Deine Rückmeldung hilft uns, SpicyHealth noch besser zu machen.
           Wir schätzen deine Meinung sehr!
         </p>
         <Button onClick={() => { setSubmitted(false); setMessage(''); setRating(0); }}>
-          Weiteres Feedback geben
+          Weitere Rückmeldung geben
         </Button>
       </main>
     );
@@ -69,9 +69,9 @@ function FeedbackForm() {
 
   return (
     <main className="max-w-md mx-auto px-4 py-8">
-      <h1 className="font-heading text-3xl text-charcoal mb-2">💬 Dein Feedback</h1>
+      <h1 className="font-heading text-3xl text-charcoal mb-2">💬 Deine Rückmeldung</h1>
       <p className="text-sm text-charcoal-light mb-6">
-        Wir sind in der Beta-Phase und deine Meinung ist uns sehr wichtig!
+        Wir sind in der Testphase und deine Meinung ist uns sehr wichtig!
         Erzähl uns, was du denkst.
       </p>
 
@@ -131,7 +131,7 @@ function FeedbackForm() {
         </Card>
 
         <Button type="submit" size="lg" className="w-full" disabled={sending || !message.trim()}>
-          {sending ? 'Wird gesendet...' : '📤 Feedback senden'}
+          {sending ? 'Wird gesendet...' : '📤 Rückmeldung senden'}
         </Button>
       </form>
     </main>
