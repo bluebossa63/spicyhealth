@@ -107,6 +107,13 @@ function ShoppingList() {
     await Promise.all(purchased.map(i => api.shoppingList.deleteItem(i.id).catch(() => {})));
   }
 
+  async function handleClearAll() {
+    if (!confirm(`Alle ${items.length} Artikel aus der Einkaufsliste löschen?`)) return;
+    const allItems = [...items];
+    setItems([]);
+    await Promise.all(allItems.map(i => api.shoppingList.deleteItem(i.id).catch(() => {})));
+  }
+
   function handleCopyToClipboard() {
     const lines = CATEGORY_ORDER.flatMap(cat => {
       const group = items.filter(i => i.category === cat);
@@ -151,10 +158,13 @@ function ShoppingList() {
             <>
               <button onClick={handleCopyToClipboard} className="btn-secondary text-sm">📋 Kopieren</button>
               {purchasedCount > 0 && (
-                <button onClick={handleClearPurchased} className="btn-ghost text-sm text-red-500">
-                  🗑 Erledigt entfernen ({purchasedCount})
+                <button onClick={handleClearPurchased} className="btn-ghost text-sm text-charcoal-light">
+                  ✓ Erledigte entfernen ({purchasedCount})
                 </button>
               )}
+              <button onClick={handleClearAll} className="btn-ghost text-sm text-red-400 hover:text-red-600">
+                🗑 Alle löschen
+              </button>
             </>
           )}
         </div>
