@@ -219,13 +219,13 @@ function StyleConsultant() {
               <p className="text-xs text-charcoal-light text-center mt-4">Noch keine Gespräche</p>
             )}
           </div>
-          {conversations.length > 1 && (
+          {conversations.length > 0 && (
             <div className="p-2 border-t border-cream-dark">
               <button
                 onClick={deleteAllConversations}
-                className="w-full text-xs text-charcoal-light hover:text-red-500 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                className="w-full text-xs text-red-400 hover:text-red-600 py-2 rounded-lg hover:bg-red-50 transition-colors font-medium"
               >
-                Alle Gespräche löschen
+                🗑 Alle Gespräche löschen ({conversations.length})
               </button>
             </div>
           )}
