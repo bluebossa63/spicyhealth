@@ -71,6 +71,8 @@ function MealPlanner() {
   const [picker, setPicker] = useState<{ date: string; slot: string } | null>(null);
   const [activeRecipe, setActiveRecipe] = useState<any>(null);
   const [autoPlanning, setAutoPlanning] = useState(false);
+  const [showAutoModal, setShowAutoModal] = useState(false);
+  const [autoSlots, setAutoSlots] = useState({ breakfast: true, lunch: true, dinner: true });
   const [activeDayIndex, setActiveDayIndex] = useState<number>(() => {
     const today = new Date().getDay();
     return today === 0 ? 6 : today - 1; // Mon=0 … Sun=6
@@ -175,39 +177,94 @@ function MealPlanner() {
       {mealPlan && (
         <div className="mb-4">
           <button
-            onClick={async () => {
-              if (!confirm('Soll ich dir einen ausgewogenen Wochenplan zusammenstellen? Bestehende Einträge werden ersetzt.')) return;
-              setAutoPlanning(true);
-              try {
-                const { recipes } = await api.recipes.list({ pageSize: 100 });
-                const byCategory: Record<string, any[]> = { breakfast: [], lunch: [], dinner: [], snack: [] };
-                for (const r of recipes) {
-                  if (byCategory[r.category]) byCategory[r.category].push(r);
-                }
-                // Shuffle
-                for (const cat of Object.keys(byCategory)) {
-                  byCategory[cat].sort(() => Math.random() - 0.5);
-                }
-                // Assign recipes to each day
-                for (let i = 0; i < days.length; i++) {
-                  const day = days[i];
-                  const bf = byCategory.breakfast[i % byCategory.breakfast.length];
-                  const lu = byCategory.lunch[i % byCategory.lunch.length];
-                  const di = byCategory.dinner[i % byCategory.dinner.length];
-                  if (bf) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'breakfast', bf);
-                  if (lu) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'lunch', lu);
-                  if (di) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'dinner', di);
-                }
-                await loadPlan(weekOffset);
-              } catch {
-                alert('Automatische Planung fehlgeschlagen.');
-              } finally { setAutoPlanning(false); }
-            }}
+            onClick={() => setShowAutoModal(true)}
             disabled={autoPlanning}
             className="btn-secondary text-sm w-full"
           >
             {autoPlanning ? 'Wird geplant...' : '✨ Woche automatisch planen'}
           </button>
+        </div>
+      )}
+
+      {/* Auto plan modal */}
+      {showAutoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowAutoModal(false)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6" onClick={e => e.stopPropagation()}>
+            <h3 className="font-heading text-xl text-charcoal mb-2">✨ Woche planen</h3>
+            <p className="text-sm text-charcoal-light mb-4">Welche Mahlzeiten soll ich für dich planen?</p>
+
+            <div className="space-y-3 mb-6">
+              {([['breakfast', '☀️ Frühstück'], ['lunch', '🥗 Mittagessen'], ['dinner', '🍽️ Abendessen']] as const).map(([slot, label]) => (
+                <label key={slot} className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={autoSlots[slot]}
+                    onChange={e => setAutoSlots(prev => ({ ...prev, [slot]: e.target.checked }))}
+                    className="w-5 h-5 rounded accent-regency"
+                  />
+                  <span className="text-sm text-charcoal">{label}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* Calorie info */}
+            <div className="bg-cream rounded-xl p-3 mb-4 text-xs text-charcoal-light">
+              <p>Geplante Kalorien pro Tag:</p>
+              <p className="font-bold text-charcoal text-sm mt-1">
+                ca. {
+                  (autoSlots.breakfast ? 400 : 0) +
+                  (autoSlots.lunch ? 500 : 0) +
+                  (autoSlots.dinner ? 550 : 0)
+                } kcal
+                <span className="font-normal text-charcoal-light"> ({[
+                  autoSlots.breakfast && 'Frühstück ~400',
+                  autoSlots.lunch && 'Mittag ~500',
+                  autoSlots.dinner && 'Abend ~550',
+                ].filter(Boolean).join(', ')} kcal)</span>
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={() => setShowAutoModal(false)} className="btn-ghost flex-1">Abbrechen</button>
+              <button
+                onClick={async () => {
+                  setShowAutoModal(false);
+                  setAutoPlanning(true);
+                  try {
+                    const { recipes } = await api.recipes.list({ pageSize: 100 });
+                    const byCategory: Record<string, any[]> = { breakfast: [], lunch: [], dinner: [] };
+                    for (const r of recipes) {
+                      if (byCategory[r.category]) byCategory[r.category].push(r);
+                    }
+                    for (const cat of Object.keys(byCategory)) {
+                      byCategory[cat].sort(() => Math.random() - 0.5);
+                    }
+                    for (let i = 0; i < days.length; i++) {
+                      const day = days[i];
+                      if (autoSlots.breakfast) {
+                        const r = byCategory.breakfast[i % byCategory.breakfast.length];
+                        if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'breakfast', r);
+                      }
+                      if (autoSlots.lunch) {
+                        const r = byCategory.lunch[i % byCategory.lunch.length];
+                        if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'lunch', r);
+                      }
+                      if (autoSlots.dinner) {
+                        const r = byCategory.dinner[i % byCategory.dinner.length];
+                        if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'dinner', r);
+                      }
+                    }
+                    await loadPlan(weekOffset);
+                  } catch { alert('Planung fehlgeschlagen.'); }
+                  finally { setAutoPlanning(false); }
+                }}
+                disabled={!autoSlots.breakfast && !autoSlots.lunch && !autoSlots.dinner}
+                className="btn-primary flex-1"
+              >
+                Planen
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
