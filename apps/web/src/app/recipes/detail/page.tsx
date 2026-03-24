@@ -3,6 +3,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { ShareMenu } from '@/components/ShareMenu';
 import { NutritionPanel } from '@/components/NutritionPanel';
 import { CommentThread } from '@/components/CommentThread';
 import { SkeletonText } from '@/components/ui/SkeletonLoader';
@@ -118,22 +119,10 @@ function RecipeDetail() {
                 </button>
               </>
             )}
-            <button
-              onClick={() => {
-                const url = window.location.href;
-                const text = `Schau dir dieses Rezept an: ${recipe.title} — ${url}`;
-                if (navigator.share) {
-                  navigator.share({ title: recipe.title, text: recipe.description, url });
-                } else {
-                  navigator.clipboard.writeText(text);
-                  alert('Link kopiert! Du kannst ihn jetzt teilen.');
-                }
-              }}
-              className="text-charcoal-light hover:text-regency transition-colors text-sm"
-              title="Rezept teilen"
-            >
-              📤 Teilen
-            </button>
+            <ShareMenu
+              text={`Schau dir dieses Rezept an: ${recipe.title} 🥗\n\n${recipe.description}\n\n${typeof window !== 'undefined' ? window.location.href : ''}`}
+              title={recipe.title}
+            />
             <button
               onClick={handleSave}
               className={`text-2xl transition-colors ${saved ? 'text-regency-dark' : 'text-charcoal-300 hover:text-regency-400'}`}

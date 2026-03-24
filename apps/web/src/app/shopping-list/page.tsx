@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { api } from '@/lib/api';
 import { api as mealApi } from '@/lib/api';
+import { ShareMenu } from '@/components/ShareMenu';
 
 type ShoppingCategory = 'produce' | 'dairy' | 'meat' | 'grains' | 'pantry' | 'frozen' | 'other';
 
@@ -157,22 +158,21 @@ function ShoppingList() {
           {items.length > 0 && (
             <>
               <button onClick={handleCopyToClipboard} className="btn-secondary text-sm">📋 Kopieren</button>
-              <button onClick={() => {
-                const lines = CATEGORY_ORDER.flatMap(cat => {
-                  const group = items.filter(i => i.category === cat);
-                  if (!group.length) return [];
-                  const header = `${CATEGORY_META[cat].icon} ${CATEGORY_META[cat].label}`;
-                  const rows = group.map(i => `  ${i.purchased ? '✓' : '○'} ${i.name} — ${i.quantity} ${i.unit}`.trim());
-                  return [header, ...rows];
-                });
-                const text = `Meine Einkaufsliste 🛒\n\n${lines.join('\n')}`;
-                if (navigator.share) {
-                  navigator.share({ title: 'Einkaufsliste', text });
-                } else {
-                  navigator.clipboard.writeText(text);
-                  alert('Liste kopiert! Du kannst sie jetzt teilen.');
-                }
-              }} className="btn-ghost text-sm">📤 Teilen</button>
+              <ShareMenu
+                text={(() => {
+                  const unpurchased = items.filter(i => !i.purchased);
+                  const list = unpurchased.length > 0 ? unpurchased : items;
+                  const lines = CATEGORY_ORDER.flatMap(cat => {
+                    const group = list.filter(i => i.category === cat);
+                    if (!group.length) return [];
+                    const header = `${CATEGORY_META[cat].icon} ${CATEGORY_META[cat].label}`;
+                    const rows = group.map(i => `  ○ ${i.name} — ${i.quantity} ${i.unit}`.trim());
+                    return [header, ...rows];
+                  });
+                  return `Einkaufsliste 🛒\n\n${lines.join('\n')}`;
+                })()}
+                title="Einkaufsliste"
+              />
               {purchasedCount > 0 && (
                 <button onClick={handleClearPurchased} className="btn-ghost text-sm text-charcoal-light">
                   ✓ Erledigte entfernen ({purchasedCount})

@@ -15,6 +15,7 @@ import { RecipePickerModal } from '@/components/RecipePickerModal';
 import { DayTotalsBar } from '@/components/DayTotalsBar';
 import { WeekTotalsPanel } from '@/components/WeekTotalsPanel';
 import { api } from '@/lib/api';
+import { ShareMenu } from '@/components/ShareMenu';
 
 const SLOTS = ['breakfast', 'lunch', 'dinner', 'snacks'] as const;
 const SLOT_LABELS: Record<string, string> = {
@@ -137,31 +138,19 @@ function MealPlanner() {
           {weekOffset !== 0 && (
             <button onClick={() => setWeekOffset(0)} className="btn-secondary text-xs px-3 py-1.5">Heute</button>
           )}
-          {days.length > 0 && (
-            <button
-              onClick={() => {
-                const lines = days.map((day: any) => {
-                  const d = new Date(day.date + 'T00:00:00Z').toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
-                  const meals = [
-                    day.breakfast && `☀️ ${day.breakfast.title}`,
-                    day.lunch && `🥗 ${day.lunch.title}`,
-                    day.dinner && `🍽️ ${day.dinner.title}`,
-                    ...(day.snacks || []).map((s: any) => `🍎 ${s.title}`),
-                  ].filter(Boolean).join('\n  ');
-                  return meals ? `${d}:\n  ${meals}` : null;
-                }).filter(Boolean).join('\n\n');
-                const text = `Mein Mahlzeitenplan 🍽️\n\n${lines}`;
-                if (navigator.share) {
-                  navigator.share({ title: 'Mein Mahlzeitenplan', text });
-                } else {
-                  navigator.clipboard.writeText(text);
-                  alert('Wochenplan kopiert! Du kannst ihn jetzt teilen.');
-                }
-              }}
-              className="btn-ghost text-xs px-3 py-1.5"
-              title="Wochenplan teilen"
-            >📤</button>
-          )}
+          {days.length > 0 && (() => {
+            const lines = days.map((day: any) => {
+              const d = new Date(day.date + 'T00:00:00Z').toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+              const meals = [
+                day.breakfast && `☀️ ${day.breakfast.title}`,
+                day.lunch && `🥗 ${day.lunch.title}`,
+                day.dinner && `🍽️ ${day.dinner.title}`,
+                ...(day.snacks || []).map((s: any) => `🍎 ${s.title}`),
+              ].filter(Boolean).join('\n  ');
+              return meals ? `${d}:\n  ${meals}` : null;
+            }).filter(Boolean).join('\n\n');
+            return <ShareMenu text={`Mein Mahlzeitenplan 🍽️\n\n${lines}`} title="Mahlzeitenplan" />;
+          })()}
         </div>
       </div>
 
