@@ -11,7 +11,7 @@ const CATEGORY_KEYWORDS: Record<ShoppingCategory, string[]> = {
   produce: [
     // Gemüse
     'tomate', 'tomaten', 'cherry', 'salat', 'spinat', 'karotte', 'rüebli', 'rüebel', 'zwiebel',
-    'knoblauch', 'peperoni', 'paprika', 'gurke', 'zucchetti', 'zucchini', 'brokkoli', 'blumenkohl',
+    'knoblauch', 'schalotte', 'peperoni', 'paprika', 'gurke', 'zucchetti', 'zucchini', 'brokkoli', 'blumenkohl',
     'champignon', 'pilz', 'avocado', 'lauch', 'sellerie', 'fenchel', 'spargel', 'bohne', 'erbsen',
     'mais', 'kürbis', 'süsskartoffel', 'kartoffel', 'randen', 'aubergine', 'radieschen', 'kohlrabi',
     'kabis', 'kohl', 'rosenkohl', 'federkohl', 'mangold', 'bärlauch', 'sojasprossen', 'bambussprossen',
@@ -132,11 +132,23 @@ shoppingListRouter.post('/generate', async (req: Request, res: Response) => {
       for (const s of day.snacks || []) allRecipes.push(s);
     }
 
-    // Aggregate ingredients — merge duplicates by name
+    // Normalize ingredient names for merging
+    // "Tomaten (reif)" → "tomaten", "Poulet-Brust" → "poulet-brust"
+    function normalizeIngredientName(name: string): string {
+      return name
+        .toLowerCase()
+        .trim()
+        .replace(/\s*\(.*?\)\s*/g, '')  // remove (reif), (gross), (gemischt) etc.
+        .replace(/\s*\/\s*.*/g, '')     // remove "/ Karotten" alternatives
+        .replace(/\s+(frisch|reif|gross|klein|mittel|gemischt|gehackt|gerieben|gewürfelt|geschnitten|tiefgekühlt|getrocknet|gefroren|dose)\s*/gi, '')
+        .trim();
+    }
+
+    // Aggregate ingredients — merge duplicates by normalized name
     const merged: Map<string, any> = new Map();
     for (const recipe of allRecipes) {
       for (const ing of recipe.ingredients || []) {
-        const key = ing.name.toLowerCase().trim();
+        const key = normalizeIngredientName(ing.name);
         if (merged.has(key)) {
           const existing = merged.get(key)!;
           existing.quantity += ing.quantity;
