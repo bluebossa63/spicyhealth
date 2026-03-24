@@ -10,7 +10,6 @@ const navLinks = [
   { href: '/shopping-list', label: 'Einkaufsliste' },
   { href: '/umstyling',    label: 'Stilberatung' },
   { href: '/mein-tag',     label: 'Mein Tag' },
-  { href: '/saisonkalender', label: 'Saison' },
 ];
 
 const authNavLinks = [

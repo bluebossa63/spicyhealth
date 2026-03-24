@@ -16,6 +16,22 @@ import { DayTotalsBar } from '@/components/DayTotalsBar';
 import { WeekTotalsPanel } from '@/components/WeekTotalsPanel';
 import { api } from '@/lib/api';
 import { ShareMenu } from '@/components/ShareMenu';
+import Link from 'next/link';
+
+const SEASONAL_HINTS: Record<number, string[]> = {
+  0: ['Rüebli','Lauch','Rosenkohl','Kabis'],
+  1: ['Nüsslisalat','Rüebli','Lauch','Chicorée'],
+  2: ['Spinat','Bärlauch','Rhabarber','Rüebli'],
+  3: ['Spargel','Spinat','Radieschen','Rhabarber'],
+  4: ['Spargel','Erdbeeren','Kohlrabi','Kopfsalat'],
+  5: ['Erdbeeren','Kirschen','Zucchetti','Gurken'],
+  6: ['Tomaten','Heidelbeeren','Peperoni','Aprikosen'],
+  7: ['Tomaten','Pflaumen','Mais','Pfirsiche'],
+  8: ['Trauben','Äpfel','Kürbis','Birnen'],
+  9: ['Kürbis','Äpfel','Randen','Süsskartoffeln'],
+  10: ['Kürbis','Federkohl','Rüebli','Lauch'],
+  11: ['Rosenkohl','Rüebli','Mandarinen','Nüsse'],
+};
 
 const SLOTS = ['breakfast', 'lunch', 'dinner', 'snacks'] as const;
 const SLOT_LABELS: Record<string, string> = {
@@ -153,6 +169,17 @@ function MealPlanner() {
           })()}
         </div>
       </div>
+
+      {/* Seasonal inspiration */}
+      <Link href="/saisonkalender" className="block mb-4">
+        <div className="bg-pistachio-light rounded-xl px-4 py-2.5 flex items-center gap-2 hover:bg-pistachio/30 transition-colors">
+          <span className="text-sm">🍓</span>
+          <span className="text-xs text-charcoal">
+            <strong>Jetzt Saison:</strong> {(SEASONAL_HINTS[new Date().getMonth()] || []).join(' · ')}
+          </span>
+          <span className="text-xs text-charcoal-light ml-auto">→ Saisonkalender</span>
+        </div>
+      </Link>
 
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         {/* Mobile: single day view */}

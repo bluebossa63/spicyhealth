@@ -57,12 +57,14 @@ export default function RecipesPage() {
           <h1 className="font-heading text-4xl text-charcoal mb-2">Rezepte</h1>
           <p className="text-charcoal-light">Entdecke gesunde, leckere Mahlzeiten</p>
         </div>
-        <Link
-          href="/recipes/new"
-          className="btn-primary flex items-center gap-1 whitespace-nowrap"
-        >
-          + Rezept
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/saisonkalender" className="btn-ghost flex items-center gap-1 whitespace-nowrap text-sm">
+            🍓 Was hat Saison?
+          </Link>
+          <Link href="/recipes/new" className="btn-primary flex items-center gap-1 whitespace-nowrap">
+            + Rezept
+          </Link>
+        </div>
       </div>
 
       <div className="mb-6">
