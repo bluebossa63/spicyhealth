@@ -45,7 +45,8 @@ function RecipesContent() {
       if (filters.maxCost < 30) params.maxCost = filters.maxCost;
 
       const { recipes: data } = await api.recipes.list(params);
-      setRecipes(prev => reset ? data : [...prev, ...data]);
+      const sorted = data.sort((a: any, b: any) => a.title.localeCompare(b.title, 'de'));
+      setRecipes(prev => reset ? sorted : [...prev, ...sorted]);
       setHasMore(data.length === 12);
     } catch {
       // API nicht verfügbar — leeren Zustand anzeigen

@@ -9,6 +9,10 @@ import { api } from '@/lib/api';
 import { RecipeImageUpload } from '@/components/RecipeImageUpload';
 
 const CATEGORIES = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'smoothie'];
+const CATEGORY_LABELS: Record<string, string> = {
+  breakfast: 'Frühstück', lunch: 'Mittagessen', dinner: 'Abendessen',
+  snack: 'Snack', dessert: 'Dessert', smoothie: 'Smoothie',
+};
 
 export default function NewRecipePage() {
   return <ProtectedRoute><NewRecipeForm /></ProtectedRoute>;
@@ -208,7 +212,7 @@ function NewRecipeForm() {
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-charcoal">Kategorie</label>
               <select value={form.category} onChange={e => set('category', e.target.value)} className="input-field">
-                {CATEGORIES.map(c => <option key={c} value={c} className="capitalize">{c}</option>)}
+                {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-3 gap-3">

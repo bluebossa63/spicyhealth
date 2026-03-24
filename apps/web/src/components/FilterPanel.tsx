@@ -52,7 +52,7 @@ export function FilterPanel({ filters, onChange }: Props) {
         </p>
         <input type="range" min={100} max={1500} step={50} value={filters.maxCalories}
           onChange={e => set('maxCalories', Number(e.target.value))}
-          className="w-full accent-terracotta" />
+          className="w-full accent-regency" />
       </div>
 
       <div>
@@ -61,7 +61,7 @@ export function FilterPanel({ filters, onChange }: Props) {
         </p>
         <input type="range" min={5} max={120} step={5} value={filters.maxPrepTime}
           onChange={e => set('maxPrepTime', Number(e.target.value))}
-          className="w-full accent-terracotta" />
+          className="w-full accent-regency" />
       </div>
 
       <div>
@@ -70,7 +70,7 @@ export function FilterPanel({ filters, onChange }: Props) {
         </p>
         <input type="range" min={1} max={30} step={1} value={filters.maxCost}
           onChange={e => set('maxCost', Number(e.target.value))}
-          className="w-full accent-terracotta" />
+          className="w-full accent-regency" />
       </div>
 
       <button

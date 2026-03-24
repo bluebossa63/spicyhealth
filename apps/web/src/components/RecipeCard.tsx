@@ -5,6 +5,11 @@ import { api } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
 import { Toast } from '@/components/ui/Toast';
 
+const CATEGORY_DE: Record<string, string> = {
+  breakfast: 'Frühstück', lunch: 'Mittagessen', dinner: 'Abendessen',
+  snack: 'Snack', dessert: 'Dessert', smoothie: 'Smoothie',
+};
+
 interface Recipe {
   id: string;
   title: string;
@@ -57,8 +62,8 @@ export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
               <div className="w-full h-full flex items-center justify-center text-4xl">🥗</div>
             )}
             {/* Category chip */}
-            <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-xs font-semibold px-2.5 py-1 rounded-full text-regency-dark capitalize">
-              {recipe.category}
+            <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-xs font-semibold px-2.5 py-1 rounded-full text-regency-dark">
+              {CATEGORY_DE[recipe.category] || recipe.category}
             </span>
             {/* Save button */}
             <button

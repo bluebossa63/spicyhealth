@@ -100,8 +100,8 @@ function RecipeDetail() {
 
       {/* Title + meta */}
       <div className="mb-6">
-        <span className="inline-block px-3 py-1 bg-rose-light text-blush-700 text-xs font-semibold rounded-full uppercase tracking-wide mb-3">
-          {recipe.category}
+        <span className="inline-block px-3 py-1 bg-rose-light text-charcoal text-xs font-semibold rounded-full tracking-wide mb-3">
+          {{ breakfast:'Frühstück', lunch:'Mittagessen', dinner:'Abendessen', snack:'Snack', dessert:'Dessert', smoothie:'Smoothie' }[recipe.category as string] || recipe.category}
         </span>
         <div className="flex items-start justify-between gap-4">
           <h1 className="font-display text-3xl text-charcoal-800 leading-tight">{recipe.title}</h1>
