@@ -291,7 +291,7 @@ function StyleConsultant() {
               <div className="flex flex-wrap justify-center gap-2">
                 {[
                   'Was ist mein Stil-Typ?',
-                  'Hilf mir bei meiner Capsule Wardrobe',
+                  'Hilf mir bei meiner Minimalgarderobe',
                   'Welche Farben stehen mir?',
                 ].map((suggestion) => (
                   <button
