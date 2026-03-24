@@ -8,12 +8,55 @@ export const shoppingListRouter = Router();
 type ShoppingCategory = 'produce' | 'dairy' | 'meat' | 'grains' | 'pantry' | 'frozen' | 'other';
 
 const CATEGORY_KEYWORDS: Record<ShoppingCategory, string[]> = {
-  produce: ['tomato', 'lettuce', 'spinach', 'carrot', 'onion', 'garlic', 'pepper', 'apple', 'banana', 'lemon', 'lime', 'cucumber', 'zucchini', 'broccoli', 'mushroom', 'herb', 'basil', 'parsley', 'cilantro', 'avocado', 'berry', 'fruit', 'vegetable', 'salad'],
-  dairy: ['milk', 'cheese', 'butter', 'cream', 'yogurt', 'egg', 'eggs', 'mozzarella', 'parmesan', 'ricotta', 'feta'],
-  meat: ['chicken', 'beef', 'pork', 'lamb', 'fish', 'salmon', 'tuna', 'shrimp', 'turkey', 'bacon', 'sausage', 'meat'],
-  grains: ['pasta', 'rice', 'bread', 'flour', 'oat', 'quinoa', 'barley', 'noodle', 'tortilla', 'cracker', 'cereal', 'grain'],
-  frozen: ['frozen', 'ice cream', 'peas frozen'],
-  pantry: ['oil', 'vinegar', 'salt', 'pepper', 'sugar', 'honey', 'sauce', 'tomato sauce', 'canned', 'bean', 'lentil', 'chickpea', 'coconut milk', 'stock', 'broth', 'spice', 'cumin', 'paprika', 'cinnamon', 'vanilla', 'baking', 'chocolate', 'nuts', 'almond', 'walnut'],
+  produce: [
+    // Gemüse
+    'tomate', 'tomaten', 'cherry', 'salat', 'spinat', 'karotte', 'rüebli', 'rüebel', 'zwiebel',
+    'knoblauch', 'peperoni', 'paprika', 'gurke', 'zucchetti', 'zucchini', 'brokkoli', 'blumenkohl',
+    'champignon', 'pilz', 'avocado', 'lauch', 'sellerie', 'fenchel', 'spargel', 'bohne', 'erbsen',
+    'mais', 'kürbis', 'süsskartoffel', 'kartoffel', 'randen', 'aubergine', 'radieschen', 'kohlrabi',
+    'kabis', 'kohl', 'rosenkohl', 'federkohl', 'mangold', 'bärlauch', 'sojasprossen', 'bambussprossen',
+    'edamame', 'ingwer',
+    // Früchte
+    'apfel', 'äpfel', 'banane', 'zitrone', 'limette', 'orange', 'mandarine', 'birne', 'mango',
+    'ananas', 'erdbeere', 'himbeere', 'blaubeere', 'heidelbeere', 'beeren', 'kirsche', 'traube',
+    'kiwi', 'pfirsich', 'aprikose', 'pflaume', 'zwetschge', 'wassermelone', 'rhabarber', 'quitte',
+    'passionsfrucht', 'cranberr',
+    // Kräuter
+    'basilikum', 'petersilie', 'koriander', 'schnittlauch', 'rosmarin', 'thymian', 'minze',
+    'oregano', 'dill', 'salbei',
+  ],
+  dairy: [
+    'milch', 'käse', 'butter', 'rahm', 'sahne', 'joghurt', 'quark', 'skyr',
+    'ei ', 'eier', 'mozzarella', 'parmesan', 'feta', 'gruyère', 'emmentaler',
+    'mascarpone', 'ricotta', 'hüttenkäse', 'cottage', 'halloumi', 'burrata',
+    'frischkäse', 'schmand', 'crème', 'gelatine',
+  ],
+  meat: [
+    'poulet', 'hähnchen', 'chicken', 'huhn', 'hühn', 'rind', 'kalb', 'schwein',
+    'lamm', 'fisch', 'lachs', 'thunfisch', 'garnele', 'crevette', 'trute',
+    'speck', 'pancetta', 'schinken', 'wurst', 'salami', 'fleisch',
+  ],
+  grains: [
+    'pasta', 'spaghetti', 'penne', 'nudel', 'reis', 'basmatireis', 'sushireis',
+    'brot', 'toast', 'zopf', 'mehl', 'haferflocken', 'hafer', 'quinoa', 'hirse',
+    'bulgur', 'couscous', 'tortilla', 'wrap', 'ciabatta', 'naan', 'knäckebrot',
+    'reiswaffel', 'griess', 'polenta', 'buchweizen', 'ditalini', 'löffelbiskuit',
+    'reisnudel', 'granola', 'müesli', 'cornflakes', 'crouton',
+  ],
+  frozen: [
+    'tiefgekühlt', 'tiefkühl', 'gefroren', 'glace', 'frozen',
+  ],
+  pantry: [
+    'öl', 'olivenöl', 'sesamöl', 'kokosöl', 'essig', 'salz', 'pfeffer', 'zucker',
+    'honig', 'ahornsirup', 'sauce', 'sojasauce', 'passata', 'tomatenmark',
+    'dose', 'linsen', 'kichererbsen', 'kokosmilch', 'bouillon', 'brühe',
+    'gewürz', 'kurkuma', 'kreuzkümmel', 'curry', 'zimt', 'muskat', 'vanille',
+    'backpulver', 'hefe', 'schokolade', 'kakao', 'nüsse', 'mandel', 'walnuss',
+    'cashew', 'erdnuss', 'pistazie', 'pinienkern', 'kürbiskern', 'sesam',
+    'leinsamen', 'chiasamen', 'tahini', 'senf', 'ketchup', 'pesto',
+    'acai', 'matcha', 'proteinpulver', 'kokosflocken', 'agar',
+    'chilliflocken', 'chiliflocken', 'paprikapulver',
+  ],
   other: [],
 };
 
