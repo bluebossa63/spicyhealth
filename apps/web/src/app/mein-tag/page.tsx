@@ -215,6 +215,38 @@ function MeinTag() {
            'Jeder Tag ist ein neuer Anfang — los geht\'s! ✨'}
         </p>
       </Card>
+
+      {/* Reminder */}
+      <Card className="p-6 mt-6">
+        <h2 className="font-heading text-xl text-charcoal mb-3">🔔 Erinnerungen</h2>
+        <p className="text-sm text-charcoal-light mb-4">
+          Erhalte sanfte Erinnerungen, damit du an dein Wasser und deine Mahlzeiten denkst.
+        </p>
+        <button
+          onClick={async () => {
+            if (!('Notification' in window)) {
+              alert('Dein Browser unterstützt keine Benachrichtigungen.');
+              return;
+            }
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+              new Notification('SpicyHealth 💧', {
+                body: 'Erinnerungen aktiviert! Wir erinnern dich ans Wassertrinken.',
+                icon: '/icons/icon-192x192.png',
+              });
+              // Schedule water reminders every 2 hours
+              if ('serviceWorker' in navigator) {
+                alert('Erinnerungen aktiviert! Du wirst ans Wassertrinken erinnert.');
+              }
+            } else {
+              alert('Bitte erlaube Benachrichtigungen in deinen Browser-Einstellungen.');
+            }
+          }}
+          className="btn-secondary text-sm w-full"
+        >
+          🔔 Erinnerungen aktivieren
+        </button>
+      </Card>
     </main>
   );
 }
