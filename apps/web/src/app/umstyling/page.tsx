@@ -42,6 +42,7 @@ function StyleConsultant() {
   };
 
   const deleteConversation = async (id: string) => {
+    if (!confirm('Dieses Gespräch wirklich löschen?')) return;
     try {
       await api.umstyling.deleteConversation(id);
       setConversations((prev) => prev.filter((c) => c.id !== id));
@@ -49,6 +50,18 @@ function StyleConsultant() {
         setConversationId(null);
         setMessages([]);
       }
+    } catch {
+      // ignore
+    }
+  };
+
+  const deleteAllConversations = async () => {
+    if (!confirm(`Alle ${conversations.length} Gespräche wirklich löschen?`)) return;
+    try {
+      await Promise.all(conversations.map((c) => api.umstyling.deleteConversation(c.id)));
+      setConversations([]);
+      setConversationId(null);
+      setMessages([]);
     } catch {
       // ignore
     }
@@ -195,10 +208,10 @@ function StyleConsultant() {
                 <span className="text-xs text-charcoal truncate flex-1">{conv.title}</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); deleteConversation(conv.id); }}
-                  className="opacity-0 group-hover:opacity-100 text-charcoal-light hover:text-red-500 text-xs px-1 transition-opacity"
+                  className="text-charcoal-light hover:text-red-500 text-sm px-1.5 rounded hover:bg-red-50 transition-colors"
                   title="Löschen"
                 >
-                  x
+                  ×
                 </button>
               </div>
             ))}
@@ -206,6 +219,16 @@ function StyleConsultant() {
               <p className="text-xs text-charcoal-light text-center mt-4">Noch keine Gespräche</p>
             )}
           </div>
+          {conversations.length > 1 && (
+            <div className="p-2 border-t border-cream-dark">
+              <button
+                onClick={deleteAllConversations}
+                className="w-full text-xs text-charcoal-light hover:text-red-500 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
+              >
+                Alle Gespräche löschen
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 
