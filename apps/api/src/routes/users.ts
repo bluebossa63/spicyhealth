@@ -8,6 +8,17 @@ const updateProfileSchema = z.object({
   displayName: z.string().min(1).max(100).optional(),
   avatarUrl: z.string().url().optional(),
   dietaryPreferences: z.array(z.string()).optional(),
+  // Body & Health
+  birthYear: z.number().int().min(1930).max(2020).optional(),
+  heightCm: z.number().min(100).max(250).optional(),
+  weightKg: z.number().min(30).max(300).optional(),
+  activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active']).optional(),
+  // Style
+  clothingSize: z.string().max(10).optional(),
+  shoeSize: z.number().min(30).max(50).optional(),
+  hairColor: z.string().max(50).optional(),
+  waistCm: z.number().min(40).max(200).optional(),
+  bustCm: z.number().min(50).max(200).optional(),
 });
 
 // GET /api/users/me

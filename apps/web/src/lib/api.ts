@@ -68,7 +68,7 @@ export const api = {
   },
   users: {
     me: () => fetchJson<{ user: any }>('/users/me'),
-    update: (data: { displayName?: string; avatarUrl?: string; dietaryPreferences?: string[] }) =>
+    update: (data: Record<string, any>) =>
       fetchJson<{ user: any }>('/users/me', { method: 'PUT', body: JSON.stringify(data) }),
     saveRecipe: (recipeId: string) => fetchJson<{ savedRecipeIds: string[] }>(`/users/me/saved-recipes/${recipeId}`, { method: 'POST' }),
     unsaveRecipe: (recipeId: string) => fetchJson<{ savedRecipeIds: string[] }>(`/users/me/saved-recipes/${recipeId}`, { method: 'DELETE' }),
