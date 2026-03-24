@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { SearchBar } from '@/components/SearchBar';
@@ -11,6 +11,14 @@ import { api } from '@/lib/api';
 const DEFAULT_FILTERS: Filters = { category: '', maxCalories: 1500, maxPrepTime: 120, maxCost: 30 };
 
 export default function RecipesPage() {
+  return (
+    <Suspense fallback={<div className="max-w-6xl mx-auto px-4 py-8 text-charcoal-light">Laden…</div>}>
+      <RecipesContent />
+    </Suspense>
+  );
+}
+
+function RecipesContent() {
   const params = useSearchParams();
   const [recipes, setRecipes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
