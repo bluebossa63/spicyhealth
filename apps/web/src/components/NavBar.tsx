@@ -42,7 +42,6 @@ export function NavBar() {
                   {label}
                 </Link>
               ))}
-              <Link href="/recipes/new" className="btn-secondary text-sm">+ Rezept</Link>
               <button onClick={logout} className="btn-ghost text-sm">Abmelden</button>
             </div>
           ) : (
