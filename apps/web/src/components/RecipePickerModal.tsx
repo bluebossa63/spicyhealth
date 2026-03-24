@@ -15,7 +15,7 @@ export function RecipePickerModal({ onSelect, onClose }: RecipePickerModalProps)
   useEffect(() => {
     setLoading(true);
     const t = setTimeout(() => {
-      api.recipes.list({ search: search || undefined, pageSize: 20 })
+      api.recipes.list({ search: search || undefined, pageSize: 100 })
         .then(d => setRecipes(d.recipes))
         .catch(() => {})
         .finally(() => setLoading(false));
@@ -56,8 +56,8 @@ export function RecipePickerModal({ onSelect, onClose }: RecipePickerModalProps)
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-charcoal-800 truncate">{recipe.title}</p>
                 <p className="text-xs text-charcoal-400">
-                  {recipe.nutrition?.calories ? `${recipe.nutrition.calories} kcal` : ''}
-                  {recipe.estimatedCostEur ? ` · CHF ${recipe.estimatedCostEur.toFixed(2)}` : ''}
+                  {recipe.nutrition?.calories ? `${Math.round(recipe.nutrition.calories / (recipe.servings || 1))} kcal` : ''}
+                  {recipe.estimatedCostEur ? ` · CHF ${(recipe.estimatedCostEur / (recipe.servings || 1)).toFixed(2)}` : ''}
                   {recipe.prepTimeMinutes ? ` · ${recipe.prepTimeMinutes + recipe.cookTimeMinutes}min` : ''}
                 </p>
               </div>
