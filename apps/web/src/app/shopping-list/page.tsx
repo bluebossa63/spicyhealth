@@ -157,6 +157,22 @@ function ShoppingList() {
           {items.length > 0 && (
             <>
               <button onClick={handleCopyToClipboard} className="btn-secondary text-sm">📋 Kopieren</button>
+              <button onClick={() => {
+                const lines = CATEGORY_ORDER.flatMap(cat => {
+                  const group = items.filter(i => i.category === cat);
+                  if (!group.length) return [];
+                  const header = `${CATEGORY_META[cat].icon} ${CATEGORY_META[cat].label}`;
+                  const rows = group.map(i => `  ${i.purchased ? '✓' : '○'} ${i.name} — ${i.quantity} ${i.unit}`.trim());
+                  return [header, ...rows];
+                });
+                const text = `Meine Einkaufsliste 🛒\n\n${lines.join('\n')}`;
+                if (navigator.share) {
+                  navigator.share({ title: 'Einkaufsliste', text });
+                } else {
+                  navigator.clipboard.writeText(text);
+                  alert('Liste kopiert! Du kannst sie jetzt teilen.');
+                }
+              }} className="btn-ghost text-sm">📤 Teilen</button>
               {purchasedCount > 0 && (
                 <button onClick={handleClearPurchased} className="btn-ghost text-sm text-charcoal-light">
                   ✓ Erledigte entfernen ({purchasedCount})

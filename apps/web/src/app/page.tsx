@@ -28,6 +28,12 @@ const features = [
     href: '/umstyling',
   },
   {
+    icon: '📸',
+    title: 'Outfit-Galerie',
+    description: 'Dein persönliches Style-Board — alle Outfits aus deinen Stilberatungen gesammelt.',
+    href: '/outfit-galerie',
+  },
+  {
     icon: '✨',
     title: 'Mein Tag',
     description: 'Wasser-Tracker, Stimmungstagebuch und deine täglichen Erfolge auf einen Blick.',
