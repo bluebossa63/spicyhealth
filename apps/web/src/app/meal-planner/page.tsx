@@ -304,6 +304,7 @@ function MealPlanner() {
       {/* Recipe picker modal */}
       {picker && (
         <RecipePickerModal
+          slot={picker.slot}
           onSelect={recipe => {
             handleAssign(picker.date, picker.slot, recipe);
             setPicker(null);
