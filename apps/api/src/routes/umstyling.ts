@@ -117,14 +117,15 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
 
     // Auto-generate: when user has uploaded a photo, use Flux Kontext
     // to directly restyle the photo based on the style advice
+    // Uses a timeout to prevent hanging requests
     if (latestUserImage && cleanedReply.length > 50) {
       try {
         const styleContext = cleanedReply.substring(0, 500);
 
-        // Extract a precise style description
+        // Extract a precise style description (fast, ~2s)
         const garment = await extractGarmentDescription(styleContext);
         garmentDescriptionDE = garment.description;
-        console.log('Style description:', garment.description);
+        console.log('Style category:', garment.category, '| description:', garment.description);
 
         // Build category-specific Flux Kontext prompt
         let editPrompt: string;
@@ -145,22 +146,21 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
             `CRITICAL: Keep face, skin, neck, body shape, age, hairstyle and makeup EXACTLY identical. ` +
             `Do NOT add wrinkles or age the person. Only change clothing. Photorealistic.`;
         }
-        console.log('Flux Kontext editing with:', editPrompt.substring(0, 80));
-        const editedUrl = await fluxKontextEdit(latestUserImage, editPrompt);
+
+        // Flux Kontext with 45-second timeout
+        console.log('Flux Kontext editing...');
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Flux timeout after 45s')), 45000)
+        );
+        const editedUrl = await Promise.race([
+          fluxKontextEdit(latestUserImage, editPrompt),
+          timeoutPromise,
+        ]);
         generatedImages.push(editedUrl);
         console.log('Flux Kontext result:', editedUrl);
       } catch (err) {
-        console.error('Flux Kontext edit FAILED:', (err as Error).message);
-        // Fallback: generate inspiration image with DALL-E 3
-        try {
-          const garment = await extractGarmentDescription(cleanedReply.substring(0, 300));
-          garmentDescriptionDE = garment.description;
-          const fallbackUrl = await generateStyleImage(garment.prompt);
-          generatedImages.push(fallbackUrl);
-          console.log('Fallback DALL-E image:', fallbackUrl);
-        } catch (fallbackErr) {
-          console.error('Fallback also failed:', (fallbackErr as Error).message);
-        }
+        console.error('Image generation failed:', (err as Error).message);
+        // No fallback — just show text response without image
       }
     }
 
