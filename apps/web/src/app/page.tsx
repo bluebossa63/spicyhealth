@@ -75,11 +75,11 @@ export default function HomePage() {
           <p className="text-charcoal-light leading-relaxed mb-4">
             SpicyHealth ist für Frauen jeden Alters, jeder Figur und jedes Lebensstils.
             Hier geht es nicht um Perfektion — sondern darum, dass du dich <strong className="text-charcoal">wohlfühlst</strong>,
-            Freude am Kochen entdeckst und deinen ganz persönlichen Stil findest.
+            Freude am Kochen hast oder entdeckst und deinen ganz persönlichen Stil findest.
           </p>
           <p className="text-charcoal-light leading-relaxed mb-4">
             Lass dich von leckeren Rezepten inspirieren, plane deine Woche entspannt,
-            probiere neue Looks aus und feiere die kleinen Erfolge im Alltag.
+            teile es mit deinen Freundinnen, probiere neue Looks aus und feiere die kleinen Erfolge im Alltag.
             Alles in deinem Tempo, ohne Druck, ohne Bewertung.
           </p>
           <p className="text-charcoal leading-relaxed font-medium">
