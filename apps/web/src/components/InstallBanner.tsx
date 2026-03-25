@@ -8,9 +8,22 @@ interface BeforeInstallPromptEvent extends Event {
 
 export function InstallBanner() {
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [dismissed, setDismissed] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
+    const wasDismissed = localStorage.getItem('pwa-install-dismissed');
+    if (wasDismissed === 'true') return;
+
+    const loginCount = parseInt(localStorage.getItem('pwa-login-count') || '0', 10) + 1;
+    localStorage.setItem('pwa-login-count', String(loginCount));
+
+    if (loginCount > 3) {
+      localStorage.setItem('pwa-install-dismissed', 'true');
+      return;
+    }
+
+    setShow(true);
+
     const handler = (e: Event) => {
       e.preventDefault();
       setPrompt(e as BeforeInstallPromptEvent);
@@ -19,14 +32,21 @@ export function InstallBanner() {
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
-  if (!prompt || dismissed) return null;
+  if (!show || !prompt) return null;
 
   async function handleInstall() {
     if (!prompt) return;
     await prompt.prompt();
     const { outcome } = await prompt.userChoice;
-    if (outcome === 'accepted') setPrompt(null);
-    else setDismissed(true);
+    if (outcome === 'accepted') {
+      localStorage.setItem('pwa-install-dismissed', 'true');
+      setShow(false);
+    }
+  }
+
+  function handleDismiss() {
+    localStorage.setItem('pwa-install-dismissed', 'true');
+    setShow(false);
   }
 
   return (
@@ -38,7 +58,7 @@ export function InstallBanner() {
       </div>
       <div className="flex flex-col gap-1">
         <button onClick={handleInstall} className="btn-primary text-xs px-3 py-1.5">Installieren</button>
-        <button onClick={() => setDismissed(true)} className="btn-ghost text-xs px-3 py-1.5">Später</button>
+        <button onClick={handleDismiss} className="btn-ghost text-xs px-3 py-1.5">Nicht jetzt</button>
       </div>
     </div>
   );
