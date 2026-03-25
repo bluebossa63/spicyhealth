@@ -125,7 +125,11 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
         console.log('Style description:', garment.description);
 
         // Use Flux Kontext to edit the user's actual photo
-        const editPrompt = `Restyle this person: ${garment.prompt}. Keep the face identical, change only clothing, hairstyle, makeup and accessories as described. Photorealistic result.`;
+        const editPrompt = `Change ONLY the clothing and accessories on this person: ${garment.prompt}. ` +
+          `CRITICAL: Keep the face, skin, neck, body shape, and age EXACTLY identical to the original photo. ` +
+          `Do NOT add wrinkles, do NOT age the person, do NOT change skin texture or body proportions. ` +
+          `The person must look exactly the same age and have the same skin quality as in the original. ` +
+          `Only change what the person is wearing. Photorealistic, natural lighting.`;
         console.log('Flux Kontext editing with:', editPrompt.substring(0, 80));
         const editedUrl = await fluxKontextEdit(latestUserImage, editPrompt);
         generatedImages.push(editedUrl);
@@ -270,7 +274,9 @@ umstylingRouter.post('/generate-look', chatLimiter, async (req: Request, res: Re
       try {
         generatedImageUrl = await fluxKontextEdit(
           sourceImageUrl,
-          `Restyle this person: ${styleDescription}. Keep face identical, photorealistic.`,
+          `Change ONLY the clothing on this person: ${styleDescription}. ` +
+            `CRITICAL: Keep face, skin, neck, body shape, and age EXACTLY identical. ` +
+            `Do NOT add wrinkles or age the person. Only change clothing. Photorealistic.`,
         );
       } catch {
         // Fallback to DALL-E 3 inspiration image
