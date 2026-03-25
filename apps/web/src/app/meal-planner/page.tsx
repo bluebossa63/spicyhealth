@@ -184,6 +184,28 @@ function MealPlanner() {
           >
             {autoPlanning ? 'Wird geplant...' : '✨ Woche automatisch planen'}
           </button>
+          <button
+            onClick={async () => {
+              if (!confirm('Alle Einträge dieser Woche wirklich löschen?')) return;
+              setAutoPlanning(true);
+              try {
+                for (const day of days) {
+                  if (day.breakfast) await api.mealPlans.removeSlot(mealPlan.id, day.date, 'breakfast');
+                  if (day.lunch) await api.mealPlans.removeSlot(mealPlan.id, day.date, 'lunch');
+                  if (day.dinner) await api.mealPlans.removeSlot(mealPlan.id, day.date, 'dinner');
+                  for (let s = (day.snacks?.length || 0) - 1; s >= 0; s--) {
+                    await api.mealPlans.removeSlot(mealPlan.id, day.date, 'snacks', s);
+                  }
+                }
+                await loadPlan(weekOffset);
+              } catch { alert('Löschen fehlgeschlagen.'); }
+              finally { setAutoPlanning(false); }
+            }}
+            disabled={autoPlanning}
+            className="btn-ghost text-sm w-full text-red-400 hover:text-red-600"
+          >
+            🗑 Woche zurücksetzen
+          </button>
         </div>
       )}
 
