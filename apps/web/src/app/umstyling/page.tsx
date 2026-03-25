@@ -6,6 +6,7 @@ import { ChatMessage } from '@/components/ChatMessage';
 import { ChatInput } from '@/components/ChatInput';
 import { api } from '@/lib/api';
 import type { ChatMessage as ChatMessageType, Conversation } from '@spicyhealth/shared';
+import { useConfirm } from '@/hooks/useConfirm';
 
 function StyleConsultant() {
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -15,6 +16,7 @@ function StyleConsultant() {
   const [generatingLook, setGeneratingLook] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const garmentInputRef = useRef<HTMLInputElement>(null);
+  const { confirm: confirmDialog, dialog: confirmDialogEl } = useConfirm();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -42,7 +44,7 @@ function StyleConsultant() {
   };
 
   const deleteConversation = async (id: string) => {
-    if (!confirm('Dieses Gespräch wirklich löschen?')) return;
+    if (!await confirmDialog('Dieses Gespräch wirklich löschen?')) return;
     try {
       await api.umstyling.deleteConversation(id);
       setConversations((prev) => prev.filter((c) => c.id !== id));
@@ -56,7 +58,7 @@ function StyleConsultant() {
   };
 
   const deleteAllConversations = async () => {
-    if (!confirm(`Alle ${conversations.length} Gespräche wirklich löschen?`)) return;
+    if (!await confirmDialog(`Alle ${conversations.length} Gespräche wirklich löschen?`)) return;
     try {
       await Promise.all(conversations.map((c) => api.umstyling.deleteConversation(c.id)));
       setConversations([]);
@@ -339,6 +341,7 @@ function StyleConsultant() {
         {/* Input */}
         <ChatInput onSend={handleSend} disabled={loading} />
       </div>
+      {confirmDialogEl}
     </div>
   );
 }

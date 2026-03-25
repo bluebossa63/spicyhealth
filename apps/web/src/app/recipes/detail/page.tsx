@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { ShareMenu } from '@/components/ShareMenu';
+import { useConfirm } from '@/hooks/useConfirm';
 import { NutritionPanel } from '@/components/NutritionPanel';
 import { CommentThread } from '@/components/CommentThread';
 import { SkeletonText } from '@/components/ui/SkeletonLoader';
@@ -32,6 +33,7 @@ function RecipeDetail() {
   const [saved, setSaved] = useState(false);
   const [showPlanPicker, setShowPlanPicker] = useState(false);
   const { toast, show, hide } = useToast();
+  const { confirm: confirmDialog, dialog: confirmDialogEl } = useConfirm();
 
   useEffect(() => {
     if (!id) { router.push('/recipes'); return; }
@@ -53,7 +55,7 @@ function RecipeDetail() {
   }
 
   async function handleDelete() {
-    if (!id || !confirm('Rezept wirklich löschen?')) return;
+    if (!id || !await confirmDialog('Rezept wirklich löschen?')) return;
     try {
       await api.recipes.delete(id);
       router.push('/recipes');
@@ -239,6 +241,7 @@ function RecipeDetail() {
       <section className="card p-6">
         <CommentThread recipeId={id!} initialComments={comments} />
       </section>
+      {confirmDialogEl}
     </main>
   );
 }

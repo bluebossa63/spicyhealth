@@ -4,6 +4,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { api } from '@/lib/api';
 import { api as mealApi } from '@/lib/api';
 import { ShareMenu } from '@/components/ShareMenu';
+import { useConfirm } from '@/hooks/useConfirm';
 
 type ShoppingCategory = 'produce' | 'dairy' | 'meat' | 'grains' | 'pantry' | 'frozen' | 'other';
 
@@ -38,6 +39,7 @@ function ShoppingList() {
   const [swipingId, setSwipingId] = useState<string | null>(null);
   const [swipeX, setSwipeX] = useState(0);
   const touchStartX = useRef<number | null>(null);
+  const { confirm: confirmDialog, dialog: confirmDialogEl } = useConfirm();
 
   function onTouchStart(e: React.TouchEvent, id: string) {
     touchStartX.current = e.touches[0].clientX;
@@ -109,7 +111,7 @@ function ShoppingList() {
   }
 
   async function handleClearAll() {
-    if (!confirm(`Alle ${items.length} Artikel aus der Einkaufsliste löschen?`)) return;
+    if (!await confirmDialog(`Alle ${items.length} Artikel aus der Einkaufsliste löschen?`)) return;
     const allItems = [...items];
     setItems([]);
     await Promise.all(allItems.map(i => api.shoppingList.deleteItem(i.id).catch(() => {})));
@@ -335,6 +337,7 @@ function ShoppingList() {
           </button>
         </div>
       )}
+      {confirmDialogEl}
     </main>
   );
 }

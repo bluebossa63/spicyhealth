@@ -16,6 +16,7 @@ import { DayTotalsBar } from '@/components/DayTotalsBar';
 import { WeekTotalsPanel } from '@/components/WeekTotalsPanel';
 import { api } from '@/lib/api';
 import { ShareMenu } from '@/components/ShareMenu';
+import { useConfirm } from '@/hooks/useConfirm';
 import Link from 'next/link';
 
 const SEASONAL_HINTS: Record<number, string[]> = {
@@ -74,6 +75,7 @@ function MealPlanner() {
   const [showAutoModal, setShowAutoModal] = useState(false);
   const [autoSlots, setAutoSlots] = useState({ breakfast: true, lunch: true, dinner: true });
   const [autoStartFrom, setAutoStartFrom] = useState('today');
+  const { confirm: confirmDialog, dialog: confirmDialogEl } = useConfirm();
   const [activeDayIndex, setActiveDayIndex] = useState<number>(() => {
     const today = new Date().getDay();
     return today === 0 ? 6 : today - 1; // Mon=0 … Sun=6
@@ -186,7 +188,7 @@ function MealPlanner() {
           </button>
           <button
             onClick={async () => {
-              if (!confirm('Alle Einträge dieser Woche wirklich löschen?')) return;
+              if (!await confirmDialog('Alle Einträge dieser Woche wirklich löschen?')) return;
               setAutoPlanning(true);
               try {
                 for (const day of days) {
@@ -492,6 +494,7 @@ function MealPlanner() {
           onClose={() => setPicker(null)}
         />
       )}
+      {confirmDialogEl}
     </main>
   );
 }

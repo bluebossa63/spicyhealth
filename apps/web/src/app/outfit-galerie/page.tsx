@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/Card';
 import { api } from '@/lib/api';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function OutfitGaleriePage() {
   return <ProtectedRoute><OutfitGalerie /></ProtectedRoute>;
@@ -12,6 +13,7 @@ function OutfitGalerie() {
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const { confirm: confirmDialog, dialog: confirmDialogEl } = useConfirm();
 
   useEffect(() => {
     api.umstyling.gallery()
@@ -21,7 +23,7 @@ function OutfitGalerie() {
   }, []);
 
   const deleteImage = async (id: string) => {
-    if (!confirm('Dieses Bild wirklich löschen?')) return;
+    if (!await confirmDialog('Dieses Bild wirklich löschen?')) return;
     try {
       await api.umstyling.deleteGalleryImage(id);
       setImages(prev => prev.filter(img => img.id !== id));
@@ -29,7 +31,7 @@ function OutfitGalerie() {
   };
 
   const deleteAll = async () => {
-    if (!confirm(`Alle ${images.length} Bilder wirklich löschen?`)) return;
+    if (!await confirmDialog(`Alle ${images.length} Bilder wirklich löschen?`)) return;
     try {
       await api.umstyling.deleteAllGallery();
       setImages([]);
@@ -106,6 +108,7 @@ function OutfitGalerie() {
           </button>
         </div>
       )}
+      {confirmDialogEl}
     </main>
   );
 }
