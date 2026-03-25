@@ -79,7 +79,7 @@ function RecipesContent() {
             🍓 Was hat Saison?
           </Link>
           <Link href="/recipes/new" className="btn-primary flex items-center gap-1 whitespace-nowrap">
-            + Rezept
+            Eigenes Rezept erfassen
           </Link>
         </div>
       </div>
