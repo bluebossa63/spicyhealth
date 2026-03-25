@@ -193,6 +193,36 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* Social proof — testimonials */}
+      <section className="max-w-4xl mx-auto px-4 pb-16">
+        <h2 className="font-heading text-2xl text-center text-charcoal mb-8">Von Frauen für Frauen</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              quote: 'Endlich eine App die mich nicht zum Abnehmen drängt, sondern mir hilft mich wohlzufühlen. Die Rezepte sind alltagstauglich und richtig lecker!',
+              name: 'Sarah, 34',
+              detail: 'Zürich',
+            },
+            {
+              quote: 'Die Stilberatung hat mir geholfen, meinen eigenen Look zu finden. Und der Mahlzeitenplaner spart mir jede Woche Zeit beim Einkaufen.',
+              name: 'Nicole, 42',
+              detail: 'Bern',
+            },
+            {
+              quote: 'Ich liebe den Wasser-Tracker und die Saisonrezepte! Die App fühlt sich an wie eine gute Freundin die immer einen Tipp hat.',
+              name: 'Laura, 28',
+              detail: 'Basel',
+            },
+          ].map((t, i) => (
+            <Card key={i} className="p-6 text-center">
+              <p className="text-charcoal-light text-sm leading-relaxed italic mb-4">"{t.quote}"</p>
+              <p className="font-medium text-charcoal text-sm">{t.name}</p>
+              <p className="text-xs text-charcoal-light">{t.detail}</p>
+            </Card>
+          ))}
+        </div>
+      </section>
     </>
   );
 }
