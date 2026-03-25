@@ -125,10 +125,13 @@ function buildProfileContext(profile?: UserProfile): string {
   if (profile.avoidStyles) lines.push(`Das mag sie nicht / möchte sie vermeiden: ${profile.avoidStyles}`);
   if (profile.dietaryPreferences?.length) lines.push(`Ernährungsweise: ${profile.dietaryPreferences.join(', ')}`);
   if (!lines.length) return '';
-  return `\n\n## Profil der Userin\nDie folgenden Informationen hat die Userin in ihrem Profil hinterlegt. ` +
-    `Nutze sie für passende Empfehlungen (Grössen, Farben, Altersgruppe). ` +
-    `Erwähne die Daten nicht direkt, aber lass sie in deine Vorschläge einfliessen.\n` +
-    lines.join('\n');
+  return `\n\n## Profil der Userin — WICHTIG\nDie folgenden Informationen hat die Userin bereits in ihrem Profil hinterlegt.\n` +
+    lines.join('\n') +
+    `\n\nWICHTIG: Frage die Userin NICHT nach Informationen die oben bereits stehen! ` +
+    `Wenn Lieblingsfarben eingetragen sind, frag NICHT "Welche Farben magst du?". ` +
+    `Wenn Stoffe eingetragen sind, frag NICHT nach Materialvorlieben. ` +
+    `Nutze die Profildaten direkt für deine Empfehlungen. ` +
+    `Frage nur nach Dingen die NICHT im Profil stehen.`;
 }
 
 export async function chatWithStyleConsultant(messages: MessageInput[], profile?: UserProfile): Promise<string> {
