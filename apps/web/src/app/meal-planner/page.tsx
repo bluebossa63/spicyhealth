@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   DndContext,
   DragEndEvent,
@@ -66,6 +67,7 @@ export default function MealPlannerPage() {
 }
 
 function MealPlanner() {
+  const router = useRouter();
   const [mealPlan, setMealPlan] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [weekOffset, setWeekOffset] = useState(0);
@@ -492,7 +494,8 @@ function MealPlanner() {
             onClick={async () => {
               try {
                 await api.shoppingList.generate(mealPlan.id);
-                alert('Einkaufsliste wurde erstellt! Du findest sie unter Einkaufsliste.');
+                const goToList = await confirmDialog('Einkaufsliste wurde erstellt! Möchtest du sie jetzt anschauen?', 'Zur Einkaufsliste');
+                if (goToList) router.push('/shopping-list');
               } catch {
                 alert('Einkaufsliste konnte nicht erstellt werden.');
               }
