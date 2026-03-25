@@ -60,9 +60,6 @@ export default function HomePage() {
           Keine Diäten. Keine Vorschriften. Einfach gut essen, sich schön fühlen
           und Spass haben — in deinem eigenen Tempo.
         </p>
-        <div className="flex justify-center">
-          <Link href="/recipes"><Button size="lg">Lass dich inspirieren</Button></Link>
-        </div>
       </section>
 
       {/* Welcome text with Regency floral background */}
@@ -187,6 +184,13 @@ export default function HomePage() {
               </Card>
             </Link>
           ))}
+        </div>
+
+        {/* Call to action — after features overview */}
+        <div className="text-center mt-12">
+          <Link href="/recipes">
+            <Button size="lg">Lass dich inspirieren</Button>
+          </Link>
         </div>
       </section>
     </>
