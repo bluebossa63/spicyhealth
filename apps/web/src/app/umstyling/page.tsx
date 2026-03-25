@@ -280,34 +280,36 @@ function StyleConsultant() {
         <div className="flex-1 overflow-y-auto px-4 py-4">
           {messages.length === 0 && !loading && (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
-              <div className="w-16 h-16 rounded-full bg-sage-light flex items-center justify-center mb-4">
-                <span className="text-3xl">👗</span>
+              <div className="bg-gradient-to-br from-rose-light via-cream to-regency-light rounded-2xl p-6 max-w-md w-full">
+                <h2 className="font-heading text-xl font-semibold text-charcoal mb-2">
+                  Deine persönliche Stilberaterin
+                </h2>
+                <p className="text-sm text-charcoal-light mb-5">
+                  Was möchtest du heute entdecken?
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {[
+                    { emoji: '👗', label: 'Stil-Typ', prompt: 'Hilf mir meinen persönlichen Stil-Typ zu entdecken. Stelle mir dazu gezielte Fragen.' },
+                    { emoji: '🎨', label: 'Farben', prompt: 'Welche Farben passen zu mir und bringen mich zum Strahlen? Berate mich basierend auf meinem Profil.' },
+                    { emoji: '👠', label: 'Outfits', prompt: 'Schlage mir ein Outfit vor das perfekt zu mir und meinem Stil passt.' },
+                    { emoji: '💄', label: 'Make-up', prompt: 'Gib mir Make-up Tipps die zu meinem Typ, meiner Augenfarbe und meiner Haarfarbe passen.' },
+                    { emoji: '📸', label: 'Foto umstylen', prompt: 'Ich möchte ein Foto von mir hochladen und einen neuen Look sehen. Was muss ich tun?' },
+                    { emoji: '👜', label: 'Accessoires', prompt: 'Welche Accessoires passen zu meinem Stil? Berate mich zu Schmuck, Taschen und mehr.' },
+                  ].map((item) => (
+                    <button
+                      key={item.label}
+                      onClick={() => handleSend(item.prompt)}
+                      className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-white/70 hover:bg-white transition-colors"
+                    >
+                      <span className="text-2xl">{item.emoji}</span>
+                      <span className="text-xs font-medium text-charcoal">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-charcoal-light mt-4">
+                  Oder schreib mir einfach was dich beschäftigt — ich bin für dich da!
+                </p>
               </div>
-              <h2 className="font-heading text-xl font-semibold text-charcoal mb-2">
-                Willkommen bei deiner Stilberatung!
-              </h2>
-              <p className="text-sm text-charcoal-light mb-6 max-w-md">
-                Ich bin deine persönliche Stilberaterin. Zusammen entdecken wir deinen individuellen Stil –
-                warm, wertschätzend und ganz auf dich abgestimmt.
-              </p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {[
-                  'Was ist mein Stil-Typ?',
-                  'Hilf mir bei meiner Minimalgarderobe',
-                  'Welche Farben stehen mir?',
-                ].map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    onClick={() => handleSend(suggestion)}
-                    className="px-4 py-2 rounded-full border border-regency-light text-sm text-charcoal hover:bg-regency-light transition-colors"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
-              <p className="text-xs text-charcoal-light mt-4">
-                Du kannst auch ein Foto hochladen und ich analysiere deinen aktuellen Look.
-              </p>
             </div>
           )}
 
