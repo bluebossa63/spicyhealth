@@ -32,12 +32,14 @@ function RecipesContent() {
     setPage(1);
     setRecipes([]);
     fetchRecipes(1, true);
-  }, [search, filters]);
+  }, [search, filters.category, filters.tag, filters.maxCalories, filters.maxPrepTime, filters.maxCost]);
 
   async function fetchRecipes(p: number, reset = false) {
     setLoading(true);
     try {
-      const params: any = { page: p, pageSize: 12 };
+      // Load more when filtering by tag (client-side) to get enough results
+      const pageSize = filters.tag ? 100 : 12;
+      const params: any = { page: p, pageSize };
       if (search) params.search = search;
       if (filters.category) params.category = filters.category;
       if (filters.maxCalories < 1500) params.maxCalories = filters.maxCalories;
@@ -51,7 +53,7 @@ function RecipesContent() {
         : data;
       const sorted = filtered.sort((a: any, b: any) => a.title.localeCompare(b.title, 'de'));
       setRecipes(prev => reset ? sorted : [...prev, ...sorted]);
-      setHasMore(data.length === 12);
+      setHasMore(!filters.tag && data.length === 12);
     } catch {
       // API nicht verfügbar — leeren Zustand anzeigen
     } finally {
