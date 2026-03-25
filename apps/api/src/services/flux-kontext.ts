@@ -20,7 +20,7 @@ export async function fluxKontextEdit(
     },
   }) as any;
 
-  const outputUrl = result?.images?.[0]?.url;
+  const outputUrl = result?.data?.images?.[0]?.url || result?.images?.[0]?.url;
   if (!outputUrl) throw new Error('No image returned from Flux Kontext');
 
   // Download and re-upload to our Azure Blob Storage for persistence
