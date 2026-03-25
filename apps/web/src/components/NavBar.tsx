@@ -35,7 +35,6 @@ export function NavBar() {
           ))}
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
-              <span className="text-sm text-charcoal-light">{user?.displayName || user?.email}</span>
               {authNavLinks.map(({ href, label }) => (
                 <Link key={href} href={href} className="text-sm font-medium text-charcoal-light hover:text-regency transition-colors">
                   {label}
