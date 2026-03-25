@@ -69,7 +69,7 @@ export default function HomePage() {
       <section className="max-w-3xl mx-auto px-4 pb-16">
         <div className="relative bg-gradient-to-br from-rose-light via-cream to-regency-light rounded-3xl p-8 md:p-12 text-center overflow-hidden">
           {/* Decorative floral SVG background */}
-          <svg className="absolute inset-0 w-full h-full opacity-[0.07] pointer-events-none" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg className="absolute inset-0 w-full h-full opacity-[0.25] pointer-events-none" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* Top-left peony */}
             <circle cx="80" cy="80" r="45" fill="#d4a5a5" />
             <circle cx="60" cy="65" r="30" fill="#e8c4c4" />
