@@ -40,10 +40,14 @@ function RecipeDetail() {
     ]).finally(() => setLoading(false));
   }, [id]);
 
+  const SLOT_DE: Record<string, string> = {
+    breakfast: 'Frühstück', lunch: 'Mittagessen', dinner: 'Abendessen', snacks: 'Snack',
+  };
+
   async function handleQuickAdd() {
     try {
       const { slot } = await api.recipes.quickAdd(id!);
-      show(`Zu ${slot} hinzugefügt!`, 'success');
+      show(`Zu ${SLOT_DE[slot] || slot} hinzugefügt!`, 'success');
     } catch { show('Hinzufügen fehlgeschlagen', 'error'); }
   }
 
@@ -141,7 +145,7 @@ function RecipeDetail() {
           ))}
         </div>
         <button onClick={handleQuickAdd} className="btn-primary mt-4">
-          + Schnell zu heute hinzufügen
+          Für heute planen
         </button>
       </div>
 

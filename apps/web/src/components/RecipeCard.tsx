@@ -10,6 +10,10 @@ const CATEGORY_DE: Record<string, string> = {
   snack: 'Snack', dessert: 'Dessert', smoothie: 'Smoothie',
 };
 
+const SLOT_DE: Record<string, string> = {
+  breakfast: 'Frühstück', lunch: 'Mittagessen', dinner: 'Abendessen', snacks: 'Snack',
+};
+
 interface Recipe {
   id: string;
   title: string;
@@ -33,18 +37,33 @@ interface Props {
 export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
   const { toast, show, hide } = useToast();
   const [isAdding, setIsAdding] = useState(false);
+  const [showPlanPicker, setShowPlanPicker] = useState(false);
 
   async function handleQuickAdd(e: React.MouseEvent) {
     e.preventDefault();
     setIsAdding(true);
     try {
       const { slot } = await api.recipes.quickAdd(recipe.id);
-      show(`Zu ${slot} hinzugefügt!`, 'success');
+      show(`Zu ${SLOT_DE[slot] || slot} hinzugefügt!`, 'success');
     } catch {
       show('Bitte zuerst anmelden', 'error');
     } finally {
       setIsAdding(false);
     }
+  }
+
+  async function handlePlanAdd(e: React.MouseEvent, date: string, slot: string) {
+    e.preventDefault();
+    setShowPlanPicker(false);
+    setIsAdding(true);
+    try {
+      const { mealPlan } = await api.mealPlans.current();
+      await api.mealPlans.updateSlot(mealPlan.id, date, slot, recipe);
+      const dayLabel = new Date(date + 'T00:00:00Z').toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+      show(`${SLOT_DE[slot]} am ${dayLabel} geplant!`, 'success');
+    } catch {
+      show('Bitte zuerst anmelden', 'error');
+    } finally { setIsAdding(false); }
   }
 
   const totalTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
@@ -86,14 +105,54 @@ export function RecipeCard({ recipe, onSaveToggle, saved = false }: Props) {
               <span>💰 CHF {recipe.estimatedCostEur.toFixed(2)}</span>
             </div>
 
-            {/* Quick Add */}
-            <button
-              onClick={handleQuickAdd}
-              disabled={isAdding}
-              className="btn-primary text-xs py-2 w-full mt-2"
-            >
-              {isAdding ? 'Wird hinzugefügt…' : '+ Schnell zu heute hinzufügen'}
-            </button>
+            {/* Plan buttons */}
+            <div className="flex gap-2 mt-2 relative">
+              <button
+                onClick={handleQuickAdd}
+                disabled={isAdding}
+                className="btn-primary text-xs py-2 flex-1"
+              >
+                {isAdding ? '...' : 'Für heute'}
+              </button>
+              <button
+                onClick={(e) => { e.preventDefault(); setShowPlanPicker(!showPlanPicker); }}
+                className="btn-secondary text-xs py-2 flex-1"
+              >
+                Planer
+              </button>
+              {showPlanPicker && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={(e) => { e.preventDefault(); setShowPlanPicker(false); }} />
+                  <div className="absolute bottom-full right-0 mb-1 z-50 bg-white rounded-xl shadow-lg border border-cream-dark p-3 min-w-[220px]" onClick={e => e.preventDefault()}>
+                    <p className="text-xs font-medium text-charcoal mb-2">Tag & Mahlzeit wählen:</p>
+                    <div className="max-h-48 overflow-y-auto space-y-1">
+                      {Array.from({ length: 7 }, (_, i) => {
+                        const d = new Date();
+                        d.setDate(d.getDate() + i);
+                        const dateStr = d.toISOString().slice(0, 10);
+                        const dayLabel = d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+                        return (
+                          <div key={dateStr}>
+                            <p className="text-[10px] text-charcoal-light font-medium mt-1">{dayLabel}</p>
+                            <div className="flex gap-1">
+                              {(['breakfast', 'lunch', 'dinner'] as const).map(slot => (
+                                <button
+                                  key={slot}
+                                  onClick={(e) => handlePlanAdd(e, dateStr, slot)}
+                                  className="text-[10px] px-2 py-1 rounded-lg bg-cream hover:bg-regency-light transition-colors flex-1"
+                                >
+                                  {SLOT_DE[slot]}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </Link>
