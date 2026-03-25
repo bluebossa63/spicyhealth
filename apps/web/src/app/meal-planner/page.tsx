@@ -300,25 +300,46 @@ function MealPlanner() {
                     for (const cat of Object.keys(byCategory)) {
                       byCategory[cat].sort(() => Math.random() - 0.5);
                     }
-                    // Only fill days from selected start date
+
+                    // Determine which week to plan in
                     const startDate = selectedStart.date;
+                    const startWeekStart = (() => {
+                      const d = new Date(startDate + 'T00:00:00Z');
+                      const day = d.getUTCDay();
+                      const diff = day === 0 ? -6 : 1 - day;
+                      d.setUTCDate(d.getUTCDate() + diff);
+                      return d.toISOString().slice(0, 10);
+                    })();
+
+                    // Load the target week's plan
+                    const { mealPlan: targetPlan } = await api.mealPlans.forWeek(startWeekStart);
+                    const targetDays = targetPlan?.days || [];
+
                     let recipeIdx = { breakfast: 0, lunch: 0, dinner: 0 };
-                    for (const day of days) {
-                      if (day.date < startDate) continue; // skip past days
+                    for (const day of targetDays) {
+                      if (day.date < startDate) continue;
                       if (autoSlots.breakfast && !day.breakfast) {
                         const r = byCategory.breakfast[recipeIdx.breakfast++ % byCategory.breakfast.length];
-                        if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'breakfast', r);
+                        if (r) await api.mealPlans.updateSlot(targetPlan.id, day.date, 'breakfast', r);
                       }
                       if (autoSlots.lunch && !day.lunch) {
                         const r = byCategory.lunch[recipeIdx.lunch++ % byCategory.lunch.length];
-                        if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'lunch', r);
+                        if (r) await api.mealPlans.updateSlot(targetPlan.id, day.date, 'lunch', r);
                       }
                       if (autoSlots.dinner && !day.dinner) {
                         const r = byCategory.dinner[recipeIdx.dinner++ % byCategory.dinner.length];
-                        if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'dinner', r);
+                        if (r) await api.mealPlans.updateSlot(targetPlan.id, day.date, 'dinner', r);
                       }
                     }
-                    await loadPlan(weekOffset);
+
+                    // Navigate to the planned week
+                    const currentWeekStart = getWeekStart(weekOffset);
+                    if (startWeekStart !== currentWeekStart) {
+                      const diffWeeks = Math.round((new Date(startWeekStart).getTime() - new Date(currentWeekStart).getTime()) / (7 * 24 * 60 * 60 * 1000));
+                      setWeekOffset(weekOffset + diffWeeks);
+                    } else {
+                      await loadPlan(weekOffset);
+                    }
                   } catch { alert('Planung fehlgeschlagen.'); }
                   finally { setAutoPlanning(false); }
                 }}
