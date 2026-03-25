@@ -7,7 +7,7 @@ interface Props {
   placeholder?: string;
 }
 
-export function SearchBar({ value, onChange, placeholder = 'Search recipes…' }: Props) {
+export function SearchBar({ value, onChange, placeholder = 'Rezepte suchen…' }: Props) {
   const [local, setLocal] = useState(value);
 
   useEffect(() => {
