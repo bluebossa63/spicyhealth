@@ -73,6 +73,7 @@ function MealPlanner() {
   const [autoPlanning, setAutoPlanning] = useState(false);
   const [showAutoModal, setShowAutoModal] = useState(false);
   const [autoSlots, setAutoSlots] = useState({ breakfast: true, lunch: true, dinner: true });
+  const [autoStartFrom, setAutoStartFrom] = useState('today');
   const [activeDayIndex, setActiveDayIndex] = useState<number>(() => {
     const today = new Date().getDay();
     return today === 0 ? 6 : today - 1; // Mon=0 … Sun=6
@@ -187,40 +188,76 @@ function MealPlanner() {
       )}
 
       {/* Auto plan modal */}
-      {showAutoModal && (
+      {showAutoModal && (() => {
+        // Calculate start dates for options
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+        const tomorrowStr = tomorrowDate.toISOString().slice(0, 10);
+        const nextMonday = new Date();
+        const dayOfWeek = nextMonday.getDay();
+        nextMonday.setDate(nextMonday.getDate() + (dayOfWeek === 0 ? 1 : 8 - dayOfWeek));
+        const nextMondayStr = nextMonday.toISOString().slice(0, 10);
+
+        const startOptions = [
+          { value: 'today', label: 'Ab heute', date: todayStr },
+          { value: 'tomorrow', label: 'Ab morgen', date: tomorrowStr },
+          { value: 'nextmonday', label: `Ab nächstem Montag (${nextMonday.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })})`, date: nextMondayStr },
+        ];
+
+        const selectedStart = startOptions.find(o => o.value === autoStartFrom) || startOptions[0];
+
+        return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowAutoModal(false)}>
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6" onClick={e => e.stopPropagation()}>
             <h3 className="font-heading text-xl text-charcoal mb-2">✨ Woche planen</h3>
-            <p className="text-sm text-charcoal-light mb-4">Welche Mahlzeiten soll ich für dich planen?</p>
+            <p className="text-sm text-charcoal-light mb-4">Lass dir einen Plan zusammenstellen — bereits belegte Slots bleiben erhalten.</p>
 
-            <div className="space-y-3 mb-6">
-              {([['breakfast', '☀️ Frühstück'], ['lunch', '🥗 Mittagessen'], ['dinner', '🍽️ Abendessen']] as const).map(([slot, label]) => (
-                <label key={slot} className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={autoSlots[slot]}
-                    onChange={e => setAutoSlots(prev => ({ ...prev, [slot]: e.target.checked }))}
-                    className="w-5 h-5 rounded accent-regency"
-                  />
-                  <span className="text-sm text-charcoal">{label}</span>
-                </label>
-              ))}
+            {/* Start from */}
+            <div className="mb-4">
+              <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">Ab wann planen?</p>
+              <div className="space-y-1.5">
+                {startOptions.map(opt => (
+                  <label key={opt.value} className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="autoStart"
+                      checked={autoStartFrom === opt.value}
+                      onChange={() => setAutoStartFrom(opt.value)}
+                      className="w-4 h-4 accent-regency"
+                    />
+                    <span className="text-sm text-charcoal">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Meals */}
+            <div className="mb-4">
+              <p className="text-xs font-semibold text-charcoal-light uppercase tracking-wide mb-2">Welche Mahlzeiten?</p>
+              <div className="space-y-1.5">
+                {([['breakfast', '☀️ Frühstück'], ['lunch', '🥗 Mittagessen'], ['dinner', '🍽️ Abendessen']] as const).map(([slot, label]) => (
+                  <label key={slot} className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={autoSlots[slot]}
+                      onChange={e => setAutoSlots(prev => ({ ...prev, [slot]: e.target.checked }))}
+                      className="w-4 h-4 rounded accent-regency"
+                    />
+                    <span className="text-sm text-charcoal">{label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
 
             {/* Calorie info */}
             <div className="bg-cream rounded-xl p-3 mb-4 text-xs text-charcoal-light">
-              <p>Geplante Kalorien pro Tag:</p>
+              <p>Geschätzte Kalorien pro Tag:</p>
               <p className="font-bold text-charcoal text-sm mt-1">
                 ca. {
                   (autoSlots.breakfast ? 400 : 0) +
                   (autoSlots.lunch ? 500 : 0) +
                   (autoSlots.dinner ? 550 : 0)
                 } kcal
-                <span className="font-normal text-charcoal-light"> ({[
-                  autoSlots.breakfast && 'Frühstück ~400',
-                  autoSlots.lunch && 'Mittag ~500',
-                  autoSlots.dinner && 'Abend ~550',
-                ].filter(Boolean).join(', ')} kcal)</span>
               </p>
             </div>
 
@@ -239,18 +276,21 @@ function MealPlanner() {
                     for (const cat of Object.keys(byCategory)) {
                       byCategory[cat].sort(() => Math.random() - 0.5);
                     }
-                    for (let i = 0; i < days.length; i++) {
-                      const day = days[i];
-                      if (autoSlots.breakfast) {
-                        const r = byCategory.breakfast[i % byCategory.breakfast.length];
+                    // Only fill days from selected start date
+                    const startDate = selectedStart.date;
+                    let recipeIdx = { breakfast: 0, lunch: 0, dinner: 0 };
+                    for (const day of days) {
+                      if (day.date < startDate) continue; // skip past days
+                      if (autoSlots.breakfast && !day.breakfast) {
+                        const r = byCategory.breakfast[recipeIdx.breakfast++ % byCategory.breakfast.length];
                         if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'breakfast', r);
                       }
-                      if (autoSlots.lunch) {
-                        const r = byCategory.lunch[i % byCategory.lunch.length];
+                      if (autoSlots.lunch && !day.lunch) {
+                        const r = byCategory.lunch[recipeIdx.lunch++ % byCategory.lunch.length];
                         if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'lunch', r);
                       }
-                      if (autoSlots.dinner) {
-                        const r = byCategory.dinner[i % byCategory.dinner.length];
+                      if (autoSlots.dinner && !day.dinner) {
+                        const r = byCategory.dinner[recipeIdx.dinner++ % byCategory.dinner.length];
                         if (r) await api.mealPlans.updateSlot(mealPlan.id, day.date, 'dinner', r);
                       }
                     }
@@ -266,7 +306,8 @@ function MealPlanner() {
             </div>
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {/* Seasonal inspiration */}
       <Link href="/saisonkalender" className="block mb-4">
