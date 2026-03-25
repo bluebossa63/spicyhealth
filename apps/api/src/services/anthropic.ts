@@ -158,25 +158,24 @@ export async function chatWithStyleConsultant(messages: MessageInput[], profile?
  * Extract a precise garment description from a style suggestion.
  * Used to generate a realistic product photo with DALL-E 3.
  */
-export async function extractGarmentDescription(styleSuggestion: string): Promise<{ prompt: string; description: string }> {
+export async function extractGarmentDescription(styleSuggestion: string): Promise<{ prompt: string; description: string; category: string }> {
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     max_tokens: 300,
     messages: [
       {
         role: 'system',
-        content: `Du bist eine erfahrene Modedesignerin und Stylistin. Extrahiere aus dem
-Stilvorschlag EIN konkretes, schmeichelhaftes Kleidungsstück oder Outfit.
+        content: `Du bist eine erfahrene Modedesignerin und Stylistin. Analysiere den Stilvorschlag
+und bestimme die Kategorie: "makeup", "hair", "outfit" oder "accessoires".
 
-WICHTIG für die Bildqualität:
-- Beschreibe hochwertige, moderne Mode die Frauen schmeichelt
-- Betone luxuriöse Materialien (Seide, Kaschmir, feiner Strick, Satin)
-- Wähle schmeichelhafte Schnitte (tailliert, fliessend, figurumspielend)
-- Denke an aktuelle Modetrends und zeitlose Eleganz
-- Das Ergebnis soll wie aus einem Premium-Modekatalog wirken
+Dann extrahiere den konkreten Vorschlag passend zur Kategorie:
+- Bei "makeup": Beschreibe NUR das Make-up (Lidschatten, Lippenstift, Wangen, etc.)
+- Bei "hair": Beschreibe NUR die Frisur
+- Bei "outfit": Beschreibe das Kleidungsstück/Outfit
+- Bei "accessoires": Beschreibe den Schmuck/die Accessoires
 
 Antworte in genau diesem JSON-Format:
-{"prompt": "Professional fashion product photo: [detailed English description of the garment with fabric, color, cut, style details]. Luxury fashion e-commerce photography, studio lighting, pure white background, high-end catalog quality, 8k detail", "description": "Warme, begeisternde deutsche Beschreibung für die Userin, z.B. Ein wunderschöner, fliessender Midi-Rock aus zartem Chiffon in Roségold — er umspielt deine Figur elegant und verleiht dir eine feminine, moderne Ausstrahlung"}
+{"category": "makeup|hair|outfit|accessoires", "prompt": "English description for image editing. Be specific about what to change.", "description": "Warme, begeisternde deutsche Beschreibung für die Userin"}
 Antworte NUR mit dem JSON, nichts anderes.`,
       },
       { role: 'user', content: styleSuggestion },
@@ -187,10 +186,11 @@ Antworte NUR mit dem JSON, nichts anderes.`,
   try {
     const parsed = JSON.parse(raw);
     return {
+      category: parsed.category || 'outfit',
       prompt: parsed.prompt || 'Elegant blazer, product photo on white background',
       description: parsed.description || 'Ein elegantes Kleidungsstück',
     };
   } catch {
-    return { prompt: raw, description: 'Ein stilvolles Kleidungsstück basierend auf deinem Wunsch' };
+    return { category: 'outfit', prompt: raw, description: 'Ein stilvolles Kleidungsstück basierend auf deinem Wunsch' };
   }
 }

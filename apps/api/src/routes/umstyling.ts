@@ -126,12 +126,25 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
         garmentDescriptionDE = garment.description;
         console.log('Style description:', garment.description);
 
-        // Use Flux Kontext to edit the user's actual photo
-        const editPrompt = `Change ONLY the clothing and accessories on this person: ${garment.prompt}. ` +
-          `CRITICAL: Keep the face, skin, neck, body shape, and age EXACTLY identical to the original photo. ` +
-          `Do NOT add wrinkles, do NOT age the person, do NOT change skin texture or body proportions. ` +
-          `The person must look exactly the same age and have the same skin quality as in the original. ` +
-          `Only change what the person is wearing. Photorealistic, natural lighting.`;
+        // Build category-specific Flux Kontext prompt
+        let editPrompt: string;
+        if (garment.category === 'makeup') {
+          editPrompt = `Apply ONLY makeup to this person's face: ${garment.prompt}. ` +
+            `CRITICAL: Do NOT change clothing, hairstyle, body, or anything else. ` +
+            `Keep face shape, skin, age, hair EXACTLY identical. Only add/change makeup. Photorealistic.`;
+        } else if (garment.category === 'hair') {
+          editPrompt = `Change ONLY the hairstyle on this person: ${garment.prompt}. ` +
+            `CRITICAL: Do NOT change clothing, makeup, face, skin, body, or age. ` +
+            `Keep everything identical except the hair. Photorealistic.`;
+        } else if (garment.category === 'accessoires') {
+          editPrompt = `Add ONLY accessories to this person: ${garment.prompt}. ` +
+            `CRITICAL: Do NOT change clothing, hairstyle, makeup, face, skin, body, or age. ` +
+            `Keep everything identical, only add the described accessories. Photorealistic.`;
+        } else {
+          editPrompt = `Change ONLY the clothing on this person: ${garment.prompt}. ` +
+            `CRITICAL: Keep face, skin, neck, body shape, age, hairstyle and makeup EXACTLY identical. ` +
+            `Do NOT add wrinkles or age the person. Only change clothing. Photorealistic.`;
+        }
         console.log('Flux Kontext editing with:', editPrompt.substring(0, 80));
         const editedUrl = await fluxKontextEdit(latestUserImage, editPrompt);
         generatedImages.push(editedUrl);
