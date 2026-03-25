@@ -30,6 +30,7 @@ function RecipeDetail() {
   const [comments, setComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [showPlanPicker, setShowPlanPicker] = useState(false);
   const { toast, show, hide } = useToast();
 
   useEffect(() => {
@@ -144,9 +145,53 @@ function RecipeDetail() {
             <span key={t} className="px-2 py-0.5 bg-cream-100 rounded-full text-xs">{t}</span>
           ))}
         </div>
-        <button onClick={handleQuickAdd} className="btn-primary mt-4">
-          Für heute planen
-        </button>
+        <div className="flex gap-3 mt-4 relative">
+          <button onClick={handleQuickAdd} className="btn-primary flex-1">
+            Für heute planen
+          </button>
+          <button onClick={() => setShowPlanPicker(!showPlanPicker)} className="btn-secondary flex-1">
+            Zum Planer hinzufügen
+          </button>
+          {showPlanPicker && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setShowPlanPicker(false)} />
+              <div className="absolute top-full right-0 mt-2 z-50 bg-white rounded-xl shadow-lg border border-cream-dark p-4 min-w-[260px]">
+                <p className="text-sm font-medium text-charcoal mb-3">Tag & Mahlzeit wählen:</p>
+                <div className="space-y-2">
+                  {Array.from({ length: 7 }, (_, i) => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + i);
+                    const dateStr = d.toISOString().slice(0, 10);
+                    const dayLabel = d.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+                    return (
+                      <div key={dateStr}>
+                        <p className="text-xs text-charcoal-light font-medium">{dayLabel}</p>
+                        <div className="flex gap-1 mt-0.5">
+                          {(['breakfast', 'lunch', 'dinner'] as const).map(slot => (
+                            <button
+                              key={slot}
+                              onClick={async () => {
+                                setShowPlanPicker(false);
+                                try {
+                                  const { mealPlan } = await api.mealPlans.current();
+                                  await api.mealPlans.updateSlot(mealPlan.id, dateStr, slot, recipe);
+                                  show(`${SLOT_DE[slot]} am ${dayLabel} geplant!`, 'success');
+                                } catch { show('Planen fehlgeschlagen', 'error'); }
+                              }}
+                              className="text-xs px-2.5 py-1.5 rounded-lg bg-cream hover:bg-regency-light transition-colors flex-1"
+                            >
+                              {SLOT_DE[slot]}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Ingredients */}
