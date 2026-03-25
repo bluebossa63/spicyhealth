@@ -1,8 +1,10 @@
 import { Card } from '@/components/ui/Card';
+import BackButton from '@/components/BackButton';
 
 export default function DatenschutzPage() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
+      <BackButton />
       <h1 className="font-heading text-3xl text-charcoal mb-6">Datenschutzerklärung</h1>
       <Card className="p-6 space-y-6 text-sm text-charcoal leading-relaxed">
         <section>

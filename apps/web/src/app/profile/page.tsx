@@ -4,6 +4,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AvatarUpload } from '@/components/AvatarUpload';
 import { RecipeCard } from '@/components/RecipeCard';
 import { api } from '@/lib/api';
+import BackButton from '@/components/BackButton';
 
 const DIETARY_OPTIONS = ['vegan', 'vegetarian', 'gluten-free', 'dairy-free', 'nut-free', 'low-carb', 'high-protein'];
 const DIETARY_LABELS: Record<string, string> = {
@@ -152,6 +153,7 @@ function Profile() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
+      <BackButton />
       <h1 className="font-heading text-3xl text-charcoal mb-8">Mein Profil</h1>
 
       <form onSubmit={handleSave} className="space-y-6">

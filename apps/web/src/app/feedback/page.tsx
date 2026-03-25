@@ -4,6 +4,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { api } from '@/lib/api';
+import BackButton from '@/components/BackButton';
 
 const CATEGORIES = [
   { id: 'feature', label: 'Neue Idee / Wunsch', emoji: '💡' },
@@ -69,6 +70,7 @@ function FeedbackForm() {
 
   return (
     <main className="max-w-md mx-auto px-4 py-8">
+      <BackButton />
       <h1 className="font-heading text-3xl text-charcoal mb-2">💬 Deine Rückmeldung</h1>
       <p className="text-sm text-charcoal-light mb-6">
         Wir sind in der Testphase und deine Meinung ist uns sehr wichtig!

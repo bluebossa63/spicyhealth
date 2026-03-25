@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 
 const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 
@@ -156,6 +157,7 @@ export default function SaisonkalenderPage() {
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-8">
+      <BackButton />
       <h1 className="font-heading text-3xl text-charcoal mb-2">🍓 Saisonkalender</h1>
       <p className="text-sm text-charcoal-light mb-6">
         Was hat gerade Saison in der Schweiz? Tippe auf eine Zutat um passende Rezepte zu finden.

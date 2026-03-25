@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/Card';
 import { api } from '@/lib/api';
+import BackButton from '@/components/BackButton';
 
 const MOODS: Record<string, { emoji: string; label: string }> = {
   great: { emoji: '😊', label: 'Super' },
@@ -80,6 +81,7 @@ function Fortschritt() {
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-8">
+      <BackButton />
       <h1 className="font-heading text-3xl text-charcoal mb-2">📊 Mein Fortschritt</h1>
       <p className="text-sm text-charcoal-light mb-6">Deine letzten 30 Tage auf einen Blick</p>
 

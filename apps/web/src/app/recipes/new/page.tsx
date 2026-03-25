@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { api } from '@/lib/api';
 import { RecipeImageUpload } from '@/components/RecipeImageUpload';
+import BackButton from '@/components/BackButton';
 
 const CATEGORIES = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'smoothie'];
 const CATEGORY_LABELS: Record<string, string> = {
@@ -191,6 +192,7 @@ function NewRecipeForm() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
+      <BackButton />
       <h1 className="font-heading text-3xl text-charcoal mb-2">Neues Rezept</h1>
       <div className="flex gap-2 mb-8">
         {[1, 2, 3].map(s => (

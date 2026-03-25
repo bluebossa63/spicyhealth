@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { api as mealApi } from '@/lib/api';
 import { ShareMenu } from '@/components/ShareMenu';
 import { useConfirm } from '@/hooks/useConfirm';
+import BackButton from '@/components/BackButton';
 
 type ShoppingCategory = 'produce' | 'dairy' | 'meat' | 'grains' | 'pantry' | 'frozen' | 'other';
 
@@ -148,6 +149,7 @@ function ShoppingList() {
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-8">
+      <BackButton />
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <h1 className="font-display text-3xl text-charcoal-800">Einkaufsliste</h1>

@@ -19,6 +19,7 @@ import { api } from '@/lib/api';
 import { ShareMenu } from '@/components/ShareMenu';
 import { useConfirm } from '@/hooks/useConfirm';
 import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 
 const SEASONAL_HINTS: Record<number, string[]> = {
   0: ['Rüebli','Lauch','Rosenkohl','Kabis'],
@@ -150,6 +151,7 @@ function MealPlanner() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
+      <BackButton />
       {/* Header + week navigation */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-3xl text-charcoal-800">Mahlzeitenplaner</h1>

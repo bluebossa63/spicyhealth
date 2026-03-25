@@ -7,6 +7,7 @@ import { ChatInput } from '@/components/ChatInput';
 import { api } from '@/lib/api';
 import type { ChatMessage as ChatMessageType, Conversation } from '@spicyhealth/shared';
 import { useConfirm } from '@/hooks/useConfirm';
+import BackButton from '@/components/BackButton';
 
 function StyleConsultant() {
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -180,6 +181,7 @@ function StyleConsultant() {
 
   return (
     <div className="flex h-[calc(100vh-4rem-3.5rem)] md:h-[calc(100vh-4rem)] max-w-5xl mx-auto">
+      <BackButton />
       {/* Sidebar — conversation history (desktop always, mobile toggle) */}
       <aside
         className={`${

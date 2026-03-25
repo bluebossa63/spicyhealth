@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/Card';
 import { api } from '@/lib/api';
+import BackButton from '@/components/BackButton';
 
 const MOODS = [
   { value: 'great', emoji: '😊', label: 'Super' },
@@ -69,6 +70,7 @@ function MeinTag() {
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-8">
+      <BackButton />
       <h1 className="font-heading text-3xl text-charcoal mb-2">Mein Tag</h1>
       <p className="text-sm text-charcoal-light mb-6">
         {new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })}

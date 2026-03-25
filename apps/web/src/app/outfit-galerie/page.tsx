@@ -4,6 +4,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Card } from '@/components/ui/Card';
 import { api } from '@/lib/api';
 import { useConfirm } from '@/hooks/useConfirm';
+import BackButton from '@/components/BackButton';
 
 export default function OutfitGaleriePage() {
   return <ProtectedRoute><OutfitGalerie /></ProtectedRoute>;
@@ -47,6 +48,7 @@ function OutfitGalerie() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
+      <BackButton />
       <div className="flex items-center justify-between mb-2">
         <h1 className="font-heading text-3xl text-charcoal">👗 Meine Outfit-Galerie</h1>
         {images.length > 0 && (

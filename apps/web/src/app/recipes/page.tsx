@@ -7,6 +7,7 @@ import { FilterPanel, Filters } from '@/components/FilterPanel';
 import { RecipeCard } from '@/components/RecipeCard';
 import { SkeletonCard } from '@/components/ui/SkeletonLoader';
 import { api } from '@/lib/api';
+import BackButton from '@/components/BackButton';
 
 const DEFAULT_FILTERS: Filters = { category: '', tag: '', maxCalories: 1500, maxPrepTime: 120, maxCost: 30 };
 
@@ -69,6 +70,7 @@ function RecipesContent() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
+      <BackButton />
       <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="font-heading text-4xl text-charcoal mb-2">Rezepte</h1>

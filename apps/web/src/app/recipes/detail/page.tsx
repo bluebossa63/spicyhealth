@@ -11,6 +11,7 @@ import { SkeletonText } from '@/components/ui/SkeletonLoader';
 import { Toast, useToast } from '@/components/ui/Toast';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { useAuth } from '@/lib/auth';
+import BackButton from '@/components/BackButton';
 
 export default function RecipeDetailPage() {
   return (
@@ -94,6 +95,7 @@ function RecipeDetail() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
+      <BackButton />
       {toast && <Toast message={toast.message} type={toast.type} onClose={hide} />}
 
       {/* Hero */}

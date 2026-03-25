@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { api } from '@/lib/api';
 import { RecipeImageUpload } from '@/components/RecipeImageUpload';
+import BackButton from '@/components/BackButton';
 
 const CATEGORIES = ['breakfast', 'lunch', 'dinner', 'snack', 'dessert', 'smoothie'];
 const CATEGORY_LABELS: Record<string, string> = {
@@ -236,6 +237,7 @@ function EditRecipeForm() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
+      <BackButton />
       <h1 className="font-heading text-3xl text-charcoal mb-2">Rezept bearbeiten</h1>
 
       <div className="flex gap-2 mb-8">
