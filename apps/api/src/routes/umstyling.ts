@@ -6,6 +6,7 @@ import { containers } from '../services/cosmos';
 import { chatWithStyleConsultant, extractGarmentDescription, type UserProfile } from '../services/anthropic';
 import { generateStyleImage } from '../services/image-gen';
 import { virtualTryOn } from '../services/fashn';
+import { fluxKontextEdit } from '../services/flux-kontext';
 import rateLimit from 'express-rate-limit';
 import type { Conversation, ChatMessage } from '@spicyhealth/shared';
 
@@ -112,33 +113,35 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
       .find((m) => m.role === 'user' && m.imageUrls?.length)
       ?.imageUrls?.[0];
 
-    // Auto-generate: when user has uploaded a photo, generate a garment
-    // with DALL-E 3, then use FASHN to show the user wearing it
+    // Auto-generate: when user has uploaded a photo, use Flux Kontext
+    // to directly restyle the photo based on the style advice
     if (latestUserImage && cleanedReply.length > 50) {
       try {
         const styleContext = cleanedReply.substring(0, 500);
 
-        // Step 0: Extract a precise garment description from the style advice
+        // Extract a precise style description
         const garment = await extractGarmentDescription(styleContext);
         garmentDescriptionDE = garment.description;
-        console.log('Garment:', garment.prompt);
+        console.log('Style description:', garment.description);
 
-        // Step 1: Generate a garment product photo with DALL-E 3
-        const garmentUrl = await generateStyleImage(garment.prompt);
-        console.log('Garment generated:', garmentUrl);
-
-        // Step 2: Virtual try-on with FASHN (user photo + generated garment)
-        try {
-          const tryOnUrl = await virtualTryOn(latestUserImage, garmentUrl);
-          generatedImages.push(tryOnUrl);
-          console.log('Try-on generated:', tryOnUrl);
-        } catch (tryOnErr) {
-          // Fallback: show just the garment if try-on fails
-          console.warn('FASHN try-on failed, showing garment only:', (tryOnErr as Error).message);
-          generatedImages.push(garmentUrl);
-        }
+        // Use Flux Kontext to edit the user's actual photo
+        const editPrompt = `Restyle this person: ${garment.prompt}. Keep the face identical, change only clothing, hairstyle, makeup and accessories as described. Photorealistic result.`;
+        console.log('Flux Kontext editing with:', editPrompt.substring(0, 80));
+        const editedUrl = await fluxKontextEdit(latestUserImage, editPrompt);
+        generatedImages.push(editedUrl);
+        console.log('Flux Kontext result:', editedUrl);
       } catch (err) {
-        console.error('Auto look generation FAILED:', (err as Error).message);
+        console.error('Flux Kontext edit FAILED:', (err as Error).message);
+        // Fallback: generate inspiration image with DALL-E 3
+        try {
+          const garment = await extractGarmentDescription(cleanedReply.substring(0, 300));
+          garmentDescriptionDE = garment.description;
+          const fallbackUrl = await generateStyleImage(garment.prompt);
+          generatedImages.push(fallbackUrl);
+          console.log('Fallback DALL-E image:', fallbackUrl);
+        } catch (fallbackErr) {
+          console.error('Fallback also failed:', (fallbackErr as Error).message);
+        }
       }
     }
 
@@ -263,10 +266,18 @@ umstylingRouter.post('/generate-look', chatLimiter, async (req: Request, res: Re
       // FASHN Virtual Try-On: person photo + garment photo → person wearing garment
       generatedImageUrl = await virtualTryOn(sourceImageUrl, garmentImageUrl);
     } else {
-      // DALL-E 3: generate inspiration image from description
-      generatedImageUrl = await generateStyleImage(
-        `Modefoto: ${styleDescription}. Realistisch, hochwertig, wie ein Modefoto.`,
-      );
+      // Flux Kontext: directly edit the user's photo
+      try {
+        generatedImageUrl = await fluxKontextEdit(
+          sourceImageUrl,
+          `Restyle this person: ${styleDescription}. Keep face identical, photorealistic.`,
+        );
+      } catch {
+        // Fallback to DALL-E 3 inspiration image
+        generatedImageUrl = await generateStyleImage(
+          `Modefoto: ${styleDescription}. Realistisch, hochwertig.`,
+        );
+      }
     }
 
     // Append to conversation as assistant message with image

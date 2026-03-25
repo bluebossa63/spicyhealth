@@ -77,6 +77,13 @@ variable "anthropic_api_key" {
   default     = ""
 }
 
+variable "fal_api_key" {
+  description = "fal.ai API key for Flux Kontext image editing"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "fashn_api_key" {
   description = "FASHN.ai API key for virtual try-on"
   type        = string

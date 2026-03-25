@@ -89,6 +89,7 @@ resource "azurerm_linux_web_app" "api" {
     GOOGLE_REDIRECT_URI  = "https://spicyhealth-api-prod.azurewebsites.net/api/auth/google/callback"
     ANTHROPIC_API_KEY    = var.anthropic_api_key
     OPENAI_API_KEY       = var.openai_api_key
+    FAL_API_KEY          = var.fal_api_key
     FASHN_API_KEY        = var.fashn_api_key
     OPENROUTER_API_KEY   = var.openrouter_api_key
     OPENROUTER_MODEL     = "openrouter/free"
