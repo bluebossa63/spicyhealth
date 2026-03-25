@@ -53,11 +53,12 @@ export default function HomePage() {
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-4 pt-16 pb-12 text-center">
         <h1 className="font-heading text-5xl md:text-6xl font-bold text-charcoal leading-tight mb-4">
-          Gut essen.<br />
-          <span className="text-regency">Großartig fühlen.</span>
+          Dein Wohlfühl-Ort.<br />
+          <span className="text-regency">Für dich gemacht.</span>
         </h1>
         <p className="text-lg text-charcoal-light max-w-xl mx-auto mb-8">
-          Gesunde Rezepte, wöchentliche Mahlzeitenplanung, Nährwert-Tracking und smarte Einkaufslisten — alles in einer wunderschönen App.
+          Keine Diäten. Keine Vorschriften. Einfach gut essen, sich schön fühlen
+          und Spass haben — in deinem eigenen Tempo.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/recipes"><Button size="lg">Rezepte entdecken</Button></Link>
@@ -65,9 +66,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Placeholder lifestyle image strip */}
-      <section className="w-full h-64 bg-gradient-to-r from-rose-light via-cream-dark to-sage-light flex items-center justify-center mb-16">
-        <p className="text-charcoal-light text-sm italic">[ Lifestyle-Fotografie ]</p>
+      {/* Welcome text */}
+      <section className="max-w-3xl mx-auto px-4 pb-16">
+        <div className="bg-gradient-to-br from-rose-light via-cream to-regency-light rounded-3xl p-8 md:p-12 text-center">
+          <h2 className="font-heading text-2xl md:text-3xl text-charcoal mb-4">
+            Willkommen, so wie du bist
+          </h2>
+          <p className="text-charcoal-light leading-relaxed mb-4">
+            SpicyHealth ist für Frauen jeden Alters, jeder Figur und jedes Lebensstils.
+            Hier geht es nicht um Perfektion — sondern darum, dass du dich <strong className="text-charcoal">wohlfühlst</strong>,
+            Freude am Kochen entdeckst und deinen ganz persönlichen Stil findest.
+          </p>
+          <p className="text-charcoal-light leading-relaxed mb-4">
+            Lass dich von leckeren Rezepten inspirieren, plane deine Woche entspannt,
+            probiere neue Looks aus und feiere die kleinen Erfolge im Alltag.
+            Alles in deinem Tempo, ohne Druck, ohne Bewertung.
+          </p>
+          <p className="text-charcoal leading-relaxed font-medium">
+            Du bist wunderbar — und diese App ist deine Begleiterin auf dem Weg
+            zu einem genussvollen, bunten Leben. 💛
+          </p>
+        </div>
       </section>
 
       {/* Features */}
