@@ -180,10 +180,13 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
       }
     }
 
-    // Append assistant reply — add garment description if image was generated
-    const replyWithImage = generatedImages.length && garmentDescriptionDE
-      ? `${cleanedReply}\n\n👗 **Mein Vorschlag für dich:** ${garmentDescriptionDE}`
-      : cleanedReply;
+    // Append assistant reply — add info about image generation
+    let replyWithImage = cleanedReply;
+    if (generatedImages.length && garmentDescriptionDE) {
+      replyWithImage = `${cleanedReply}\n\n👗 **Mein Vorschlag für dich:** ${garmentDescriptionDE}`;
+    } else if (latestUserImage && cleanedReply.length > 50 && !generatedImages.length && garmentDescriptionDE) {
+      replyWithImage = `${cleanedReply}\n\n⏳ Das Bild konnte diesmal nicht erstellt werden. Klicke auf "Zeig mir den Look" um es nochmal zu versuchen.`;
+    }
 
     const assistantMessage: ChatMessage = {
       role: 'assistant',
