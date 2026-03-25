@@ -85,6 +85,10 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
           eyeColor: resource.eyeColor,
           bodyLikes: resource.bodyLikes,
           bodyDiscreet: resource.bodyDiscreet,
+          favoriteColors: resource.favoriteColors,
+          fabricPreferences: resource.fabricPreferences,
+          styleKeywords: resource.styleKeywords,
+          avoidStyles: resource.avoidStyles,
           dietaryPreferences: resource.dietaryPreferences,
         };
       }

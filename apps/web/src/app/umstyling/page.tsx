@@ -207,7 +207,12 @@ function StyleConsultant() {
                 }`}
                 onClick={() => loadConversation(conv.id)}
               >
-                <span className="text-xs text-charcoal truncate flex-1">{conv.title}</span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs text-charcoal truncate block">{conv.title}</span>
+                  <span className="text-[10px] text-charcoal-light">
+                    {new Date(conv.updatedAt).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}, {new Date(conv.updatedAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
                 <button
                   onClick={(e) => { e.stopPropagation(); deleteConversation(conv.id); }}
                   className="text-charcoal-light hover:text-red-500 text-sm px-1.5 rounded hover:bg-red-50 transition-colors"

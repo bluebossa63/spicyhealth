@@ -75,6 +75,10 @@ function Profile() {
   const [eyeColor, setEyeColor] = useState('');
   const [bodyLikes, setBodyLikes] = useState('');
   const [bodyDiscreet, setBodyDiscreet] = useState('');
+  const [favoriteColors, setFavoriteColors] = useState('');
+  const [fabricPreferences, setFabricPreferences] = useState('');
+  const [styleKeywords, setStyleKeywords] = useState('');
+  const [avoidStyles, setAvoidStyles] = useState('');
 
   useEffect(() => {
     api.users.me().then(d => {
@@ -94,6 +98,10 @@ function Profile() {
       setEyeColor(u.eyeColor || '');
       setBodyLikes(u.bodyLikes || '');
       setBodyDiscreet(u.bodyDiscreet || '');
+      setFavoriteColors(u.favoriteColors || '');
+      setFabricPreferences(u.fabricPreferences || '');
+      setStyleKeywords(u.styleKeywords || '');
+      setAvoidStyles(u.avoidStyles || '');
       const ids: string[] = u.savedRecipeIds || [];
       Promise.all(ids.map((id: string) => api.recipes.get(id).then(r => r.recipe).catch(() => null)))
         .then(results => setSavedRecipes(results.filter(Boolean)));
@@ -117,6 +125,7 @@ function Profile() {
       const data: Record<string, any> = {
         displayName, dietaryPreferences: dietary, activityLevel,
         clothingSize, hairColor, eyeColor, bodyLikes, bodyDiscreet,
+        favoriteColors, fabricPreferences, styleKeywords, avoidStyles,
       };
       if (birthYear) data.birthYear = Number(birthYear);
       if (heightCm) data.heightCm = Number(heightCm);
@@ -275,6 +284,51 @@ function Profile() {
                 className="input-field resize-none text-sm"
                 rows={2}
                 placeholder="z.B. meine Oberarme, mein Bauch, meine Oberschenkel..."
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">
+                🎨 Meine Lieblingsfarben
+              </label>
+              <input
+                value={favoriteColors}
+                onChange={e => setFavoriteColors(e.target.value)}
+                className="input-field text-sm"
+                placeholder="z.B. Dunkelblau, Weinrot, Crème, Olivgrün..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">
+                🧶 Bevorzugte Stoffe & Materialien
+              </label>
+              <input
+                value={fabricPreferences}
+                onChange={e => setFabricPreferences(e.target.value)}
+                className="input-field text-sm"
+                placeholder="z.B. Baumwolle, Seide, Kaschmir, fliessende Stoffe..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">
+                ✨ So würde ich meinen Stil beschreiben
+              </label>
+              <input
+                value={styleKeywords}
+                onChange={e => setStyleKeywords(e.target.value)}
+                className="input-field text-sm"
+                placeholder="z.B. elegant, sportlich-schick, feminin, minimalistisch..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">
+                🚫 Das mag ich gar nicht
+              </label>
+              <input
+                value={avoidStyles}
+                onChange={e => setAvoidStyles(e.target.value)}
+                className="input-field text-sm"
+                placeholder="z.B. Neonfarben, enge Hosen, Muster, Rüschen..."
               />
             </div>
           </div>

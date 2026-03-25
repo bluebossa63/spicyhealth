@@ -95,6 +95,10 @@ export interface UserProfile {
   eyeColor?: string;
   bodyLikes?: string;
   bodyDiscreet?: string;
+  favoriteColors?: string;
+  fabricPreferences?: string;
+  styleKeywords?: string;
+  avoidStyles?: string;
   dietaryPreferences?: string[];
 }
 
@@ -114,7 +118,11 @@ function buildProfileContext(profile?: UserProfile): string {
   if (profile.bustCm) lines.push(`Brustumfang: ${profile.bustCm} cm`);
   if (profile.eyeColor) lines.push(`Augenfarbe: ${profile.eyeColor}`);
   if (profile.bodyLikes) lines.push(`Das mag sie an sich und möchte es betonen: ${profile.bodyLikes}`);
-  if (profile.bodyDiscreet) lines.push(`Das möchte sie lieber umspielen/kaschieren: ${profile.bodyDiscreet}`);
+  if (profile.bodyDiscreet) lines.push(`Das möchte sie lieber kaschieren: ${profile.bodyDiscreet}`);
+  if (profile.favoriteColors) lines.push(`Lieblingsfarben: ${profile.favoriteColors}`);
+  if (profile.fabricPreferences) lines.push(`Bevorzugte Stoffe/Materialien: ${profile.fabricPreferences}`);
+  if (profile.styleKeywords) lines.push(`Stil-Vorlieben: ${profile.styleKeywords}`);
+  if (profile.avoidStyles) lines.push(`Das mag sie nicht / möchte sie vermeiden: ${profile.avoidStyles}`);
   if (profile.dietaryPreferences?.length) lines.push(`Ernährungsweise: ${profile.dietaryPreferences.join(', ')}`);
   if (!lines.length) return '';
   return `\n\n## Profil der Userin\nDie folgenden Informationen hat die Userin in ihrem Profil hinterlegt. ` +

@@ -22,6 +22,10 @@ const updateProfileSchema = z.object({
   eyeColor: z.string().max(50).optional(),
   bodyLikes: z.string().max(500).optional(),
   bodyDiscreet: z.string().max(500).optional(),
+  favoriteColors: z.string().max(200).optional(),
+  fabricPreferences: z.string().max(200).optional(),
+  styleKeywords: z.string().max(200).optional(),
+  avoidStyles: z.string().max(200).optional(),
 });
 
 // GET /api/users/me
