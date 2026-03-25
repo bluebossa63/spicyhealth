@@ -73,6 +73,8 @@ function Profile() {
   const [waistCm, setWaistCm] = useState<number | ''>('');
   const [bustCm, setBustCm] = useState<number | ''>('');
   const [eyeColor, setEyeColor] = useState('');
+  const [bodyLikes, setBodyLikes] = useState('');
+  const [bodyDiscreet, setBodyDiscreet] = useState('');
 
   useEffect(() => {
     api.users.me().then(d => {
@@ -90,6 +92,8 @@ function Profile() {
       setWaistCm(u.waistCm || '');
       setBustCm(u.bustCm || '');
       setEyeColor(u.eyeColor || '');
+      setBodyLikes(u.bodyLikes || '');
+      setBodyDiscreet(u.bodyDiscreet || '');
       const ids: string[] = u.savedRecipeIds || [];
       Promise.all(ids.map((id: string) => api.recipes.get(id).then(r => r.recipe).catch(() => null)))
         .then(results => setSavedRecipes(results.filter(Boolean)));
@@ -112,7 +116,7 @@ function Profile() {
     try {
       const data: Record<string, any> = {
         displayName, dietaryPreferences: dietary, activityLevel,
-        clothingSize, hairColor, eyeColor,
+        clothingSize, hairColor, eyeColor, bodyLikes, bodyDiscreet,
       };
       if (birthYear) data.birthYear = Number(birthYear);
       if (heightCm) data.heightCm = Number(heightCm);
@@ -245,6 +249,33 @@ function Profile() {
                 <option value="">— wählen —</option>
                 {EYE_COLORS.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
+            </div>
+          </div>
+
+          <div className="mt-4 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">
+                💝 Das mag ich an mir und möchte es betonen
+              </label>
+              <textarea
+                value={bodyLikes}
+                onChange={e => setBodyLikes(e.target.value)}
+                className="input-field resize-none text-sm"
+                rows={2}
+                placeholder="z.B. meine Schultern, meine Taille, meine langen Beine..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">
+                🤫 Das möchte ich lieber kaschieren
+              </label>
+              <textarea
+                value={bodyDiscreet}
+                onChange={e => setBodyDiscreet(e.target.value)}
+                className="input-field resize-none text-sm"
+                rows={2}
+                placeholder="z.B. meine Oberarme, mein Bauch, meine Oberschenkel..."
+              />
             </div>
           </div>
         </div>

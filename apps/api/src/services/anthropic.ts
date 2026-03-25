@@ -93,6 +93,8 @@ export interface UserProfile {
   waistCm?: number;
   bustCm?: number;
   eyeColor?: string;
+  bodyLikes?: string;
+  bodyDiscreet?: string;
   dietaryPreferences?: string[];
 }
 
@@ -111,6 +113,8 @@ function buildProfileContext(profile?: UserProfile): string {
   if (profile.waistCm) lines.push(`Taillenumfang: ${profile.waistCm} cm`);
   if (profile.bustCm) lines.push(`Brustumfang: ${profile.bustCm} cm`);
   if (profile.eyeColor) lines.push(`Augenfarbe: ${profile.eyeColor}`);
+  if (profile.bodyLikes) lines.push(`Das mag sie an sich und möchte es betonen: ${profile.bodyLikes}`);
+  if (profile.bodyDiscreet) lines.push(`Das möchte sie lieber umspielen/kaschieren: ${profile.bodyDiscreet}`);
   if (profile.dietaryPreferences?.length) lines.push(`Ernährungsweise: ${profile.dietaryPreferences.join(', ')}`);
   if (!lines.length) return '';
   return `\n\n## Profil der Userin\nDie folgenden Informationen hat die Userin in ihrem Profil hinterlegt. ` +
