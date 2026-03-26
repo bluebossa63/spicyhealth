@@ -133,28 +133,28 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
 
         // Build category-specific Flux Kontext prompt
         let editPrompt: string;
+        const ageRule = `ABSOLUTE RULE: The person's face, skin texture, neck, and body must remain PERFECTLY IDENTICAL to the original photo. ` +
+          `Do NOT age the person. Do NOT add wrinkles, lines, or skin changes. The person must look EXACTLY the same age as in the original. ` +
+          `Preserve every detail of the face, skin smoothness, and body shape precisely.`;
+
         if (garment.category === 'makeup') {
           editPrompt = `Apply ONLY makeup to this person's face: ${garment.prompt}. ` +
-            `CRITICAL: Do NOT change clothing, hairstyle, body, or anything else. ` +
-            `Keep face shape, skin, age, hair EXACTLY identical. Only add/change makeup. Photorealistic.`;
+            `Do NOT change clothing, hairstyle, body, or anything else. ${ageRule}`;
         } else if (garment.category === 'hair') {
           editPrompt = `Change ONLY the hairstyle on this person: ${garment.prompt}. ` +
-            `CRITICAL: Do NOT change clothing, makeup, face, skin, body, or age. ` +
-            `Keep everything identical except the hair. Photorealistic.`;
+            `Do NOT change clothing, makeup, face, skin, or body. ${ageRule}`;
         } else if (garment.category === 'accessoires') {
           editPrompt = `Add ONLY accessories to this person: ${garment.prompt}. ` +
-            `CRITICAL: Do NOT change clothing, hairstyle, makeup, face, skin, body, or age. ` +
-            `Keep everything identical, only add the described accessories. Photorealistic.`;
+            `Do NOT change clothing, hairstyle, makeup, face, skin, or body. ${ageRule}`;
         } else {
           editPrompt = `Change ONLY the clothing on this person: ${garment.prompt}. ` +
-            `CRITICAL: Keep face, skin, neck, body shape, age, hairstyle and makeup EXACTLY identical. ` +
-            `Do NOT add wrinkles or age the person. Only change clothing. Photorealistic.`;
+            `Keep hairstyle and makeup identical. ${ageRule}`;
         }
 
-        // Flux Kontext with 45-second timeout
+        // Flux Kontext with 60-second timeout
         console.log('Flux Kontext editing...');
         const timeoutPromise = new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Flux timeout after 45s')), 45000)
+          setTimeout(() => reject(new Error('Flux timeout after 60s')), 60000)
         );
         const editedUrl = await Promise.race([
           fluxKontextEdit(latestUserImage, editPrompt),
