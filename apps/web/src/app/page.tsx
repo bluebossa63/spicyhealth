@@ -6,43 +6,43 @@ const features = [
   {
     icon: '🥗',
     title: 'Rezeptbibliothek',
-    description: 'Hunderte gesunde Rezepte mit vollständigen Nährwertangaben und Kostenübersicht.',
+    description: 'Leckere, gesunde Rezepte — einfach nachzukochen und für dich gemacht.',
     href: '/recipes',
   },
   {
     icon: '📅',
     title: 'Mahlzeitenplaner',
-    description: 'Plane deine Woche mit einem wunderschönen Drag-and-Drop-Planer.',
+    description: 'Plane deine Woche mit einem Klick — stressfrei und flexibel.',
     href: '/meal-planner',
   },
   {
     icon: '🛒',
     title: 'Smarte Einkaufsliste',
-    description: 'Generiere deine Einkaufsliste automatisch aus dem wöchentlichen Mahlzeitenplan.',
+    description: 'Automatisch aus deinem Plan — nie mehr vergessen, was du brauchst.',
     href: '/shopping-list',
   },
   {
     icon: '👗',
     title: 'Styling',
-    description: 'Deine persönliche Stilberaterin — entdecke deinen Look mit KI-gestützter Modeberatung.',
+    description: 'Deine persönliche Stilberaterin — entdecke was dir steht und was dich zum Strahlen bringt.',
     href: '/umstyling',
   },
   {
     icon: '📸',
     title: 'Outfit-Galerie',
-    description: 'Dein persönliches Style-Board — alle Outfits aus deinen Stilberatungen gesammelt.',
+    description: 'Dein persönliches Style-Board — sammle deine Lieblingsoutfits.',
     href: '/outfit-galerie',
   },
   {
     icon: '✨',
     title: 'Mein Tag',
-    description: 'Wasser-Tracker, Stimmungstagebuch und deine täglichen Erfolge auf einen Blick.',
+    description: 'Dein Wasser-Tracker, Stimmungstagebuch und kleine Erfolge — alles auf einen Blick.',
     href: '/mein-tag',
   },
   {
     icon: '🍓',
     title: 'Saisonkalender',
-    description: 'Was hat gerade Saison in der Schweiz? Frisch und regional einkaufen.',
+    description: 'Was ist gerade frisch? Regional und saisonal einkaufen — ganz einfach.',
     href: '/saisonkalender',
   },
 ];
@@ -50,16 +50,40 @@ const features = [
 export default function HomePage() {
   return (
     <>
-      {/* Hero */}
+      {/* Hero — Problem → Lösung → Aktion */}
       <section className="max-w-6xl mx-auto px-4 pt-16 pb-12 text-center">
-        <h1 className="font-heading text-5xl md:text-6xl font-bold text-charcoal leading-tight mb-4">
-          Dein Wohlfühl-Ort.<br />
-          <span className="text-regency">Für dich gemacht.</span>
+        <h1 className="font-heading text-5xl md:text-6xl font-bold text-charcoal leading-tight mb-6">
+          In 10 Minuten pro Tag<br />
+          <span className="text-regency">zu mehr Energie und deinem Stil.</span>
         </h1>
-        <p className="text-lg text-charcoal-light max-w-xl mx-auto mb-8">
-          Keine Diäten. Keine Vorschriften. Einfach gut essen, sich schön fühlen
-          und Spass haben — in deinem eigenen Tempo.
+        <p className="text-lg text-charcoal-light max-w-2xl mx-auto mb-4">
+          Du hast wenig Zeit, willst dich aber gut fühlen? SpicyHealth plant deine Woche,
+          inspiriert deinen Stil und macht gesundes Essen einfach — ohne Diätstress.
         </p>
+        <p className="text-base text-charcoal-light max-w-xl mx-auto mb-10">
+          Keine Vorschriften. Keine Perfektion. Einfach <strong className="text-charcoal">du</strong> — in deinem eigenen Tempo.
+        </p>
+        <Link href="/recipes">
+          <Button size="lg" className="text-lg px-10 py-4">Jetzt entdecken</Button>
+        </Link>
+      </section>
+
+      {/* So funktioniert's — 3 Schritte */}
+      <section className="max-w-4xl mx-auto px-4 pb-16">
+        <h2 className="font-heading text-2xl text-center text-charcoal mb-10">So einfach geht&apos;s</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          {[
+            { step: '1', icon: '✨', title: 'Profil ausfüllen', desc: 'Sag uns was du magst, was dir steht und wie du dich ernährst — ganz entspannt.' },
+            { step: '2', icon: '📅', title: 'Woche planen lassen', desc: 'Die App erstellt dir einen Mahlzeitenplan mit Einkaufsliste — ein Klick genügt.' },
+            { step: '3', icon: '💛', title: 'Geniessen & entdecken', desc: 'Koche leckere Rezepte, entdecke deinen Stil und feiere deine kleinen Erfolge.' },
+          ].map((s) => (
+            <div key={s.step} className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-regency-light flex items-center justify-center text-3xl mb-4">{s.icon}</div>
+              <h3 className="font-heading text-lg font-semibold text-charcoal mb-2">Schritt {s.step}: {s.title}</h3>
+              <p className="text-charcoal-light text-sm leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Welcome text with Regency floral background */}
@@ -174,12 +198,12 @@ export default function HomePage() {
       {/* Features */}
       <section className="max-w-6xl mx-auto px-4 pb-16">
         <h2 className="font-heading text-3xl text-center text-charcoal mb-10">Alles, was du brauchst</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {features.map(({ icon, title, description, href }) => (
             <Link key={href} href={href} className="group block">
-              <Card className="h-full group-hover:shadow-card-hover transition-shadow text-center">
-                <div className="text-4xl mb-4">{icon}</div>
-                <h3 className="font-heading text-xl font-semibold text-charcoal mb-2">{title}</h3>
+              <Card className="h-full group-hover:shadow-card-hover transition-shadow text-center p-8">
+                <div className="text-5xl mb-5">{icon}</div>
+                <h3 className="font-heading text-xl font-semibold text-charcoal mb-3">{title}</h3>
                 <p className="text-charcoal-light text-sm leading-relaxed">{description}</p>
               </Card>
             </Link>
@@ -189,8 +213,28 @@ export default function HomePage() {
         {/* Call to action — after features overview */}
         <div className="text-center mt-12">
           <Link href="/recipes">
-            <Button size="lg">Lass dich inspirieren</Button>
+            <Button size="lg" className="text-lg px-10 py-4">Lass dich inspirieren</Button>
           </Link>
+        </div>
+      </section>
+
+      {/* Beispiele — sofort sichtbar */}
+      <section className="max-w-6xl mx-auto px-4 pb-16">
+        <h2 className="font-heading text-2xl text-center text-charcoal mb-4">Das erwartet dich</h2>
+        <p className="text-center text-charcoal-light mb-10">Gesunde Rezepte, persönliche Stilberatung und alles was dich zum Strahlen bringt.</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { title: 'Overnight Oats', cat: 'Frühstück', emoji: '🥣' },
+            { title: 'Quinoa-Bowl', cat: 'Mittagessen', emoji: '🥗' },
+            { title: 'Lachs-Teriyaki', cat: 'Abendessen', emoji: '🍣' },
+            { title: 'Dein neuer Look', cat: 'Stilberatung', emoji: '👗' },
+          ].map((item) => (
+            <div key={item.title} className="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
+              <div className="text-4xl mb-3">{item.emoji}</div>
+              <h3 className="font-heading text-sm font-semibold text-charcoal mb-1">{item.title}</h3>
+              <p className="text-xs text-charcoal-light">{item.cat}</p>
+            </div>
+          ))}
         </div>
       </section>
 
