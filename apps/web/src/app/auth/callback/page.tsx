@@ -20,13 +20,8 @@ function CallbackHandler() {
       try {
         const user = JSON.parse(decodeURIComponent(userParam));
         localStorage.setItem('auth', JSON.stringify({ user, token }));
-        // Check if user has completed onboarding before
-        const hasOnboarded = localStorage.getItem('spicyhealth_onboarded');
-        if (hasOnboarded) {
-          window.location.href = '/';
-        } else {
-          window.location.href = '/willkommen';
-        }
+        localStorage.setItem('spicyhealth_onboarded', 'true');
+        window.location.href = '/';
       } catch {
         router.replace('/auth/login?error=invalid_callback');
       }
