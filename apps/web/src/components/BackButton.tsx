@@ -1,13 +1,39 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+
+// Map sub-pages to their logical parent
+function getParentPath(path: string): string | null {
+  if (path.startsWith('/recipes/')) return '/recipes';
+  if (path.startsWith('/umstyling')) return '/';
+  if (path.startsWith('/outfit-galerie')) return '/umstyling';
+  if (path.startsWith('/meal-planner')) return '/';
+  if (path.startsWith('/shopping-list')) return '/';
+  if (path.startsWith('/mein-tag')) return '/';
+  if (path.startsWith('/saisonkalender')) return '/recipes';
+  if (path.startsWith('/profile')) return '/';
+  if (path.startsWith('/feedback')) return '/profile';
+  if (path.startsWith('/fortschritt')) return '/mein-tag';
+  if (path.startsWith('/datenschutz') || path.startsWith('/impressum')) return '/';
+  return null;
+}
 
 export default function BackButton() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const handleBack = () => {
+    const parent = getParentPath(pathname);
+    if (parent) {
+      router.push(parent);
+    } else {
+      router.back();
+    }
+  };
 
   return (
     <button
-      onClick={() => router.back()}
+      onClick={handleBack}
       style={{
         position: 'fixed',
         top: '12px',
