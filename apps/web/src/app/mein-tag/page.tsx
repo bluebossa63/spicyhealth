@@ -35,7 +35,12 @@ function MeinTag() {
   const [log, setLog] = useState<any>({ waterGlasses: 0, mood: '', energy: 0, sleepQuality: 0, note: '' });
   const [weekLogs, setWeekLogs] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
+  const [remindersActive, setRemindersActive] = useState(false);
   const date = today();
+
+  useEffect(() => {
+    setRemindersActive(localStorage.getItem('spicyhealth_reminders') === 'true');
+  }, []);
 
   useEffect(() => {
     api.dailyLogs.get(date).then(d => { if (d.log) setLog(d.log); }).catch(() => {});
@@ -233,27 +238,30 @@ function MeinTag() {
         </p>
         <button
           onClick={async () => {
+            if (remindersActive) {
+              localStorage.removeItem('spicyhealth_reminders');
+              setRemindersActive(false);
+              return;
+            }
             if (!('Notification' in window)) {
               alert('Dein Browser unterstützt keine Benachrichtigungen.');
               return;
             }
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
+              localStorage.setItem('spicyhealth_reminders', 'true');
+              setRemindersActive(true);
               new Notification('SpicyHealth 💧', {
                 body: 'Erinnerungen aktiviert! Wir erinnern dich ans Wassertrinken.',
                 icon: '/icons/icon-192x192.png',
               });
-              // Schedule water reminders every 2 hours
-              if ('serviceWorker' in navigator) {
-                alert('Erinnerungen aktiviert! Du wirst ans Wassertrinken erinnert.');
-              }
             } else {
               alert('Bitte erlaube Benachrichtigungen in deinen Browser-Einstellungen.');
             }
           }}
-          className="btn-secondary text-sm w-full"
+          className={remindersActive ? 'btn-secondary text-sm w-full bg-red-50 border-red-200 text-red-600 hover:bg-red-100' : 'btn-secondary text-sm w-full'}
         >
-          🔔 Erinnerungen aktivieren
+          {remindersActive ? '🔕 Erinnerungen deaktivieren' : '🔔 Erinnerungen aktivieren'}
         </button>
       </Card>
     </main>
