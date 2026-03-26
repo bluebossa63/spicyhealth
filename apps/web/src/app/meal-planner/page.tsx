@@ -375,9 +375,15 @@ function MealPlanner() {
           <div className="md:hidden">
             <div className="flex items-center justify-between mb-4">
               <button
-                onClick={() => setActiveDayIndex(i => Math.max(0, i - 1))}
-                disabled={activeDayIndex === 0}
-                className="btn-ghost px-3 py-2 text-lg disabled:opacity-30"
+                onClick={() => {
+                  if (activeDayIndex === 0) {
+                    setWeekOffset(w => w - 1);
+                    setActiveDayIndex(6);
+                  } else {
+                    setActiveDayIndex(i => i - 1);
+                  }
+                }}
+                className="btn-ghost px-3 py-2 text-lg"
                 aria-label="Vorheriger Tag"
               >‹</button>
               <div className="text-center">
@@ -388,9 +394,15 @@ function MealPlanner() {
                 </p>
               </div>
               <button
-                onClick={() => setActiveDayIndex(i => Math.min(days.length - 1, i + 1))}
-                disabled={activeDayIndex === days.length - 1}
-                className="btn-ghost px-3 py-2 text-lg disabled:opacity-30"
+                onClick={() => {
+                  if (activeDayIndex === days.length - 1) {
+                    setWeekOffset(w => w + 1);
+                    setActiveDayIndex(0);
+                  } else {
+                    setActiveDayIndex(i => i + 1);
+                  }
+                }}
+                className="btn-ghost px-3 py-2 text-lg"
                 aria-label="Nächster Tag"
               >›</button>
             </div>
