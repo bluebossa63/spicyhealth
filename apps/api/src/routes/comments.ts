@@ -3,6 +3,30 @@ import { containers } from '../services/cosmos';
 
 export const commentsRouter = Router();
 
+// POST /api/comments — Rückmeldung erstellen
+commentsRouter.post('/', async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const { message, rating, category } = req.body;
+  if (!message || message.trim().length === 0) {
+    return res.status(400).json({ error: 'Nachricht ist erforderlich' });
+  }
+  try {
+    const feedback = {
+      id: require('uuid').v4(),
+      userId: user.sub || user.oid,
+      displayName: user.displayName || user.name || 'Anonym',
+      message: message.trim(),
+      rating: rating || null,
+      category: category || 'allgemein',
+      createdAt: new Date().toISOString(),
+    };
+    await containers.comments.items.create(feedback);
+    res.status(201).json({ success: true, id: feedback.id });
+  } catch {
+    res.status(500).json({ error: 'Rückmeldung konnte nicht gesendet werden' });
+  }
+});
+
 // POST /api/comments/:id/like
 commentsRouter.post('/:id/like', async (req: Request, res: Response) => {
   const user = (req as any).user;
