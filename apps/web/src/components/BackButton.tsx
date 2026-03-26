@@ -22,6 +22,10 @@ export default function BackButton() {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Hide on pages that have their own navigation
+  if (pathname.startsWith('/umstyling')) return null;
+  if (pathname === '/') return null;
+
   const handleBack = () => {
     const parent = getParentPath(pathname);
     if (parent) {
