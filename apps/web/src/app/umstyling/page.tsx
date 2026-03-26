@@ -259,7 +259,7 @@ function StyleConsultant() {
           </button>
           {messages.length > 0 && (
             <button
-              onClick={() => { setMessages([]); setCurrentConversationId(undefined); }}
+              onClick={() => { setMessages([]); setConversationId(null); }}
               className="p-1.5 rounded-lg hover:bg-regency-light transition-colors"
               title="Neues Thema wählen"
             >
