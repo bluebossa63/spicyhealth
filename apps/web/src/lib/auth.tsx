@@ -44,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(user);
     setToken(token);
     localStorage.setItem('auth', JSON.stringify({ user, token }));
+    localStorage.setItem('spicyhealth_onboarded', 'true');
   }
 
   async function login(email: string, password: string) {

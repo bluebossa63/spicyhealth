@@ -46,8 +46,10 @@ function Onboarding() {
       const data: Record<string, any> = { dietaryPreferences: dietary };
       if (name.trim()) data.displayName = name.trim();
       await api.users.update(data);
+      localStorage.setItem('spicyhealth_onboarded', 'true');
       router.push('/mein-tag');
     } catch {
+      localStorage.setItem('spicyhealth_onboarded', 'true');
       router.push('/');
     } finally {
       setSaving(false);
