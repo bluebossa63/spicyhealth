@@ -33,10 +33,13 @@ app.use(cors({
   origin: (origin, cb) => {
     const allowed = (process.env.ALLOWED_ORIGIN || 'http://localhost:3000').split(',').map(s => s.trim());
     if (!origin || allowed.includes(origin)) cb(null, true);
-    else cb(null, false);
+    else cb(new Error('Not allowed by CORS'));
   },
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  credentials: true,
 }));
-app.use(express.json());
+app.use(express.json({ type: ['application/json', 'text/plain'] }));
 app.use(rateLimit({ windowMs: 60_000, max: 100, standardHeaders: true, legacyHeaders: false }));
 
 // Public routes

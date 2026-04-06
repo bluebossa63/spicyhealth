@@ -59,8 +59,11 @@ recipesRouter.get('/', async (req: Request, res: Response) => {
       params.push({ name: '@maxCost', value: Number(maxCost) });
     }
     if (search) {
-      query += ' AND (CONTAINS(LOWER(c.title), LOWER(@search)) OR CONTAINS(LOWER(c.description), LOWER(@search)))';
-      params.push({ name: '@search', value: search });
+      // Cosmos DB LOWER() only lowercases ASCII — breaks umlauts (ä ö ü ß).
+      // Search both original and lowercased (ASCII-safe) to cover mixed-case ASCII titles.
+      query += ' AND (CONTAINS(c.title, @search) OR CONTAINS(c.description, @search) OR CONTAINS(LOWER(c.title), @searchLower) OR CONTAINS(LOWER(c.description), @searchLower))';
+      params.push({ name: '@search', value: String(search) });
+      params.push({ name: '@searchLower', value: String(search).toLowerCase() });
     }
 
     const offset = (Number(page) - 1) * Number(pageSize);
