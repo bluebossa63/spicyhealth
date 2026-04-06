@@ -119,6 +119,34 @@ authRouter.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/auth/change-password
+authRouter.post('/change-password', async (req: Request, res: Response) => {
+  const schema = z.object({
+    email: z.string().email(),
+    currentPassword: z.string().min(1),
+    newPassword: z.string().min(8),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: 'Validation failed', details: parsed.error.flatten() });
+
+  const { email, currentPassword, newPassword } = parsed.data;
+  try {
+    const { resources } = await containers.users.items.query({
+      query: 'SELECT * FROM c WHERE c.email = @email',
+      parameters: [{ name: '@email', value: email.toLowerCase() }],
+    }).fetchAll();
+    const user = resources[0];
+    if (!user || !user.passwordHash) return res.status(401).json({ error: 'Invalid email or password' });
+    const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!valid) return res.status(401).json({ error: 'Invalid email or password' });
+    user.passwordHash = await bcrypt.hash(newPassword, 12);
+    await containers.users.item(user.id, user.id).replace(user);
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to change password' });
+  }
+});
+
 // GET /api/users/me
 authRouter.get('/me', async (req: Request, res: Response) => {
   const user = (req as any).user;
