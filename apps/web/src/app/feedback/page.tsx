@@ -39,11 +39,7 @@ function FeedbackForm() {
     if (!message.trim()) return;
     setSending(true);
     try {
-      // Save feedback as a daily log note (reusing existing API)
-      await api.dailyLogs.update({
-        date: new Date().toISOString().slice(0, 10),
-        note: `[FEEDBACK|${category}|${rating}] ${message}`,
-      });
+      await api.feedback.send({ category, rating, message });
       setSubmitted(true);
     } catch {
       alert('Rückmeldung konnte nicht gesendet werden. Bitte versuche es nochmal.');

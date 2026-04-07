@@ -16,4 +16,5 @@ export const containers = {
   conversations: db.container('conversations'),
   dailyLogs: db.container('daily-logs'),
   outfitGallery: db.container('outfit-gallery'),
+  feedback: db.container('feedback'),
 };

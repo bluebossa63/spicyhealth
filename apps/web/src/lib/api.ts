@@ -104,6 +104,10 @@ export const api = {
     getRange: (from: string, to: string) => fetchJson<{ logs: any[] }>(`/daily-logs?from=${from}&to=${to}`),
     update: (data: any) => fetchJson<{ log: any }>('/daily-logs', { method: 'PUT', body: JSON.stringify(data) }),
   },
+  feedback: {
+    send: (data: { category: string; rating: number; message: string }) =>
+      fetchJson<{ success: boolean }>('/feedback', { method: 'POST', body: JSON.stringify(data) }),
+  },
   umstyling: {
     chat: (data: { conversationId?: string; message: string; imageUrls?: string[] }) =>
       fetchJson<{ conversation: any; reply: string; generatedImages?: string[] }>('/umstyling/chat', {

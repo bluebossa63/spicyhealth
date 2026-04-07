@@ -13,6 +13,7 @@
     "@azure/storage-blob": "^12.31.0",
     "@fal-ai/client": "^1.9.5",
     "@spicyhealth/shared": "file:../../packages/shared",
+    "@types/nodemailer": "^8.0.0",
     "applicationinsights": "^3.14.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
@@ -22,6 +23,7 @@
     "helmet": "^7.2.0",
     "jsonwebtoken": "^9.0.0",
     "jwks-rsa": "^3.1.0",
+    "nodemailer": "^8.0.4",
     "openai": "^6.32.0",
     "uuid": "^9.0.1",
     "zod": "^3.25.76"
