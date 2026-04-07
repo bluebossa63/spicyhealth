@@ -12,6 +12,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [text, setText] = useState('');
   const [images, setImages] = useState<{ file: File; previewUrl: string; publicUrl?: string }[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,25 +20,27 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
     if (!files.length) return;
 
     setUploading(true);
+    setUploadError(null);
     try {
       const newImages = await Promise.all(
         files.slice(0, 3).map(async (file) => {
           const previewUrl = URL.createObjectURL(file);
-          // Get SAS upload URL
+          // Get SAS upload URL from API
           const { uploadUrl, publicUrl } = await api.umstyling.uploadImage(file.name, file.type);
-          // Upload directly to Azure Blob
-          await fetch(uploadUrl, {
+          // Upload directly to Azure Blob — check response!
+          const putRes = await fetch(uploadUrl, {
             method: 'PUT',
             headers: { 'x-ms-blob-type': 'BlockBlob', 'Content-Type': file.type },
             body: file,
           });
+          if (!putRes.ok) throw new Error(`Upload fehlgeschlagen (${putRes.status})`);
           return { file, previewUrl, publicUrl };
         }),
       );
       setImages((prev) => [...prev, ...newImages].slice(0, 3));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Image upload failed:', err);
-      alert('Bild-Upload fehlgeschlagen. Bitte versuche es nochmal.');
+      setUploadError('Foto konnte nicht hochgeladen werden. Bitte nochmal versuchen.');
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -73,6 +76,12 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
 
   return (
     <form onSubmit={handleSubmit} className="border-t border-cream-dark bg-cream p-3">
+      {uploadError && (
+        <div className="mb-2 px-3 py-2 bg-rose-light rounded-xl text-xs text-charcoal flex items-center justify-between">
+          <span>⚠️ {uploadError}</span>
+          <button type="button" onClick={() => setUploadError(null)} className="ml-2 text-charcoal-light hover:text-charcoal">✕</button>
+        </div>
+      )}
       {images.length > 0 && (
         <div className="flex gap-2 mb-2">
           {images.map((img, i) => (

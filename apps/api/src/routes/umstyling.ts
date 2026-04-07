@@ -438,9 +438,13 @@ umstylingRouter.post('/upload-image', async (req: Request, res: Response) => {
     const { filename, contentType } = req.body;
     if (!filename || !contentType) return res.status(400).json({ error: 'filename and contentType required' });
 
-    const accountName = process.env.STORAGE_ACCOUNT!;
-    const accountKey = process.env.STORAGE_KEY!;
+    const accountName = process.env.STORAGE_ACCOUNT;
+    const accountKey = process.env.STORAGE_KEY;
     const containerName = process.env.STORAGE_CONTAINER || 'media';
+    if (!accountName || !accountKey) {
+      console.error('STORAGE_ACCOUNT or STORAGE_KEY not configured');
+      return res.status(500).json({ error: 'Foto-Upload nicht konfiguriert' });
+    }
     const blobName = `umstyling/${uuidv4()}-${filename}`;
 
     const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
@@ -459,6 +463,7 @@ umstylingRouter.post('/upload-image', async (req: Request, res: Response) => {
 
     res.json({ uploadUrl, publicUrl });
   } catch (err: any) {
+    console.error('upload-image error:', err.message);
     res.status(500).json({ error: 'Upload-URL konnte nicht erstellt werden' });
   }
 });
