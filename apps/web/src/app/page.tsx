@@ -129,12 +129,12 @@ function DashboardView() {
       </Card>
 
       {/* Quick links */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {QUICK_LINKS.map(({ href, icon, label }) => (
           <Link key={href} href={href}>
-            <Card className="p-3 text-center hover:shadow-card-hover transition-shadow cursor-pointer">
-              <div className="text-2xl mb-1">{icon}</div>
-              <p className="text-xs font-medium text-charcoal leading-tight">{label}</p>
+            <Card className="p-4 text-center hover:shadow-card-hover transition-shadow cursor-pointer">
+              <div className="text-3xl mb-2">{icon}</div>
+              <p className="text-xs font-medium text-charcoal leading-snug">{label}</p>
             </Card>
           </Link>
         ))}
