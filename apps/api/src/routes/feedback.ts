@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { containers } from '../services/cosmos';
-import nodemailer from 'nodemailer';
+import { ConfidentialClientApplication } from '@azure/msal-node';
 import { v4 as uuidv4 } from 'uuid';
 
 export const feedbackRouter = Router();
@@ -22,6 +22,31 @@ const RATING_LABELS: Record<number, string> = {
   1: '😞 Nicht gut',
 };
 
+async function getGraphToken(): Promise<string> {
+  const tenantId = process.env.AZURE_TENANT_ID || process.env.M365_TENANT_ID;
+  const clientId = process.env.MICROSOFT_CLIENT_ID || process.env.M365_CLIENT_ID;
+  const clientSecret = process.env.MICROSOFT_CLIENT_SECRET || process.env.M365_CLIENT_SECRET;
+
+  if (!tenantId || !clientId || !clientSecret) {
+    throw new Error('Graph API credentials not configured');
+  }
+
+  const app = new ConfidentialClientApplication({
+    auth: {
+      clientId,
+      clientSecret,
+      authority: `https://login.microsoftonline.com/${tenantId}`,
+    },
+  });
+
+  const result = await app.acquireTokenByClientCredential({
+    scopes: ['https://graph.microsoft.com/.default'],
+  });
+
+  if (!result?.accessToken) throw new Error('Could not acquire Graph token');
+  return result.accessToken;
+}
+
 async function sendFeedbackEmail(feedback: {
   category: string;
   rating: number;
@@ -30,58 +55,64 @@ async function sendFeedbackEmail(feedback: {
   userEmail: string;
   submittedAt: string;
 }) {
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
   const notifyEmail = process.env.FEEDBACK_NOTIFY_EMAIL || 'servicedesk@niceneasy.ch';
+  const senderEmail = process.env.GRAPH_SENDER_EMAIL || 'servicedesk@niceneasy.ch';
 
-  if (!smtpHost || !smtpUser || !smtpPass) {
-    console.warn('SMTP not configured — feedback saved to DB only');
-    return;
-  }
-
-  const transporter = nodemailer.createTransport({
-    host: smtpHost,
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false,
-    auth: { user: smtpUser, pass: smtpPass },
-  });
-
+  const token = await getGraphToken();
   const categoryLabel = CATEGORY_LABELS[feedback.category] || feedback.category;
   const ratingLabel = RATING_LABELS[feedback.rating] || `${feedback.rating}/5`;
 
-  await transporter.sendMail({
-    from: `"SpicyHealth Feedback" <${smtpUser}>`,
-    to: notifyEmail,
-    subject: `💬 Neue Rückmeldung: ${categoryLabel}`,
-    html: `
-      <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #fdf8f4; padding: 32px; border-radius: 12px;">
-        <h1 style="color: #8B4A6B; font-size: 24px; margin-bottom: 4px;">💬 Neue Rückmeldung</h1>
-        <p style="color: #888; font-size: 14px; margin-top: 0;">${new Date(feedback.submittedAt).toLocaleString('de-CH')}</p>
+  const html = `
+    <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #fdf8f4; padding: 32px; border-radius: 12px;">
+      <h1 style="color: #8B4A6B; font-size: 24px; margin-bottom: 4px;">💬 Neue Rückmeldung</h1>
+      <p style="color: #888; font-size: 14px; margin-top: 0;">${new Date(feedback.submittedAt).toLocaleString('de-CH')}</p>
 
-        <table style="width: 100%; border-collapse: collapse; margin: 24px 0;">
-          <tr>
-            <td style="padding: 10px 0; color: #666; width: 140px; vertical-align: top; font-size: 14px;">Von</td>
-            <td style="padding: 10px 0; color: #333; font-size: 14px;"><strong>${feedback.userName}</strong> (${feedback.userEmail})</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px 0; color: #666; vertical-align: top; font-size: 14px;">Kategorie</td>
-            <td style="padding: 10px 0; color: #333; font-size: 14px;">${categoryLabel}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px 0; color: #666; vertical-align: top; font-size: 14px;">Bewertung</td>
-            <td style="padding: 10px 0; color: #333; font-size: 14px;">${ratingLabel}</td>
-          </tr>
-        </table>
+      <table style="width: 100%; border-collapse: collapse; margin: 24px 0;">
+        <tr>
+          <td style="padding: 10px 0; color: #666; width: 140px; vertical-align: top; font-size: 14px;">Von</td>
+          <td style="padding: 10px 0; color: #333; font-size: 14px;"><strong>${feedback.userName}</strong> (${feedback.userEmail})</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; vertical-align: top; font-size: 14px;">Kategorie</td>
+          <td style="padding: 10px 0; color: #333; font-size: 14px;">${categoryLabel}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: #666; vertical-align: top; font-size: 14px;">Bewertung</td>
+          <td style="padding: 10px 0; color: #333; font-size: 14px;">${ratingLabel}</td>
+        </tr>
+      </table>
 
-        <div style="background: white; border-left: 4px solid #C4956A; padding: 16px 20px; border-radius: 6px; margin: 16px 0;">
-          <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0; white-space: pre-wrap;">${feedback.message}</p>
-        </div>
-
-        <p style="color: #aaa; font-size: 12px; margin-top: 32px;">SpicyHealth — Testphase</p>
+      <div style="background: white; border-left: 4px solid #C4956A; padding: 16px 20px; border-radius: 6px; margin: 16px 0;">
+        <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0; white-space: pre-wrap;">${feedback.message}</p>
       </div>
-    `,
-  });
+
+      <p style="color: #aaa; font-size: 12px; margin-top: 32px;">SpicyHealth — Testphase</p>
+    </div>
+  `;
+
+  const response = await fetch(
+    `https://graph.microsoft.com/v1.0/users/${senderEmail}/sendMail`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: {
+          subject: `💬 SpicyHealth Rückmeldung: ${categoryLabel}`,
+          body: { contentType: 'HTML', content: html },
+          toRecipients: [{ emailAddress: { address: notifyEmail } }],
+        },
+        saveToSentItems: false,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Graph sendMail failed: ${response.status} — ${err}`);
+  }
 }
 
 feedbackRouter.post('/', async (req: any, res) => {
@@ -104,7 +135,7 @@ feedbackRouter.post('/', async (req: any, res) => {
 
   await containers.feedback.items.create(entry);
 
-  // Send email notification (non-blocking — failure doesn't affect response)
+  // Send email via Graph API (non-blocking)
   sendFeedbackEmail(entry).catch(err => console.error('Feedback email failed:', err));
 
   res.json({ success: true });
