@@ -107,3 +107,13 @@ export async function notifyStyleChat(firstMessage: string, user: { name: string
   ]);
   await sendMail('👗 SpicyHealth: Stilberaterin gestartet', html);
 }
+
+export async function notifyRecipeComment(comment: { body: string; recipeTitle?: string }, user: { name: string; email: string }): Promise<void> {
+  const preview = comment.body.length > 200 ? comment.body.substring(0, 197) + '...' : comment.body;
+  const html = wrap('💬', 'Kommentar geschrieben', [
+    ['Nutzerin', `${user.name} (${user.email})`],
+    ['Rezept', comment.recipeTitle || '—'],
+    ['Kommentar', preview],
+  ]);
+  await sendMail(`💬 SpicyHealth: Kommentar von ${user.name}`, html);
+}

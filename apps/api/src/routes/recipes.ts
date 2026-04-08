@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { containers } from '../services/cosmos';
-import { notifyNewRecipe } from '../services/notify-admin';
+import { notifyNewRecipe, notifyRecipeComment } from '../services/notify-admin';
 import type { Recipe } from '@spicyhealth/shared';
 
 export const recipesRouter = Router();
@@ -222,6 +222,19 @@ recipesRouter.post('/:id/comments', async (req: Request, res: Response) => {
       createdAt: new Date().toISOString(),
     };
     await containers.comments.items.create(comment);
+
+    // Fetch recipe title for notification (best-effort)
+    const recipeTitle = await containers.recipes.items.query({
+      query: 'SELECT c.title FROM c WHERE c.id = @id',
+      parameters: [{ name: '@id', value: req.params.id }],
+    }).fetchAll().then(r => r.resources[0]?.title).catch(() => undefined);
+
+    const u = (req as any).user;
+    notifyRecipeComment(
+      { body: parsed.data.body, recipeTitle },
+      { name: u?.displayName || u?.name || u?.email || 'Unbekannt', email: u?.email || '—' }
+    ).catch(() => {});
+
     res.status(201).json({ comment });
   } catch (err: any) {
     res.status(500).json({ error: 'Failed to add comment' });
