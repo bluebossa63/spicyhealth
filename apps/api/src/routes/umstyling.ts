@@ -151,10 +151,10 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
             `Keep hairstyle and makeup identical. ${ageRule}`;
         }
 
-        // Flux Kontext with 60-second timeout
+        // Flux Kontext with 120-second timeout
         console.log('Flux Kontext editing...');
         const timeoutPromise = new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Flux timeout after 60s')), 60000)
+          setTimeout(() => reject(new Error('Flux timeout after 120s')), 120000)
         );
         const editedUrl = await Promise.race([
           fluxKontextEdit(latestUserImage, editPrompt),
@@ -452,14 +452,20 @@ umstylingRouter.post('/upload-image', async (req: Request, res: Response) => {
     const containerClient = blobServiceClient.getContainerClient(containerName);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    const expiresOn = new Date(Date.now() + 10 * 60 * 1000);
-    const sas = generateBlobSASQueryParameters(
-      { containerName, blobName, permissions: BlobSASPermissions.parse('w'), expiresOn, contentType },
+    // Write SAS — 10 minutes for upload
+    const writeSas = generateBlobSASQueryParameters(
+      { containerName, blobName, permissions: BlobSASPermissions.parse('w'), expiresOn: new Date(Date.now() + 10 * 60 * 1000), contentType },
       sharedKeyCredential,
     ).toString();
 
-    const uploadUrl = `${blockBlobClient.url}?${sas}`;
-    const publicUrl = blockBlobClient.url;
+    // Read SAS — 4 hours so OpenAI Vision and fal.ai can access the image
+    const readSas = generateBlobSASQueryParameters(
+      { containerName, blobName, permissions: BlobSASPermissions.parse('r'), expiresOn: new Date(Date.now() + 4 * 60 * 60 * 1000) },
+      sharedKeyCredential,
+    ).toString();
+
+    const uploadUrl = `${blockBlobClient.url}?${writeSas}`;
+    const publicUrl = `${blockBlobClient.url}?${readSas}`;
 
     res.json({ uploadUrl, publicUrl });
   } catch (err: any) {
