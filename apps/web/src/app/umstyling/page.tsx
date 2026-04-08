@@ -97,11 +97,8 @@ function StyleConsultant() {
       // Replace with server state to stay in sync
       setMessages(conversation.messages);
 
-      // Auto-generate style image in background if user uploaded a photo
-      const latestPhoto = [...conversation.messages]
-        .reverse()
-        .find((m) => m.role === 'user' && m.imageUrls?.length)
-        ?.imageUrls?.[0];
+      // Auto-generate style image in background ONLY when user just uploaded a new photo
+      const latestPhoto = imageUrls?.[0];
       const lastReply = conversation.messages.findLast?.((m: ChatMessageType) => m.role === 'assistant')?.content ?? '';
       if (latestPhoto && lastReply.length > 50) {
         setGeneratingLook(true);
