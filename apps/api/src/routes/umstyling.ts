@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { containers } from '../services/cosmos';
-import { chatWithStyleConsultant, extractGarmentDescription, type UserProfile } from '../services/anthropic';
+import { chatWithStyleConsultant, type UserProfile } from '../services/anthropic';
 import { generateStyleImage } from '../services/image-gen';
 import { virtualTryOn } from '../services/fashn';
 import { fluxKontextEdit } from '../services/flux-kontext';
@@ -109,93 +109,10 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
       .replace(/\n{3,}/g, '\n\n')
       .trim();
 
-    // --- Automatic image generation ---
-    const generatedImages: string[] = [];
-    let garmentDescriptionDE = '';
-
-    // Find the latest user-uploaded photo
-    const latestUserImage = [...conversation.messages]
-      .reverse()
-      .find((m) => m.role === 'user' && m.imageUrls?.length)
-      ?.imageUrls?.[0];
-
-    // Auto-generate: when user has uploaded a photo, use Flux Kontext
-    // to directly restyle the photo based on the style advice
-    // Uses a timeout to prevent hanging requests
-    if (latestUserImage && cleanedReply.length > 50) {
-      try {
-        const styleContext = cleanedReply.substring(0, 500);
-
-        // Extract a precise style description (fast, ~2s)
-        const garment = await extractGarmentDescription(styleContext);
-        garmentDescriptionDE = garment.description;
-        console.log('Style category:', garment.category, '| description:', garment.description);
-
-        // Build category-specific Flux Kontext prompt
-        let editPrompt: string;
-        const ageRule = `ABSOLUTE RULE: The person's face, skin texture, neck, and body must remain PERFECTLY IDENTICAL to the original photo. ` +
-          `Do NOT age the person. Do NOT add wrinkles, lines, or skin changes. The person must look EXACTLY the same age as in the original. ` +
-          `Preserve every detail of the face, skin smoothness, and body shape precisely.`;
-
-        if (garment.category === 'makeup') {
-          editPrompt = `Apply ONLY makeup to this person's face: ${garment.prompt}. ` +
-            `Do NOT change clothing, hairstyle, body, or anything else. ${ageRule}`;
-        } else if (garment.category === 'hair') {
-          editPrompt = `Change ONLY the hairstyle on this person: ${garment.prompt}. ` +
-            `Do NOT change clothing, makeup, face, skin, or body. ${ageRule}`;
-        } else if (garment.category === 'accessoires') {
-          editPrompt = `Add ONLY accessories to this person: ${garment.prompt}. ` +
-            `Do NOT change clothing, hairstyle, makeup, face, skin, or body. ${ageRule}`;
-        } else {
-          editPrompt = `Change ONLY the clothing on this person: ${garment.prompt}. ` +
-            `Keep hairstyle and makeup identical. ${ageRule}`;
-        }
-
-        // Flux Kontext with 120-second timeout
-        console.log('Flux Kontext editing...');
-        const timeoutPromise = new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Flux timeout after 120s')), 120000)
-        );
-        const editedUrl = await Promise.race([
-          fluxKontextEdit(latestUserImage, editPrompt),
-          timeoutPromise,
-        ]);
-        generatedImages.push(editedUrl);
-        console.log('Flux Kontext result:', editedUrl);
-      } catch (err) {
-        console.error('Image generation failed:', (err as Error).message);
-        // No fallback — just show text response without image
-      }
-    }
-
-    // Save generated images to permanent gallery
-    if (generatedImages.length) {
-      const userId = user?.sub || user?.oid;
-      for (const url of generatedImages) {
-        try {
-          await containers.outfitGallery.items.create({
-            id: uuidv4(),
-            userId,
-            imageUrl: url,
-            description: garmentDescriptionDE || cleanedReply.substring(0, 150),
-            createdAt: new Date().toISOString(),
-          });
-        } catch {}
-      }
-    }
-
-    // Append assistant reply — add info about image generation
-    let replyWithImage = cleanedReply;
-    if (generatedImages.length && garmentDescriptionDE) {
-      replyWithImage = `${cleanedReply}\n\n👗 **Mein Vorschlag für dich:** ${garmentDescriptionDE}`;
-    } else if (latestUserImage && cleanedReply.length > 50 && !generatedImages.length && garmentDescriptionDE) {
-      replyWithImage = `${cleanedReply}\n\n⏳ Das Bild konnte diesmal nicht erstellt werden. Klicke auf "Zeig mir den Look" um es nochmal zu versuchen.`;
-    }
-
+    // Text reply comes back fast — image generation happens separately via /generate-look
     const assistantMessage: ChatMessage = {
       role: 'assistant',
-      content: replyWithImage,
-      imageUrls: generatedImages.length ? generatedImages : undefined,
+      content: cleanedReply,
       timestamp: new Date().toISOString(),
     };
     conversation.messages.push(assistantMessage);
@@ -204,7 +121,7 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
     // Persist
     await containers.conversations.items.upsert(conversation);
 
-    res.json({ conversation, reply: cleanedReply, generatedImages });
+    res.json({ conversation, reply: cleanedReply });
   } catch (err: any) {
     console.error('Umstyling chat error:', err);
     res.status(500).json({ error: 'Stilberatung vorübergehend nicht verfügbar' });

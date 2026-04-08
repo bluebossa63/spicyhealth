@@ -88,7 +88,7 @@ function StyleConsultant() {
     setLoading(true);
 
     try {
-      const { conversation, reply } = await api.umstyling.chat({
+      const { conversation } = await api.umstyling.chat({
         conversationId: conversationId || undefined,
         message,
         imageUrls,
@@ -96,6 +96,27 @@ function StyleConsultant() {
       setConversationId(conversation.id);
       // Replace with server state to stay in sync
       setMessages(conversation.messages);
+
+      // Auto-generate style image in background if user uploaded a photo
+      const latestPhoto = [...conversation.messages]
+        .reverse()
+        .find((m) => m.role === 'user' && m.imageUrls?.length)
+        ?.imageUrls?.[0];
+      const lastReply = conversation.messages.findLast?.((m: ChatMessageType) => m.role === 'assistant')?.content ?? '';
+      if (latestPhoto && lastReply.length > 50) {
+        setGeneratingLook(true);
+        api.umstyling.generateLook({
+          conversationId: conversation.id,
+          sourceImageUrl: latestPhoto,
+          styleDescription: lastReply.substring(0, 500),
+        }).then(({ conversation: updated }) => {
+          setMessages(updated.messages);
+        }).catch(() => {
+          // silent — text reply is already shown
+        }).finally(() => {
+          setGeneratingLook(false);
+        });
+      }
     } catch {
       // Remove optimistic message on error, show error
       setMessages((prev) => [
@@ -348,6 +369,20 @@ function StyleConsultant() {
                   <span className="w-2 h-2 bg-charcoal-light rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-2 h-2 bg-charcoal-light rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-2 h-2 bg-charcoal-light rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!loading && generatingLook && (
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-full bg-sage-light flex items-center justify-center">
+                <span className="text-sm">✨</span>
+              </div>
+              <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 shadow-sm border border-cream-dark">
+                <div className="flex items-center gap-2 text-xs text-charcoal-light">
+                  <span className="w-3 h-3 border-2 border-regency border-t-transparent rounded-full animate-spin" />
+                  Stilbild wird erstellt…
                 </div>
               </div>
             </div>
