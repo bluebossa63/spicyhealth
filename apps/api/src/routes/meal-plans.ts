@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { containers } from '../services/cosmos';
+import { notifyMealPlan } from '../services/notify-admin';
 
 export const mealPlansRouter = Router();
 
@@ -73,6 +74,8 @@ mealPlansRouter.get('/current', async (req: Request, res: Response) => {
     const days = buildWeekDays(weekStart).map(emptyDay);
     const plan = { id: uuidv4(), userId, weekStart, days, createdAt: new Date().toISOString() };
     await containers.mealPlans.items.create(plan);
+    const u = (req as any).user;
+    notifyMealPlan(weekStart, { name: u?.name || u?.email || 'Unbekannt', email: u?.email || '—' }).catch(() => {});
     res.json({ mealPlan: plan });
   } catch (err: any) {
     console.error('GET /meal-plans/current error:', err.message);

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { containers } from '../services/cosmos';
+import { notifyNewUser } from '../services/notify-admin';
 
 export const authRouter = Router();
 
@@ -61,6 +62,7 @@ authRouter.post('/register', async (req: Request, res: Response) => {
     };
 
     await containers.users.items.create(userDoc);
+    notifyNewUser({ name: displayName, email: userDoc.email }).catch(() => {});
 
     const token = jwt.sign(
       { sub: userId, email: userDoc.email, displayName },

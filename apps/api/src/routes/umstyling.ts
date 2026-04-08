@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { containers } from '../services/cosmos';
 import { chatWithStyleConsultant, type UserProfile } from '../services/anthropic';
+import { notifyStyleChat } from '../services/notify-admin';
 import { generateStyleImage } from '../services/image-gen';
 import { virtualTryOn } from '../services/fashn';
 import { fluxKontextEdit } from '../services/flux-kontext';
@@ -56,6 +57,9 @@ umstylingRouter.post('/chat', chatLimiter, async (req: Request, res: Response) =
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
+      // Notify on first message of new conversation
+      const u = user;
+      notifyStyleChat(message, { name: u?.name || u?.email || 'Unbekannt', email: u?.email || '—' }).catch(() => {});
     }
 
     // Append user message

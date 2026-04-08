@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions, StorageSharedKeyCredential } from '@azure/storage-blob';
 import { containers } from '../services/cosmos';
+import { notifyNewRecipe } from '../services/notify-admin';
 import type { Recipe } from '@spicyhealth/shared';
 
 export const recipesRouter = Router();
@@ -110,6 +111,11 @@ recipesRouter.post('/', async (req: Request, res: Response) => {
       updatedAt: now,
     };
     await containers.recipes.items.create(recipe);
+    const u = (req as any).user;
+    notifyNewRecipe(
+      { title: recipe.title, category: recipe.category },
+      { name: u?.name || u?.email || 'Unbekannt', email: u?.email || '—' }
+    ).catch(() => {});
     res.status(201).json({ recipe });
   } catch (err: any) {
     res.status(500).json({ error: 'Failed to create recipe' });

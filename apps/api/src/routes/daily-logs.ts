@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { containers } from '../services/cosmos';
+import { notifyDailyLog } from '../services/notify-admin';
 
 export const dailyLogsRouter = Router();
 
@@ -60,6 +61,11 @@ dailyLogsRouter.put('/', async (req: Request, res: Response) => {
     const updated = { ...existing, ...data, updatedAt: new Date().toISOString() };
 
     await containers.dailyLogs.items.upsert(updated);
+    const u = (req as any).user;
+    notifyDailyLog(
+      { water: updated.waterGlasses ?? 0, mood: updated.mood, energy: updated.energy },
+      { id: userId, name: u?.name || u?.email || 'Unbekannt', email: u?.email || '—' }
+    ).catch(() => {});
     res.json({ log: updated });
   } catch {
     res.status(500).json({ error: 'Failed to save log' });
