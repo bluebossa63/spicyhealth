@@ -33,7 +33,7 @@ async function sendFeedbackEmail(feedback: {
   const smtpHost = process.env.SMTP_HOST;
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
-  const notifyEmail = process.env.FEEDBACK_NOTIFY_EMAIL || 'franziska.ulrich@niceneasy.ch';
+  const notifyEmail = process.env.FEEDBACK_NOTIFY_EMAIL || 'servicedesk@niceneasy.ch';
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     console.warn('SMTP not configured — feedback saved to DB only');
